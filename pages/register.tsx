@@ -1,10 +1,11 @@
 import { Button, Grid, CircularProgress, makeStyles } from "@material-ui/core";
 import React from "react";
-import * as yup from "yup";
 import { Formik, Form } from "formik";
 import InputField from "../src/components/InputField";
 import BasicContainer from "../src/components/BasicContainer";
 import { useRegisterMutation } from "../src/generated/graphql";
+import { toErrorMap } from "../src/utils/toErrorMap";
+import { useRouter } from "next/dist/client/router";
 
 const useStyles = makeStyles({
     button: {
@@ -15,13 +16,19 @@ const useStyles = makeStyles({
 const Register: React.FC = () => {
     const classes = useStyles();
     const [,register] = useRegisterMutation();
+    const router = useRouter();
 
   return (
     <BasicContainer>
     <Formik
       initialValues={{ username: "", password: "" }}
-      onSubmit={async (values) => {
+      onSubmit={async (values, {setErrors}) => {
         const response = await register(values);
+        if(response.data?.register.errors){
+          setErrors(toErrorMap(response.data.register.errors));
+        }else if(response.data?.register.user){
+          router.push("/");
+        }
       }}
     >
       {({ values, handleChange, isSubmitting }) => (
