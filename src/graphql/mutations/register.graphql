@@ -1,0 +1,14 @@
+mutation Register($credentials: Credentials!) {
+  register(credentials: $credentials){
+    errors {
+      field
+      message
+    }
+    user {
+      _id
+      username
+      createdAt
+      updatedAt
+    }
+  }
+}

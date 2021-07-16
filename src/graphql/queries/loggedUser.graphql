@@ -1,0 +1,6 @@
+query loggedUser{
+  loggedUser{
+    _id
+    username
+  }
+}
