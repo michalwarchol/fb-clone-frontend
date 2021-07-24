@@ -5,10 +5,7 @@ mutation Register($credentials: Credentials!) {
       message
     }
     user {
-      _id
-      username
-      createdAt
-      updatedAt
+      ...RegularUser
     }
   }
 }

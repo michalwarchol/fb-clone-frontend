@@ -32,6 +32,7 @@ export type Mutation = {
   deletePost: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
+  logout: Scalars['Boolean'];
 };
 
 
@@ -95,6 +96,11 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type RegularUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, '_id' | 'username'>
+);
+
 export type LoginMutationVariables = Exact<{
   credentials: Credentials;
 }>;
@@ -109,9 +115,17 @@ export type LoginMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, '_id' | 'username' | 'createdAt' | 'updatedAt'>
+      & RegularUserFragment
     )> }
   ) }
+);
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -128,7 +142,7 @@ export type RegisterMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, '_id' | 'username' | 'createdAt' | 'updatedAt'>
+      & RegularUserFragment
     )> }
   ) }
 );
@@ -140,11 +154,16 @@ export type LoggedUserQuery = (
   { __typename?: 'Query' }
   & { loggedUser?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, '_id' | 'username'>
+    & RegularUserFragment
   )> }
 );
 
-
+export const RegularUserFragmentDoc = gql`
+    fragment RegularUser on User {
+  _id
+  username
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($credentials: Credentials!) {
   login(credentials: $credentials) {
@@ -153,17 +172,23 @@ export const LoginDocument = gql`
       message
     }
     user {
-      _id
-      username
-      createdAt
-      updatedAt
+      ...RegularUser
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
     mutation Register($credentials: Credentials!) {
@@ -173,14 +198,11 @@ export const RegisterDocument = gql`
       message
     }
     user {
-      _id
-      username
-      createdAt
-      updatedAt
+      ...RegularUser
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
@@ -188,11 +210,10 @@ export function useRegisterMutation() {
 export const LoggedUserDocument = gql`
     query loggedUser {
   loggedUser {
-    _id
-    username
+    ...RegularUser
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 export function useLoggedUserQuery(options: Omit<Urql.UseQueryArgs<LoggedUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<LoggedUserQuery>({ query: LoggedUserDocument, ...options });
