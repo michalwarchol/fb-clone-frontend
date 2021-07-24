@@ -1,17 +1,14 @@
-import {
-  Link as ChakraLink,
-  Text,
-  Code,
-  List,
-  ListIcon,
-  ListItem,
-} from '@chakra-ui/react'
-import { CheckCircleIcon, LinkIcon } from '@chakra-ui/icons'
+import React from "react"
+import {Box} from "@chakra-ui/react"
+import Navbar from "../components/Navbar/Navbar"
+import { withUrqlClient } from "next-urql"
+import { createUrqlClient } from "../utils/createUrqlClient"
 
 const Index = () => (
-  <>
-  hello
-  </>
+  <Box maxW="100vw" color="textPrimary" bg={"primary"}>
+    <Navbar />
+    fdsfdsfsd
+  </Box>
 )
 
-export default Index
+export default withUrqlClient(createUrqlClient, {ssr: true})(Index);

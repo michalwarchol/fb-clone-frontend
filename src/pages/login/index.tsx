@@ -14,10 +14,12 @@ import {
 import React from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/dist/client/router";
-import { useLoginMutation } from "../generated/graphql";
-import { toErrorMap } from "../utils/toErrorMap";
-import InputField from "../components/InputField";
-import RegisterModal from "../components/RegisterModal/RegisterModal";
+import { useLoginMutation } from "../../generated/graphql";
+import { toErrorMap } from "../../utils/toErrorMap";
+import InputField from "../../components/InputField";
+import RegisterModal from "../../components/RegisterModal/RegisterModal";
+import { createUrqlClient } from "../../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
 
 const Login: React.FC = () => {
   const [, login] = useLoginMutation();
@@ -133,4 +135,4 @@ const Login: React.FC = () => {
     </Container>
   );
 };
-export default Login;
+export default withUrqlClient(createUrqlClient, {ssr: true})(Login);
