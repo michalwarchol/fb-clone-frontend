@@ -15,8 +15,8 @@ const theme = extendTheme({
   colors: {
     primary: '#18191A',
     secondary: '#242526',
-    tertiary: '#3A3B3C',
-    hover: '#303031',
+    tertiary: '#303031',
+    hover: '#3A3B3C',
     active: '#2D86FF',
     textPrimary: '#D5D6DA',
     textSecondary: "#ffffff",
