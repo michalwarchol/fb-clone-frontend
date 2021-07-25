@@ -3,7 +3,6 @@ import {
   Grid,
   CircularProgress,
   Container,
-  Link,
   GridItem,
   Divider,
   Flex,
@@ -20,6 +19,7 @@ import InputField from "../../components/InputField";
 import RegisterModal from "../../components/RegisterModal/RegisterModal";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { withUrqlClient } from "next-urql";
+import NextLink from "next/link";
 
 const Login: React.FC = () => {
   const [, login] = useLoginMutation();
@@ -27,10 +27,13 @@ const Login: React.FC = () => {
 
   return (
     <Container h="100vh" bg="#f0f2f5" maxW="100vw">
-      <Container pt={{base: "8px", md: "92px"}} maxW={{ md: "100%", lg: "960px" }}>
-        <Grid templateColumns={{base: "1fr", md: "7fr 5fr"}}>
+      <Container
+        pt={{ base: "8px", md: "92px" }}
+        maxW={{ md: "100%", lg: "960px" }}
+      >
+        <Grid templateColumns={{ base: "1fr", md: "7fr 5fr" }}>
           <GridItem>
-            <Box textAlign={{base: "center", md: "start"}}>
+            <Box textAlign={{ base: "center", md: "start" }}>
               <Heading as="h2" color="active" mb="10px">
                 clonebook
               </Heading>
@@ -46,7 +49,7 @@ const Login: React.FC = () => {
             <Formik
               initialValues={{ username: "", password: "" }}
               onSubmit={async (values, { setErrors }) => {
-                const response = await login({ credentials: values });
+                const response = await login({ username: values.username, password: values.password });
                 if (response.data?.login.errors) {
                   setErrors(toErrorMap(response.data.login.errors));
                 } else if (response.data?.login.user) {
@@ -105,15 +108,17 @@ const Login: React.FC = () => {
                           "Log in"
                         )}
                       </Button>
-                      <Link
+                      <Box
                         color="active"
                         fontSize="14px"
                         textAlign="center"
                         mt={4}
                         fontWeight="400"
                       >
-                        Forgot password?
-                      </Link>
+                        <NextLink href="login/recover">
+                          <Text _hover={{textDecoration: "underline", cursor: "pointer"}} display="inline-block">Forgot password?</Text>
+                        </NextLink>
+                      </Box>
                       <Divider
                         orientation="horizontal"
                         mt={5}
@@ -122,7 +127,6 @@ const Login: React.FC = () => {
                       />
                       <Flex justify="center" pt="6px">
                         <RegisterModal />
-
                       </Flex>
                     </Grid>
                   </Form>
@@ -135,4 +139,4 @@ const Login: React.FC = () => {
     </Container>
   );
 };
-export default withUrqlClient(createUrqlClient, {ssr: true})(Login);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Login);

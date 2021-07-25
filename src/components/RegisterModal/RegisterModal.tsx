@@ -66,7 +66,7 @@ const RegisterModal: React.FC = () => {
           <ModalCloseButton />
           <ModalBody>
             <Formik
-              initialValues={{ username: "", password: "" }}
+              initialValues={{ username: "", email: "", password: "" }}
               onSubmit={async (values, { setErrors }) => {
                 const response = await register({ credentials: values });
                 if (response.data?.register.errors) {
@@ -85,6 +85,16 @@ const RegisterModal: React.FC = () => {
                       name="username"
                       label="Username"
                       placeholder="username"
+                      bg="gray.100"
+                      borderColor="gray.300"
+                    />
+                    <InputField
+                      value={values.email}
+                      onChange={handleChange}
+                      name="email"
+                      label="email"
+                      placeholder="email"
+                      type="text"
                       bg="gray.100"
                       borderColor="gray.300"
                     />
