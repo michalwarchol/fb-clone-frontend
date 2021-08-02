@@ -8,7 +8,7 @@ const Navbar:React.FC = () => {
             <GridItem colStart={1} colEnd={3}>
                 logo and search
             </GridItem>
-            <GridItem colStart={5} colEnd={9}>
+            <GridItem colStart={4} colEnd={9}>
                 subpages
             </GridItem>
             <GridItem colStart={11} colEnd={13}>

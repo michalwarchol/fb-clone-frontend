@@ -1,6 +1,6 @@
 import { Grid, GridItem } from '@chakra-ui/react';
 import React from 'react'
-import PostCreator from './PostCreator';
+import PostCreator from '../PostCreator/PostCreator';
 
 const Content:React.FC = () => {
     return(
