@@ -1,0 +1,1 @@
+export default ["🎉 Celebrating", "👓 Watching", "🍴 Eating", "🍺 Drinking"];

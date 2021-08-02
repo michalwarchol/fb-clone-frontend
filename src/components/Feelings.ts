@@ -1,0 +1,1 @@
+export default ["😀 happy", "😢 sad", "😎 cool", "🤪 crazy"];
