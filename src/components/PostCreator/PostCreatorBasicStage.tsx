@@ -1,14 +1,15 @@
 import {
-    Avatar,
-    Button,
-    CircularProgress,
-    Divider,
-    Flex,
-    IconButton,
-    ModalBody,
-    ModalCloseButton,
-    ModalHeader, Text,
-    Textarea
+  Avatar,
+  Button,
+  CircularProgress,
+  Divider,
+  Flex,
+  IconButton,
+  ModalBody,
+  ModalCloseButton,
+  ModalHeader,
+  Text,
+  Textarea,
 } from "@chakra-ui/react";
 import { FormikProps } from "formik";
 import React, { MutableRefObject } from "react";
@@ -45,8 +46,11 @@ const PostCreatorBasicStage: React.FC<Props> = ({
         <Flex>
           <Avatar />
           <Text color="textPrimary" fontWeight="bold">
-            {user && user.username} {!!formikProps.values.feeling&&`is feeling ${formikProps.values.feeling}`}
-            {!!formikProps.values.activity&&`is ${formikProps.values.activity}`}
+            {user && user.username}{" "}
+            {!!formikProps.values.feeling &&
+              `is feeling ${formikProps.values.feeling}`}
+            {!!formikProps.values.activity &&
+              `is ${formikProps.values.activity}`}
           </Text>
         </Flex>
         <Textarea
@@ -114,7 +118,10 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           type="submit"
           onClick={formikProps.submitForm}
           disabled={
-            formikProps.isSubmitting || formikProps.values.text.length < 1
+            formikProps.isSubmitting ||
+            (formikProps.values.text.length < 1 &&
+            formikProps.values.activity.length < 1 &&
+            formikProps.values.feeling.length < 1)
           }
           _disabled={{
             backgroundColor: "gray",

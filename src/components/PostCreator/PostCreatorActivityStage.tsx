@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   Flex,
   IconButton,
@@ -11,10 +12,10 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { Field, FormikProps } from "formik";
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
+import { FormikProps } from "formik";
+import React, { useState } from "react";
 import { BsArrowLeftShort } from "react-icons/bs";
+import { MdKeyboardArrowRight } from "react-icons/md";
 import FEELINGS from "../Feelings";
 import ACTIVITIES from "../Activities";
 import { FormProps } from "./PostCreatorModal";
@@ -24,66 +25,27 @@ interface Props {
   setStage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-type MyRadioButtonProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  feeling: string;
-  feelingProp: string;
-  formikProps: FormikProps<FormProps>;
-  setStage: React.Dispatch<React.SetStateAction<string>>;
-  name: string;
-  isActivity: boolean
-};
-
-const MyRadio: React.FC<MyRadioButtonProps> = ({
-  feeling,
-  feelingProp,
-  formikProps,
-  setStage,
-  isActivity,
-  ...props
-}) => {
-  const initialMount = useRef(true);
-
-  useEffect(() => {
-    if (initialMount.current) {
-      initialMount.current = false;
-    } else {
-      setStage("basic");
-    }
-  }, [formikProps]);
-
-  const updateSecondProp = () => {
-    if(isActivity){
-      formikProps.values.feeling="";
-    }else{
-      formikProps.values.activity="";
-    }
-  }
-
-  return (
-    <Flex
-      align="center"
-      width="50%"
-      py="10px"
-      pl="10px"
-      as="label"
-      borderRadius="8px"
-      bg={feeling == feelingProp ? "primary" : null}
-      _hover={{ backgroundColor: "hover", cursor: "pointer" }}
-      onClick={updateSecondProp}
-    >
-      <Field type="radio" value={feeling} {...props} hidden />
-      <Text color="textPrimary" fontWeight="bold" ml="10px">
-        {feeling}
-      </Text>
-    </Flex>
-  );
-};
-
 const PostCreatorActivityStage: React.FC<Props> = ({
   setStage,
   formikProps,
 }) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
+
+  const clickFeeling = (feeling: string) => {
+    if (feeling == formikProps.values.feeling) {
+      formikProps.values.feeling = "";
+    } else {
+      formikProps.values.feeling = feeling;
+    }
+    formikProps.values.activity = "";
+    formikProps.values.prefix = "";
+    setStage("basic");
+  };
+
+  const handleClick = (activity: string) => {
+    formikProps.values.prefix = activity;
+    setStage("details");
+  };
 
   return (
     <>
@@ -120,28 +82,34 @@ const PostCreatorActivityStage: React.FC<Props> = ({
             <TabPanel p="0">
               <Flex direction="row" wrap="wrap">
                 {FEELINGS.map((feeling) => (
-                  <MyRadio
-                    name="feeling"
-                    feeling={feeling}
-                    feelingProp={formikProps.values.feeling}
-                    setStage={setStage}
-                    isActivity={false}
-                    formikProps={formikProps}
-                  />
+                  <Button
+                    onClick={() => clickFeeling(feeling)}
+                    _hover={{ backgroundColor: "hover", cursor: "pointer" }}
+                    color="textPrimary"
+                    w="50%"
+                    bg={feeling==formikProps.values.feeling?"secondary":"tertiary"}
+                  >
+                    <Text w="100%" textAlign="start">
+                      {feeling}
+                    </Text>
+                  </Button>
                 ))}
               </Flex>
             </TabPanel>
-            <TabPanel>
-              <Flex direction="row" wrap="wrap">
+            <TabPanel p="0">
+              <Flex direction="column">
                 {ACTIVITIES.map((activity) => (
-                  <MyRadio
-                    name="activity"
-                    feeling={activity}
-                    feelingProp={formikProps.values.activity}
-                    setStage={setStage}
-                    isActivity={true}
-                    formikProps={formikProps}
-                  />
+                  <Button
+                    onClick={() => handleClick(activity)}
+                    rightIcon={<MdKeyboardArrowRight size="26px" />}
+                    bg={activity==formikProps.values.activity?"secondary":"tertiary"}
+                    _hover={{ backgroundColor: "hover", cursor: "pointer" }}
+                    color="textPrimary"
+                  >
+                    <Text w="100%" textAlign="start">
+                      {activity}
+                    </Text>
+                  </Button>
                 ))}
               </Flex>
             </TabPanel>
