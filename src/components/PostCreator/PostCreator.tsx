@@ -13,7 +13,6 @@ const PostCreator: React.FC = () => {
   const [stage, setStage] = useState<string>("basic");
 
   const {isOpen, onClose, onOpen} = useDisclosure();
-
   useEffect(() => {
     if (!fetching) {
       if (data?.loggedUser) {
@@ -35,7 +34,7 @@ const PostCreator: React.FC = () => {
           onClick={onOpen}
         >
           <Text textAlign="left" w="100%">
-            What's on your mind, {user && user.username}
+            What's on your mind, {user && user.username}?
           </Text>
         </Button>
       </Flex>
