@@ -1,0 +1,9 @@
+fragment RegularReactions on Post {
+  like
+  love
+  care
+  haha
+  wow
+  sad
+  angry
+}
