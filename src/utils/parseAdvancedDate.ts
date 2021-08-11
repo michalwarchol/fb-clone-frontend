@@ -21,7 +21,7 @@ export const parseAdvancedDate = (timestamp: string) => {
   if (
     date.getFullYear() == now.getFullYear() &&
     date.getMonth() == now.getMonth() &&
-    date.getDay() == now.getDay()
+    date.getDate() == now.getDate()
   ) {
     let rowValue = now.getTime() - date.getTime();
     let seconds = rowValue / 1000;
@@ -37,7 +37,7 @@ export const parseAdvancedDate = (timestamp: string) => {
   if (
     date.getFullYear() == now.getFullYear() &&
     date.getMonth() == now.getMonth() &&
-    date.getDay() == now.getDay() - 1
+    date.getDate() == now.getDate() - 1
   ) {
     let hours = date.getHours();
     let ampm = hours >= 12 ? "pm" : "am";
@@ -50,10 +50,10 @@ export const parseAdvancedDate = (timestamp: string) => {
 
   //if this year
   if(date.getFullYear() == now.getFullYear()){
-    return months[date.getMonth()] + " " + date.getDay();
+    return months[date.getMonth()] + " " + date.getDate();
   }
 
   //if whenever
-  return months[date.getMonth()] + " " + date.getDay()+", " + date.getFullYear();
+  return months[date.getMonth()] + " " + date.getDate()+", " + date.getFullYear();
 
 };
