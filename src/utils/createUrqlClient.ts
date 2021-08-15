@@ -129,7 +129,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
     cacheExchange({
       resolvers: {
         Query: {
-          posts: cursorPagination(),
+          posts: cursorPagination()
         },
       },
       updates: {
@@ -139,9 +139,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
             const fieldInfos = allFields.filter(
               (info) => info.fieldName === "posts"
             );
-            fieldInfos.forEach((fi)=>{
+            fieldInfos.forEach((fi) => {
               cache.invalidate("Query", "posts", fi.arguments || {});
-            })
+            });
           },
           logout: (_result, args, cache, info) => {
             betterUpdateQuery<LogoutMutation, LoggedUserQuery>(
@@ -183,6 +183,24 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 }
               }
             );
+          },
+          react: (_result, args, cache, info) => {
+            const { parentKey: entityKey } = info;
+            const allFields = cache.inspectFields("Query");
+            const fieldInfos = allFields.filter(
+              (info) => info.fieldName === "reaction"
+            );
+            const fieldKey = `reaction(${stringifyVariables(args)})`;
+            const isItInTheCache = cache.resolve(
+              cache.resolve(entityKey, fieldKey) as string,
+              "reaction"
+            );
+            info.partial = !isItInTheCache;
+             fieldInfos.forEach((fi) => {
+               const key = cache.resolve("Query", fi.fieldKey) as string;
+               cache.invalidate("Query", key, fi.arguments || {});
+            });
+            return true;
           },
         },
       },
