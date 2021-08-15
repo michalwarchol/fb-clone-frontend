@@ -7,7 +7,6 @@ import PostContainer from "../Post/PostContainer";
 const Content:React.FC = () => {
 
     const [{data}] = usePostsQuery({variables: {limit: 10}});
-    console.log(data)
 
     return(
         <Grid templateColumns="repeat(12, 1fr)" mt="20px">
@@ -21,7 +20,7 @@ const Content:React.FC = () => {
                     <div>loading</div>
                     )
                     :(
-                        data.posts.posts.map((post)=>(<PostContainer data={post}/>))
+                        data.posts.posts.map((post)=>(<PostContainer data={post} key={post._id}/>))
                     )
                     }
                 </Box>
