@@ -36,6 +36,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
+  react: Scalars['Boolean'];
 };
 
 
@@ -76,6 +77,17 @@ export type MutationChangePasswordArgs = {
   token: Scalars['String'];
 };
 
+
+export type MutationReactArgs = {
+  variables: ReactionInput;
+};
+
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  posts: Array<Post>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Post = {
   __typename?: 'Post';
   _id: Scalars['Int'];
@@ -104,15 +116,54 @@ export type PostInput = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  posts: Array<Post>;
+  posts: PaginatedPosts;
   post?: Maybe<Post>;
   loggedUser?: Maybe<User>;
+  reactions: Array<Reaction>;
+  reaction?: Maybe<Reaction>;
+};
+
+
+export type QueryPostsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
 };
+
+
+export type QueryReactionArgs = {
+  postId: Scalars['Int'];
+};
+
+export type Reaction = {
+  __typename?: 'Reaction';
+  _id: Scalars['Int'];
+  reaction: Scalars['String'];
+  value: Scalars['Int'];
+  userId: Scalars['Int'];
+  postId: Scalars['Int'];
+};
+
+export type ReactionInput = {
+  reaction: ReactionType;
+  postId: Scalars['Int'];
+  value: Scalars['Int'];
+};
+
+/** Reactions, that a user can have on a post */
+export enum ReactionType {
+  Like = 'LIKE',
+  Love = 'LOVE',
+  Care = 'CARE',
+  Haha = 'HAHA',
+  Wow = 'WOW',
+  Sad = 'SAD',
+  Angry = 'ANGRY'
+}
 
 export type User = {
   __typename?: 'User';
@@ -132,6 +183,11 @@ export type UserResponse = {
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularReactionsFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry'>
 );
 
 export type RegularUserFragment = (
@@ -209,6 +265,16 @@ export type LogoutMutation = (
   & Pick<Mutation, 'logout'>
 );
 
+export type ReactMutationVariables = Exact<{
+  variables: ReactionInput;
+}>;
+
+
+export type ReactMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'react'>
+);
+
 export type RegisterMutationVariables = Exact<{
   credentials: Credentials;
 }>;
@@ -233,6 +299,52 @@ export type LoggedUserQuery = (
   )> }
 );
 
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type PostsQuery = (
+  { __typename?: 'Query' }
+  & { posts: (
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'creatorId' | 'createdAt' | 'updatedAt'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, '_id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+      ) }
+    )> }
+  ) }
+);
+
+export type ReactionQueryVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type ReactionQuery = (
+  { __typename?: 'Query' }
+  & { reaction?: Maybe<(
+    { __typename?: 'Reaction' }
+    & Pick<Reaction, '_id' | 'reaction' | 'userId' | 'value' | 'postId'>
+  )> }
+);
+
+export const RegularReactionsFragmentDoc = gql`
+    fragment RegularReactions on Post {
+  like
+  love
+  care
+  haha
+  wow
+  sad
+  angry
+}
+    `;
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -320,6 +432,15 @@ export const LogoutDocument = gql`
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
+export const ReactDocument = gql`
+    mutation React($variables: ReactionInput!) {
+  react(variables: $variables)
+}
+    `;
+
+export function useReactMutation() {
+  return Urql.useMutation<ReactMutation, ReactMutationVariables>(ReactDocument);
+};
 export const RegisterDocument = gql`
     mutation Register($credentials: Credentials!) {
   register(credentials: $credentials) {
@@ -341,4 +462,53 @@ export const LoggedUserDocument = gql`
 
 export function useLoggedUserQuery(options: Omit<Urql.UseQueryArgs<LoggedUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<LoggedUserQuery>({ query: LoggedUserDocument, ...options });
+};
+export const PostsDocument = gql`
+    query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
+      _id
+      text
+      feeling
+      activity
+      like
+      love
+      care
+      haha
+      wow
+      sad
+      angry
+      creatorId
+      creator {
+        _id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
+};
+export const ReactionDocument = gql`
+    query Reaction($postId: Int!) {
+  reaction(postId: $postId) {
+    _id
+    reaction
+    userId
+    value
+    postId
+  }
+}
+    `;
+
+export function useReactionQuery(options: Omit<Urql.UseQueryArgs<ReactionQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ReactionQuery>({ query: ReactionDocument, ...options });
 };
