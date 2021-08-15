@@ -1,0 +1,9 @@
+query Reaction($postId: Int!){
+  reaction(postId: $postId){
+    _id
+    reaction
+    userId
+    value
+    postId
+  }
+}
