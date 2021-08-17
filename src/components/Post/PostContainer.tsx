@@ -91,7 +91,7 @@ const PostContainer: React.FC<PostProps> = ({ data }) => {
       </Grid>
       <Box>
         {openComment && (
-          <CommentSection />
+          <CommentSection postId={data._id}/>
         )}
       </Box>
     </Box>
