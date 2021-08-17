@@ -44,6 +44,7 @@ export const reactionOrder = (data: Post) => {
       {...styles}
       {...my_reactions[0].customStyles}
       zIndex="3"
+      key={1}
     >{my_reactions[0].icon}</Flex>)
 
     if(my_reactions[1].value!=0)
@@ -52,6 +53,7 @@ export const reactionOrder = (data: Post) => {
       {...my_reactions[1].customStyles}
       zIndex="2"
       ml="-5px"
+      key={2}
     >{my_reactions[1].icon}</Flex>)
 
     if(my_reactions[2].value!=0)
@@ -60,6 +62,7 @@ export const reactionOrder = (data: Post) => {
       {...my_reactions[2].customStyles}
       zIndex="1"
       ml="-5px"
+      key={3}
     >{my_reactions[2].icon}</Flex>)
 
     return my_buttons;
