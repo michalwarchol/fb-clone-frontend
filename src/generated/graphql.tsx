@@ -100,6 +100,12 @@ export type MutationCreateCommentArgs = {
   text: Scalars['String'];
 };
 
+export type PaginatedComments = {
+  __typename?: 'PaginatedComments';
+  comments: Array<Comment>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   posts: Array<Post>;
@@ -139,7 +145,8 @@ export type Query = {
   loggedUser?: Maybe<User>;
   reactions: Array<Reaction>;
   reaction?: Maybe<Reaction>;
-  getPostComments: Array<Comment>;
+  getPostComments: PaginatedComments;
+  commentCount: Scalars['Int'];
 };
 
 
@@ -160,6 +167,13 @@ export type QueryReactionArgs = {
 
 
 export type QueryGetPostCommentsArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
+  postId: Scalars['Int'];
+};
+
+
+export type QueryCommentCountArgs = {
   postId: Scalars['Int'];
 };
 
@@ -326,21 +340,37 @@ export type RegisterMutation = (
   ) }
 );
 
+export type CommentCountQueryVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type CommentCountQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'commentCount'>
+);
+
 export type GetPostCommentsQueryVariables = Exact<{
   postId: Scalars['Int'];
+  limit: Scalars['Int'];
+  offset?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type GetPostCommentsQuery = (
   { __typename?: 'Query' }
-  & { getPostComments: Array<(
-    { __typename?: 'Comment' }
-    & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId'>
-    & { creator: (
-      { __typename?: 'User' }
-      & Pick<User, '_id' | 'username' | 'email'>
-    ) }
-  )> }
+  & { getPostComments: (
+    { __typename?: 'PaginatedComments' }
+    & Pick<PaginatedComments, 'hasMore'>
+    & { comments: Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, '_id' | 'username' | 'email'>
+      ) }
+    )> }
+  ) }
 );
 
 export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
@@ -521,17 +551,29 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const CommentCountDocument = gql`
+    query CommentCount($postId: Int!) {
+  commentCount(postId: $postId)
+}
+    `;
+
+export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CommentCountQuery>({ query: CommentCountDocument, ...options });
+};
 export const GetPostCommentsDocument = gql`
-    query getPostComments($postId: Int!) {
-  getPostComments(postId: $postId) {
-    _id
-    text
-    postId
-    creatorId
-    creator {
+    query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
+  getPostComments(postId: $postId, limit: $limit, offset: $offset) {
+    hasMore
+    comments {
       _id
-      username
-      email
+      text
+      postId
+      creatorId
+      creator {
+        _id
+        username
+        email
+      }
     }
   }
 }

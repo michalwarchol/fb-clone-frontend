@@ -1,0 +1,3 @@
+query CommentCount($postId: Int!){
+  commentCount(postId: $postId)
+}
