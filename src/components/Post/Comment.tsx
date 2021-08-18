@@ -1,9 +1,9 @@
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-import { RegularCommentFragment } from "../../generated/graphql";
+import { Comment } from "../../generated/graphql";
 
 interface Props {
-  data: RegularCommentFragment;
+  data: Comment;
 }
 
 const CommentNote: React.FC<Props> = ({ data }) => {

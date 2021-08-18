@@ -364,10 +364,10 @@ export type GetPostCommentsQuery = (
     & Pick<PaginatedComments, 'hasMore'>
     & { comments: Array<(
       { __typename?: 'Comment' }
-      & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId'>
+      & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId' | 'createdAt' | 'updatedAt'>
       & { creator: (
         { __typename?: 'User' }
-        & Pick<User, '_id' | 'username' | 'email'>
+        & Pick<User, '_id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
       ) }
     )> }
   ) }
@@ -569,10 +569,14 @@ export const GetPostCommentsDocument = gql`
       text
       postId
       creatorId
+      createdAt
+      updatedAt
       creator {
         _id
         username
         email
+        createdAt
+        updatedAt
       }
     }
   }

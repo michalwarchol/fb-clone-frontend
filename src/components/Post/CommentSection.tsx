@@ -5,9 +5,7 @@ import {
   Flex,
   Spinner,
   Text,
-  Textarea,
-  TextareaProps,
-  useBoolean,
+  Textarea
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import autosize from "autosize";
