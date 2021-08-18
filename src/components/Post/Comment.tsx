@@ -11,7 +11,7 @@ const CommentNote: React.FC<Props> = ({ data }) => {
     <Flex direction="row" mt="4px">
       <Avatar size="sm" mr="10px" />
       <Box bg="hover" borderRadius="18px" px="12px" py="8px">
-        <Text>{data.creator.username}</Text>
+        <Text fontWeight="bold">{data.creator.username}</Text>
         <Text wordBreak="break-word">{data.text}</Text>
       </Box>
     </Flex>

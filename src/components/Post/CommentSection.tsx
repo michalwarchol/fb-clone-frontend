@@ -4,9 +4,12 @@ import {
   Divider,
   Flex,
   Spinner,
+  Text,
   Textarea,
+  TextareaProps,
+  useBoolean,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import autosize from "autosize";
 import {
   useCreateCommentMutation,
@@ -21,19 +24,20 @@ interface Props {
 }
 
 const CommentSection: React.FC<Props> = ({ postId }) => {
-
-  const [{ data }] = useGetPostCommentsQuery({
+  const [variables, setVariables] = useState({ limit: 5, offset: 0 });
+  const [{ data, fetching }] = useGetPostCommentsQuery({
     pause: isServer,
-    variables: { postId },
+    variables: { postId, ...variables },
   });
-  const [,createComment] = useCreateCommentMutation();
-  const ref = useRef();
+  const [, createComment] = useCreateCommentMutation();
+  const ref = useRef<HTMLTextAreaElement>();
   useEffect(() => {
     autosize(ref.current);
     return () => {
       autosize.destroy(ref.current);
     };
   }, []);
+
   return (
     <Box>
       <Divider
@@ -46,12 +50,12 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
         <Avatar size="sm" mr="10px" />
         <Formik
           initialValues={{ text: "" }}
-          onSubmit={async (values, {setValues}) => {
-            if(values.text.length<1){
+          onSubmit={async (values, { setValues }) => {
+            if (values.text.length < 1) {
               return;
             }
-            await createComment({postId, text: values.text});
-            setValues({text: ""});
+            await createComment({ postId, text: values.text });
+            setValues({ text: "" });
           }}
         >
           {({ handleSubmit, handleChange, values }) => (
@@ -72,6 +76,7 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key == "Enter" && !e.shiftKey) {
+                    e.preventDefault();
                     handleSubmit();
                   }
                 }}
@@ -86,9 +91,35 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
             <Spinner color="textPrimary" size="md" />
           </Flex>
         ) : (
-          data.getPostComments.map((comment) => <CommentNote data={comment} key={comment._id}/>)
+          <Box>
+            {data.getPostComments.comments.map((comment) => (
+              <CommentNote data={comment} key={comment._id} />
+            ))}
+            {data.getPostComments.hasMore && (
+              <Text
+                mt="10px"
+                _hover={{ textDecoration: "underline", cursor: "pointer" }}
+                fontWeight="500"
+                onClick={() =>
+                  setVariables({
+                    limit: variables.limit,
+                    offset: variables.offset + 5,
+                  })
+                }
+              >
+                View more comments{" "}
+                {fetching && <Spinner color="textPrimary" size="sm" />}
+              </Text>
+            )}
+            <Text _hover={{ textDecoration: "underline", cursor: "pointer" }} fontWeight="500" onClick={()=>{
+                ref.current.focus();
+            }}>
+              Write a comment...
+            </Text>
+          </Box>
         )}
       </Box>
+      <Box></Box>
     </Box>
   );
 };

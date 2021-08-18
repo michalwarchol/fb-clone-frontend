@@ -1,4 +1,5 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
+import {simplePagination} from "@urql/exchange-graphcache/extras"
 import {
   dedupExchange,
   Exchange,
@@ -67,6 +68,43 @@ const cursorPagination = (): Resolver => {
   };
 };
 
+const commentPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItInTheCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "getPostComments"
+    );
+    info.partial = !isItInTheCache;
+    let hasMore = true;
+    const results: string[] = [];
+    
+    fieldInfos.forEach((fi) => {
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, "comments") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+      results.push(...data);
+    });
+    
+    return {
+      __typename: "PaginatedComments",
+      hasMore,
+      comments: results,
+    };
+  };
+};
+
 export const createUrqlClient = (ssrExchange: any) => ({
   url: "http://localhost:4000/graphql",
   fetchOptions: {
@@ -80,7 +118,8 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       resolvers: {
         Query: {
-          posts: cursorPagination()
+          posts: cursorPagination(),
+          getPostComments: commentPagination()
         },
       },
       updates: {

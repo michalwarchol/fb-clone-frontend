@@ -1,13 +1,16 @@
-query getPostComments($postId: Int!){
-  getPostComments(postId: $postId){
-    _id
-    text
-    postId
-    creatorId
-    creator {
+query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
+  getPostComments(postId: $postId, limit: $limit, offset: $offset) {
+    hasMore
+    comments {
+      _id
+      text
+      postId
+      creatorId
+      creator {
         _id
         username
         email
+      }
     }
   }
 }
