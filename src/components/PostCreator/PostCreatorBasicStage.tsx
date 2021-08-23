@@ -1,10 +1,16 @@
 import {
   Avatar,
+  Box,
   Button,
   CircularProgress,
+  CloseButton,
   Divider,
   Flex,
+  FormControl,
+  FormLabel,
   IconButton,
+  Input,
+  InputGroup,
   ModalBody,
   ModalCloseButton,
   ModalHeader,
@@ -12,10 +18,11 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { FormikProps } from "formik";
-import React, { MutableRefObject } from "react";
+import React, { MutableRefObject, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import { RegularUserFragment } from "../../generated/graphql";
+import Image from "../Image";
 import { FormProps } from "./PostCreatorModal";
 
 interface Props {
@@ -23,6 +30,8 @@ interface Props {
   user: RegularUserFragment | null;
   initialRef: MutableRefObject<any>;
   setStage: React.Dispatch<React.SetStateAction<string>>;
+  img: File;
+  setImg: React.Dispatch<React.SetStateAction<File>>;
 }
 
 const PostCreatorBasicStage: React.FC<Props> = ({
@@ -30,7 +39,10 @@ const PostCreatorBasicStage: React.FC<Props> = ({
   user,
   initialRef,
   setStage,
+  img,
+  setImg,
 }) => {
+  const ref = useRef<HTMLInputElement>();
   return (
     <>
       <ModalHeader textAlign="center" color="textSecondary">
@@ -61,11 +73,35 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           name="text"
           value={formikProps.values.text}
           onChange={formikProps.handleChange}
-          fontSize="22px"
+          fontSize={!!img ? "13px" : "22px"}
           color="gray"
           mt="10px"
-          h="200px"
+          mb="20px"
+          h={!!img ? "60px" : "200px"}
         />
+        {!!img && (
+          <Box>
+            <CloseButton
+              position="absolute"
+              right="30px"
+              mt="10px"
+              bg="tertiary"
+              color="primary"
+              borderRadius="50%"
+              _hover={{
+                bg: "tertiary",
+              }}
+              _active={{
+                bg: "tertiary",
+              }}
+              onClick={() => {
+                setImg(null);
+              }}
+            />
+            <Image src={URL.createObjectURL(img)} />
+          </Box>
+        )}
+
         <Flex
           border="1px"
           borderColor="#4F4F4D"
@@ -80,17 +116,37 @@ const PostCreatorBasicStage: React.FC<Props> = ({
             Add to Your Post
           </Text>
           <Flex>
-            <IconButton
-              icon={<MdPhotoLibrary />}
-              aria-label="photo/video"
-              variant="basic"
-              w="50%"
-              color="green.300"
-              fontSize="28px"
-              borderRadius="50%"
-              bg="tertiary"
-              mr="4px"
-            />
+            <FormControl w="50%">
+              <FormLabel textAlign="center">
+                <IconButton
+                  icon={<MdPhotoLibrary />}
+                  aria-label="photo/video"
+                  variant="basic"
+                  w="50%"
+                  color="green.300"
+                  fontSize="28px"
+                  borderRadius="50%"
+                  bg="tertiary"
+                  mr="4px"
+                  onClick={() => {
+                    ref.current.value=null;
+                    ref.current.click();
+                  }}
+                />
+              </FormLabel>
+              <InputGroup display="none">
+                <Input
+                  type="file"
+                  accept="image/png"
+                  placeholder="filesss"
+                  ref={ref}
+                  onChange={(e) => {
+                    setImg(e.target.files[0]);
+                  }}
+                />
+              </InputGroup>
+            </FormControl>
+
             <IconButton
               icon={<FaUserTag />}
               aria-label="feeling/activity"
@@ -120,8 +176,9 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           disabled={
             formikProps.isSubmitting ||
             (formikProps.values.text.length < 1 &&
-            formikProps.values.activity.length < 1 &&
-            formikProps.values.feeling.length < 1)
+              formikProps.values.activity.length < 1 &&
+              formikProps.values.feeling.length < 1 && 
+              img==null)
           }
           _disabled={{
             backgroundColor: "gray",

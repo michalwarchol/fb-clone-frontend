@@ -15,6 +15,8 @@ interface Props {
   user: RegularUserFragment | null;
   stage: string;
   setStage: React.Dispatch<React.SetStateAction<string>>;
+  img: File;
+  setImg: React.Dispatch<React.SetStateAction<File>>;
 }
 
 export interface FormProps {
@@ -30,6 +32,8 @@ const PostCreatorModal: React.FC<Props> = ({
   user,
   stage,
   setStage,
+  img,
+  setImg,
 }) => {
   const initialRef = React.useRef(null);
   const [, createPost] = useCreatePostMutation();
@@ -44,6 +48,7 @@ const PostCreatorModal: React.FC<Props> = ({
             feeling: values.feeling,
             activity: values.activity,
           },
+          image: img,
         });
         onClose();
       }}
@@ -66,6 +71,8 @@ const PostCreatorModal: React.FC<Props> = ({
                   user={user}
                   initialRef={initialRef}
                   setStage={setStage}
+                  img={img}
+                  setImg={setImg}
                 />
               )}
               {stage == "activity" && (
