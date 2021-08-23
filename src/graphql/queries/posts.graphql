@@ -6,6 +6,7 @@ query Posts($limit: Int!, $cursor: String) {
     	text
     	feeling
     	activity
+      imageId
     	like
     	love
     	care
