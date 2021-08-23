@@ -13,6 +13,7 @@
     "@emotion/react": "11.1.5",
     "@emotion/styled": "11.1.5",
     "@urql/exchange-graphcache": "^4.2.1",
+    "@urql/exchange-multipart-fetch": "^0.1.13",
     "autosize": "^5.0.1",
     "formik": "^2.2.9",
     "framer-motion": "^4.0.3",
