@@ -1,0 +1,3 @@
+query GetImage($imageId: String!){
+  getImage(imageId: $imageId)
+}
