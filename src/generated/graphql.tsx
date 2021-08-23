@@ -12,6 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Comment = {
@@ -53,6 +55,7 @@ export type Mutation = {
 
 
 export type MutationCreatePostArgs = {
+  image?: Maybe<Scalars['Upload']>;
   input: PostInput;
 };
 
@@ -120,6 +123,7 @@ export type Post = {
   text: Scalars['String'];
   feeling: Scalars['String'];
   activity: Scalars['String'];
+  imageId: Scalars['String'];
   like: Scalars['Float'];
   love: Scalars['Float'];
   care: Scalars['Float'];
@@ -142,6 +146,7 @@ export type Query = {
   hello: Scalars['String'];
   posts: PaginatedPosts;
   post?: Maybe<Post>;
+  getImage: Scalars['String'];
   loggedUser?: Maybe<User>;
   reactions: Array<Reaction>;
   reaction?: Maybe<Reaction>;
@@ -158,6 +163,11 @@ export type QueryPostsArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryGetImageArgs = {
+  imageId: Scalars['String'];
 };
 
 
@@ -202,6 +212,7 @@ export enum ReactionType {
   Sad = 'SAD',
   Angry = 'ANGRY'
 }
+
 
 export type User = {
   __typename?: 'User';
@@ -274,6 +285,7 @@ export type CreateCommentMutation = (
 
 export type CreatePostMutationVariables = Exact<{
   input: PostInput;
+  image?: Maybe<Scalars['Upload']>;
 }>;
 
 
@@ -281,7 +293,7 @@ export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, '_id' | 'creatorId' | 'text' | 'feeling' | 'activity' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'createdAt' | 'updatedAt'>
+    & Pick<Post, '_id' | 'creatorId' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -350,6 +362,16 @@ export type CommentCountQuery = (
   & Pick<Query, 'commentCount'>
 );
 
+export type GetImageQueryVariables = Exact<{
+  imageId: Scalars['String'];
+}>;
+
+
+export type GetImageQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getImage'>
+);
+
 export type GetPostCommentsQueryVariables = Exact<{
   postId: Scalars['Int'];
   limit: Scalars['Int'];
@@ -397,7 +419,7 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'creatorId' | 'createdAt' | 'updatedAt'>
+      & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'creatorId' | 'createdAt' | 'updatedAt'>
       & { creator: (
         { __typename?: 'User' }
         & Pick<User, '_id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
@@ -479,13 +501,14 @@ export function useCreateCommentMutation() {
   return Urql.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument);
 };
 export const CreatePostDocument = gql`
-    mutation CreatePost($input: PostInput!) {
-  createPost(input: $input) {
+    mutation CreatePost($input: PostInput!, $image: Upload) {
+  createPost(input: $input, image: $image) {
     _id
     creatorId
     text
     feeling
     activity
+    imageId
     like
     love
     care
@@ -560,6 +583,15 @@ export const CommentCountDocument = gql`
 export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CommentCountQuery>({ query: CommentCountDocument, ...options });
 };
+export const GetImageDocument = gql`
+    query GetImage($imageId: String!) {
+  getImage(imageId: $imageId)
+}
+    `;
+
+export function useGetImageQuery(options: Omit<Urql.UseQueryArgs<GetImageQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetImageQuery>({ query: GetImageDocument, ...options });
+};
 export const GetPostCommentsDocument = gql`
     query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
   getPostComments(postId: $postId, limit: $limit, offset: $offset) {
@@ -606,6 +638,7 @@ export const PostsDocument = gql`
       text
       feeling
       activity
+      imageId
       like
       love
       care
