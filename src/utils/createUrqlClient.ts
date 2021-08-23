@@ -1,9 +1,7 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
-import {simplePagination} from "@urql/exchange-graphcache/extras"
 import {
   dedupExchange,
   Exchange,
-  fetchExchange,
   stringifyVariables,
 } from "urql";
 import {
@@ -16,6 +14,7 @@ import {
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
 import Router from "next/router";
+import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 
 const errorExchange: Exchange =
   ({ forward }) =>
@@ -59,7 +58,6 @@ const cursorPagination = (): Resolver => {
       }
       results.push(...data);
     });
-
     return {
       __typename: "PaginatedPosts",
       hasMore,
@@ -86,7 +84,7 @@ const commentPagination = (): Resolver => {
     info.partial = !isItInTheCache;
     let hasMore = true;
     const results: string[] = [];
-    
+
     fieldInfos.forEach((fi) => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "comments") as string[];
@@ -96,7 +94,7 @@ const commentPagination = (): Resolver => {
       }
       results.push(...data);
     });
-    
+
     return {
       __typename: "PaginatedComments",
       hasMore,
@@ -115,11 +113,12 @@ export const createUrqlClient = (ssrExchange: any) => ({
     cacheExchange({
       keys: {
         PaginatedPosts: () => null,
+        PaginatedComments: () => null,
       },
       resolvers: {
         Query: {
           posts: cursorPagination(),
-          getPostComments: commentPagination()
+          getPostComments: commentPagination(),
         },
       },
       updates: {
@@ -134,7 +133,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
             });
           },
           createComment: (result, args, cache, info) => {
-            console.log("im here");
             const allFields = cache.inspectFields("Query");
             const fieldInfos = allFields.filter(
               (info) => info.fieldName === "getPostComments"
@@ -196,9 +194,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
               "reaction"
             );
             info.partial = !isItInTheCache;
-             fieldInfos.forEach((fi) => {
-               const key = cache.resolve("Query", fi.fieldKey) as string;
-               cache.invalidate("Query", key, fi.arguments || {});
+            fieldInfos.forEach((fi) => {
+              const key = cache.resolve("Query", fi.fieldKey) as string;
+              cache.invalidate("Query", key, fi.arguments || {});
             });
             return true;
           },
@@ -207,6 +205,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
     }),
     errorExchange,
     ssrExchange,
-    fetchExchange,
+    multipartFetchExchange,
   ],
 });
