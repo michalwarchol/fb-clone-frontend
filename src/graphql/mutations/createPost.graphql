@@ -1,10 +1,11 @@
-mutation CreatePost($input: PostInput!){
-  createPost(input: $input){
+mutation CreatePost($input: PostInput!, $image: Upload){
+  createPost(input: $input, image: $image){
     _id
     creatorId
     text
     feeling
     activity
+    imageId
     like
     love
     care
