@@ -20,7 +20,7 @@ const Content:React.FC = () => {
                     <div>loading</div>
                     )
                     :(
-                        data.posts.posts.map((post)=>(<PostContainer comment={post} key={post._id}/>))
+                        data.posts.posts.map((post)=>(<PostContainer post={post} key={post._id}/>))
                     )
                     }
                 </Box>
