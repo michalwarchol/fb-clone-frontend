@@ -9,11 +9,7 @@ query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
       createdAt
       updatedAt
       creator {
-        _id
-        username
-        email
-        createdAt
-        updatedAt
+        ...RegularUser
       }
     }
   }

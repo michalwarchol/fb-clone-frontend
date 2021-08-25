@@ -56,7 +56,7 @@ const ChangePassword: NextPage = () => {
                 setTokenError(errorMap.token);
               }
               setErrors(toErrorMap(response.data.changePassword.errors));
-            }else if(response.data.changePassword.user){
+            }else if(response.data.changePassword.loggedUser){
               router.push("/");
             }
           }}

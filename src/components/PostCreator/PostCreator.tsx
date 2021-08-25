@@ -12,42 +12,30 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  RegularUserFragment,
-  useLoggedUserQuery,
-} from "../../generated/graphql";
-import { isServer } from "../../utils/isServer";
+import { FullUser } from "../../generated/graphql";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import PostCreatorModal from "./PostCreatorModal";
 
-const PostCreator: React.FC = () => {
-  const [{ data, fetching }] = useLoggedUserQuery({
-    pause: isServer,
-  });
-  const [user, setUser] = useState<RegularUserFragment | null>(null);
+interface Props {
+  loggedUser: FullUser;
+}
+
+const PostCreator: React.FC<Props> = ({ loggedUser }) => {
   const [stage, setStage] = useState<string>("basic");
-  const [uploadedImage, setUploadedImage] = useState<File|null>(null);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
 
   const ref = useRef<HTMLInputElement>();
   const initialMount = useRef(true);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-  useEffect(() => {
-    if (!fetching) {
-      if (data?.loggedUser) {
-        setUser(data.loggedUser);
-      }
-    }
-  }, [data]);
 
-  useEffect(()=>{
-    if(initialMount.current){
-      initialMount.current=false;
-    }else{
+  useEffect(() => {
+    if (initialMount.current) {
+      initialMount.current = false;
+    } else {
       onOpen();
     }
-    
-  }, [uploadedImage])
+  }, [uploadedImage]);
   return (
     <Box bg="secondary" p="10px" borderRadius="8px">
       <Flex align="center">
@@ -62,7 +50,7 @@ const PostCreator: React.FC = () => {
           onClick={onOpen}
         >
           <Text textAlign="left" w="100%">
-            What's on your mind, {user && user.username}?
+            What's on your mind, {loggedUser && loggedUser.user.username}?
           </Text>
         </Button>
       </Flex>
@@ -76,8 +64,8 @@ const PostCreator: React.FC = () => {
               color="green.300"
               mr="4px"
               w="100%"
-              onClick={()=>{
-                ref.current.value=null;
+              onClick={() => {
+                ref.current.value = null;
                 ref.current.click();
               }}
             >
@@ -89,7 +77,7 @@ const PostCreator: React.FC = () => {
               type="file"
               accept="image/png"
               ref={ref}
-              onChange={(e)=>setUploadedImage(e.target.files[0])}
+              onChange={(e) => setUploadedImage(e.target.files[0])}
             />
           </InputGroup>
         </FormControl>
@@ -111,7 +99,7 @@ const PostCreator: React.FC = () => {
       <PostCreatorModal
         isOpen={isOpen}
         onClose={onClose}
-        user={user}
+        user={loggedUser.user}
         stage={stage}
         setStage={setStage}
         img={uploadedImage}

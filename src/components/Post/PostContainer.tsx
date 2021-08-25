@@ -45,6 +45,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       mt="20px"
       pt="10px"
       pb="4px"
+      w="100%"
     >
       <Flex px="10px" mb="10px">
         <Avatar />

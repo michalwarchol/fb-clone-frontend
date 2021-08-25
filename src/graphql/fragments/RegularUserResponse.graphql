@@ -2,7 +2,11 @@ fragment RegularUserResponse on UserResponse {
   errors {
     ...RegularError
   }
-  user {
+  loggedUser {
+    user{
     ...RegularUser
+    }
+    avatarImage
+    bannerImage
   }
 }

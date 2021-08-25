@@ -16,11 +16,7 @@ query Posts($limit: Int!, $cursor: String) {
     	angry
       creatorId
       creator {
-        _id
-        username
-        email
-        createdAt
-        updatedAt
+        ...RegularUser
       }
       createdAt
       updatedAt

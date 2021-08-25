@@ -71,7 +71,7 @@ const RegisterModal: React.FC = () => {
                 const response = await register({ credentials: values });
                 if (response.data?.register.errors) {
                   setErrors(toErrorMap(response.data.register.errors));
-                } else if (response.data?.register.user) {
+                } else if (response.data?.register.loggedUser) {
                   router.push("/");
                 }
               }}

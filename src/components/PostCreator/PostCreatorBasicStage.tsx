@@ -21,13 +21,13 @@ import { FormikProps } from "formik";
 import React, { MutableRefObject, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
-import { RegularUserFragment } from "../../generated/graphql";
+import { User } from "../../generated/graphql";
 import Image from "../Image";
 import { FormProps } from "./PostCreatorModal";
 
 interface Props {
   formikProps: FormikProps<FormProps>;
-  user: RegularUserFragment | null;
+  user: User | null;
   initialRef: MutableRefObject<any>;
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;

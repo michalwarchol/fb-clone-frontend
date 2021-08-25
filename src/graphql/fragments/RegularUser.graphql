@@ -1,4 +1,9 @@
 fragment RegularUser on User {
     _id
     username
+    email
+    avatarId
+    bannerId
+    createdAt
+    updatedAt
 }

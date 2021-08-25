@@ -39,11 +39,19 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type FullUser = {
+  __typename?: 'FullUser';
+  user?: Maybe<User>;
+  avatarImage?: Maybe<Scalars['String']>;
+  bannerImage?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
+  uploadImage: Scalars['String'];
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -68,6 +76,12 @@ export type MutationUpdatePostArgs = {
 
 export type MutationDeletePostArgs = {
   id: Scalars['Float'];
+};
+
+
+export type MutationUploadImageArgs = {
+  avatarOrBanner: Scalars['String'];
+  image?: Maybe<Scalars['Upload']>;
 };
 
 
@@ -147,7 +161,8 @@ export type Query = {
   posts: PaginatedPosts;
   post?: Maybe<Post>;
   getImage: Scalars['String'];
-  loggedUser?: Maybe<User>;
+  getUserById?: Maybe<User>;
+  loggedUser?: Maybe<FullUser>;
   reactions: Array<Reaction>;
   reaction?: Maybe<Reaction>;
   getPostComments: PaginatedComments;
@@ -168,6 +183,11 @@ export type QueryPostArgs = {
 
 export type QueryGetImageArgs = {
   imageId: Scalars['String'];
+};
+
+
+export type QueryGetUserByIdArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -219,6 +239,8 @@ export type User = {
   _id: Scalars['Int'];
   username: Scalars['String'];
   email: Scalars['String'];
+  avatarId: Scalars['String'];
+  bannerId: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -226,7 +248,7 @@ export type User = {
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
+  loggedUser?: Maybe<FullUser>;
 };
 
 export type RegularErrorFragment = (
@@ -241,7 +263,7 @@ export type RegularReactionsFragment = (
 
 export type RegularUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, '_id' | 'username'>
+  & Pick<User, '_id' | 'username' | 'email' | 'avatarId' | 'bannerId' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularUserResponseFragment = (
@@ -249,9 +271,13 @@ export type RegularUserResponseFragment = (
   & { errors?: Maybe<Array<(
     { __typename?: 'FieldError' }
     & RegularErrorFragment
-  )>>, user?: Maybe<(
-    { __typename?: 'User' }
-    & RegularUserFragment
+  )>>, loggedUser?: Maybe<(
+    { __typename?: 'FullUser' }
+    & Pick<FullUser, 'avatarImage' | 'bannerImage'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & RegularUserFragment
+    )> }
   )> }
 );
 
@@ -352,6 +378,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type UploadUserImageMutationVariables = Exact<{
+  image?: Maybe<Scalars['Upload']>;
+  avatarOrBanner: Scalars['String'];
+}>;
+
+
+export type UploadUserImageMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'uploadImage'>
+);
+
 export type CommentCountQueryVariables = Exact<{
   postId: Scalars['Int'];
 }>;
@@ -389,10 +426,23 @@ export type GetPostCommentsQuery = (
       & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId' | 'createdAt' | 'updatedAt'>
       & { creator: (
         { __typename?: 'User' }
-        & Pick<User, '_id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+        & RegularUserFragment
       ) }
     )> }
   ) }
+);
+
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetUserByIdQuery = (
+  { __typename?: 'Query' }
+  & { getUserById?: Maybe<(
+    { __typename?: 'User' }
+    & RegularUserFragment
+  )> }
 );
 
 export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
@@ -401,8 +451,12 @@ export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
 export type LoggedUserQuery = (
   { __typename?: 'Query' }
   & { loggedUser?: Maybe<(
-    { __typename?: 'User' }
-    & RegularUserFragment
+    { __typename?: 'FullUser' }
+    & Pick<FullUser, 'avatarImage' | 'bannerImage'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & RegularUserFragment
+    )> }
   )> }
 );
 
@@ -422,7 +476,7 @@ export type PostsQuery = (
       & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'creatorId' | 'createdAt' | 'updatedAt'>
       & { creator: (
         { __typename?: 'User' }
-        & Pick<User, '_id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+        & RegularUserFragment
       ) }
     )> }
   ) }
@@ -462,6 +516,11 @@ export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
   _id
   username
+  email
+  avatarId
+  bannerId
+  createdAt
+  updatedAt
 }
     `;
 export const RegularUserResponseFragmentDoc = gql`
@@ -469,8 +528,12 @@ export const RegularUserResponseFragmentDoc = gql`
   errors {
     ...RegularError
   }
-  user {
-    ...RegularUser
+  loggedUser {
+    user {
+      ...RegularUser
+    }
+    avatarImage
+    bannerImage
   }
 }
     ${RegularErrorFragmentDoc}
@@ -574,6 +637,15 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const UploadUserImageDocument = gql`
+    mutation UploadUserImage($image: Upload, $avatarOrBanner: String!) {
+  uploadImage(image: $image, avatarOrBanner: $avatarOrBanner)
+}
+    `;
+
+export function useUploadUserImageMutation() {
+  return Urql.useMutation<UploadUserImageMutation, UploadUserImageMutationVariables>(UploadUserImageDocument);
+};
 export const CommentCountDocument = gql`
     query CommentCount($postId: Int!) {
   commentCount(postId: $postId)
@@ -604,24 +676,35 @@ export const GetPostCommentsDocument = gql`
       createdAt
       updatedAt
       creator {
-        _id
-        username
-        email
-        createdAt
-        updatedAt
+        ...RegularUser
       }
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 export function useGetPostCommentsQuery(options: Omit<Urql.UseQueryArgs<GetPostCommentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostCommentsQuery>({ query: GetPostCommentsDocument, ...options });
 };
+export const GetUserByIdDocument = gql`
+    query GetUserById($id: Int!) {
+  getUserById(id: $id) {
+    ...RegularUser
+  }
+}
+    ${RegularUserFragmentDoc}`;
+
+export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
+};
 export const LoggedUserDocument = gql`
     query loggedUser {
   loggedUser {
-    ...RegularUser
+    user {
+      ...RegularUser
+    }
+    avatarImage
+    bannerImage
   }
 }
     ${RegularUserFragmentDoc}`;
@@ -648,18 +731,14 @@ export const PostsDocument = gql`
       angry
       creatorId
       creator {
-        _id
-        username
-        email
-        createdAt
-        updatedAt
+        ...RegularUser
       }
       createdAt
       updatedAt
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });

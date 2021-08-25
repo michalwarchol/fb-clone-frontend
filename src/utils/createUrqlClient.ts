@@ -9,7 +9,7 @@ import {
   LoggedUserQuery,
   LoggedUserDocument,
   LoginMutation,
-  RegisterMutation,
+  RegisterMutation
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -159,7 +159,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
                   return query;
                 } else {
                   return {
-                    loggedUser: result.login.user,
+                    loggedUser: {
+                      ...result.login.loggedUser
+                    },
                   };
                 }
               }
@@ -176,7 +178,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
                   return query;
                 } else {
                   return {
-                    loggedUser: result.register.user,
+                    loggedUser: {
+                      ...result.register.loggedUser
+                    },
                   };
                 }
               }
@@ -199,7 +203,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
               cache.invalidate("Query", key, fi.arguments || {});
             });
             return true;
-          },
+          }
         },
       },
     }),

@@ -9,36 +9,23 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { ImExit } from "react-icons/im";
-import { useLoggedUserQuery, useLogoutMutation } from "../../generated/graphql";
+import { FullUser, useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "next/dist/client/router";
-import { isServer } from "../../utils/isServer";
-import { useEffect } from "react";
 
-const Options: React.FC = () => {
-  const [{ data, fetching }] = useLoggedUserQuery({
-    pause: isServer
-  });
+interface Props {
+  loggedUser: FullUser;
+}
+
+const Options: React.FC<Props> = ({loggedUser}) => {
   const [, logout] = useLogoutMutation();
   const router = useRouter();
 
-  const [body, setBody] = useState<string>("no user");
-
-  useEffect(()=> {
-    if (!fetching) {
-      if (data?.loggedUser) {
-        setBody(data.loggedUser?.username)
-      } else {
-        router.push("/login");
-      }
-    }
-  }, [data])
-
   return (
     <Box>
-      {body}
+      {loggedUser?.user.username}
       <Menu>
         <MenuButton
           as={IconButton}
