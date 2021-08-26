@@ -1,15 +1,13 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
-import {
-  dedupExchange,
-  Exchange,
-  stringifyVariables,
-} from "urql";
+import { dedupExchange, Exchange, stringifyVariables } from "urql";
 import {
   LogoutMutation,
   LoggedUserQuery,
   LoggedUserDocument,
   LoginMutation,
-  RegisterMutation
+  RegisterMutation,
+  UploadUserImageMutation,
+  GetImageQuery,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -114,6 +112,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
       keys: {
         PaginatedPosts: () => null,
         PaginatedComments: () => null,
+        FullUser: () => null,
       },
       resolvers: {
         Query: {
@@ -160,7 +159,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 } else {
                   return {
                     loggedUser: {
-                      ...result.login.loggedUser
+                      ...result.login.loggedUser,
                     },
                   };
                 }
@@ -179,7 +178,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 } else {
                   return {
                     loggedUser: {
-                      ...result.register.loggedUser
+                      ...result.register.loggedUser,
                     },
                   };
                 }
@@ -203,7 +202,28 @@ export const createUrqlClient = (ssrExchange: any) => ({
               cache.invalidate("Query", key, fi.arguments || {});
             });
             return true;
-          }
+          },
+          uploadImage: (_result, args, cache, info) => {
+            console.log(info)
+            const allFields = cache.inspectFields("Query");
+            const getUserById = allFields.filter(
+              (info) => info.fieldName === "getUserById"
+            );
+
+            getUserById.forEach((fi) => {
+              cache.invalidate("Query", "getUserById", fi.arguments || {});
+            });
+
+            const getImage = allFields.filter(
+              (info) => info.fieldName === "getImage"
+            );
+            console.log(getImage)
+            getImage.forEach((fi) => {
+              const key = cache.resolve("Query", fi.fieldKey) as string;
+              console.log(fi)
+              cache.invalidate("Query", "getImage", fi.arguments || {});
+            });
+          },
         },
       },
     }),
