@@ -99,7 +99,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
       <PostCreatorModal
         isOpen={isOpen}
         onClose={onClose}
-        user={loggedUser.user}
+        user={loggedUser}
         stage={stage}
         setStage={setStage}
         img={uploadedImage}

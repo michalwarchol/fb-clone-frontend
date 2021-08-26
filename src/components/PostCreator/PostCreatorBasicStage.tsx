@@ -21,13 +21,13 @@ import { FormikProps } from "formik";
 import React, { MutableRefObject, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
-import { User } from "../../generated/graphql";
+import { FullUser } from "../../generated/graphql";
 import Image from "../Image";
 import { FormProps } from "./PostCreatorModal";
 
 interface Props {
   formikProps: FormikProps<FormProps>;
-  user: User | null;
+  loggedUser: FullUser;
   initialRef: MutableRefObject<any>;
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;
@@ -36,7 +36,7 @@ interface Props {
 
 const PostCreatorBasicStage: React.FC<Props> = ({
   formikProps,
-  user,
+  loggedUser,
   initialRef,
   setStage,
   img,
@@ -56,9 +56,9 @@ const PostCreatorBasicStage: React.FC<Props> = ({
       <Divider orientation="horizontal" my="10px" borderColor="hover" />
       <ModalBody>
         <Flex>
-          <Avatar />
+          <Avatar src={loggedUser.avatarImage} />
           <Text color="textPrimary" fontWeight="bold">
-            {user && user.username}{" "}
+            {loggedUser && loggedUser.user.username}{" "}
             {!!formikProps.values.feeling &&
               `is feeling ${formikProps.values.feeling}`}
             {!!formikProps.values.activity &&
@@ -66,7 +66,7 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           </Text>
         </Flex>
         <Textarea
-          placeholder={"What's on your mind, " + user.username}
+          placeholder={"What's on your mind, " + loggedUser.user.username}
           resize="none"
           border="none"
           ref={initialRef}

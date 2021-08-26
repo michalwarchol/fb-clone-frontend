@@ -1,7 +1,7 @@
 import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
-import { useCreatePostMutation, User } from "../../generated/graphql";
+import { FullUser, useCreatePostMutation } from "../../generated/graphql";
 import PostCreatorActivityStage from "./PostCreatorActivityStage";
 import PostCreatorBasicStage from "./PostCreatorBasicStage";
 import PostCreatorDetailActivityStage from "./PostCreatorDetailActivityStage";
@@ -9,7 +9,7 @@ import { inDetail } from "../Activities";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  user: User | null;
+  user: FullUser;
   stage: string;
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;
@@ -65,7 +65,7 @@ const PostCreatorModal: React.FC<Props> = ({
               {stage == "basic" && (
                 <PostCreatorBasicStage
                   formikProps={formikProps}
-                  user={user}
+                  loggedUser={user}
                   initialRef={initialRef}
                   setStage={setStage}
                   img={img}
