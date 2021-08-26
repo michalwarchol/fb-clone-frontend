@@ -11,10 +11,7 @@ interface Props {
 }
 
 const Content: React.FC<Props> = ({loggedUser}) => {
-  const [{ data, fetching, error }] = usePostsQuery({ variables: { limit: 10 }, pause: isServer });
-  console.log("error: ", error);
-  console.log("fetching: ", fetching)
-  console.log("data: ", data)
+  const [{ data }] = usePostsQuery({ variables: { limit: 10 }, pause: isServer });
   return (
     <Flex maxW="1920px" justify="center" mt="40px">
       <Flex mt="20px" w={{base: "500px", md: "680px"}}>
