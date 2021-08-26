@@ -1,0 +1,3 @@
+mutation UploadUserImage($image: Upload, $avatarOrBanner: String!){
+    uploadImage(image: $image, avatarOrBanner: $avatarOrBanner)
+}
