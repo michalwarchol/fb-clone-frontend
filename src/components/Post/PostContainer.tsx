@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import {
   Post,
   useCommentCountQuery,
+  useGetImageQuery,
 } from "../../generated/graphql";
 import { parseAdvancedDate } from "../../utils/parseAdvancedDate";
 import { BiComment } from "react-icons/bi";
@@ -32,7 +33,11 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     variables: { postId: post._id },
     pause: isServer,
   });
-  
+
+  const [{ data: image }] = useGetImageQuery({
+    variables: { imageId: post.creator.avatarId },
+    pause: !post,
+  });
 
   const { like, love, care, haha, wow, sad, angry } = post;
   let points = like + love + care + haha + wow + sad + angry;
@@ -48,7 +53,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       w="100%"
     >
       <Flex px="10px" mb="10px">
-        <Avatar />
+        <Avatar src={image?.getImage} />
         <Flex direction="column" ml="10px">
           <Heading size="sm">
             {post.creator.username} {post.activity}
@@ -56,10 +61,13 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
           <Text fontSize="14px">{date}</Text>
         </Flex>
       </Flex>
-      <Text fontSize={post.text.length > 250 || !!post.imageId ? "16px" : "26px"} px="10px">
+      <Text
+        fontSize={post.text.length > 250 || !!post.imageId ? "16px" : "26px"}
+        px="10px"
+      >
         {post.text}
       </Text>
-      {!!post.imageId && <ImageContainer imageId={post.imageId}/>}
+      {!!post.imageId && <ImageContainer imageId={post.imageId} />}
       <Flex mt="10px" mb="4px" justify="space-between" px="10px">
         <Flex align="center">
           <Flex>{reactionOrder(post)}</Flex>
