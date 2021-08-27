@@ -1,0 +1,8 @@
+query GetPostsByCreatorId($creatorId: Int!, $limit: Int!, $cursor: String) {
+  getPostsByCreatorId(creatorId: $creatorId, limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
+      ...RegularPost
+    }
+  }
+}
