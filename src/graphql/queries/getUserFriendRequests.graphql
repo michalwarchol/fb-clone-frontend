@@ -1,0 +1,5 @@
+query GetUserFriendRequests($userId: Int!){
+  getUserFriendRequests(userId: $userId){
+    ...RegularFriendRequest
+  }
+}

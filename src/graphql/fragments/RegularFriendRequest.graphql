@@ -1,0 +1,5 @@
+fragment RegularFriendRequest on FriendRequest {
+    sender
+    receiver
+    status
+}

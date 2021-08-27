@@ -1,0 +1,3 @@
+mutation CreateFriendRequest($receiver: Int!) {
+  createFriendRequest(receiverId: $receiver)
+}

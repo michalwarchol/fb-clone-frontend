@@ -1,0 +1,3 @@
+mutation RemoveFriendRequest($userId: Int!) {
+    removeFriendRequest(userId: $userId)
+}

@@ -1,0 +1,8 @@
+query GetFriendRequest($userId: Int!){
+  getFriendRequest(userId: $userId) {
+    friendRequest {
+      ...RegularFriendRequest
+    }
+    isSender
+  }
+}

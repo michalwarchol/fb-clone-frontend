@@ -39,6 +39,13 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type FriendRequest = {
+  __typename?: 'FriendRequest';
+  status: Scalars['String'];
+  sender: Scalars['Float'];
+  receiver: Scalars['Float'];
+};
+
 export type FullUser = {
   __typename?: 'FullUser';
   user?: Maybe<User>;
@@ -59,6 +66,9 @@ export type Mutation = {
   changePassword: UserResponse;
   react: Scalars['Boolean'];
   createComment: Comment;
+  createFriendRequest: Scalars['Boolean'];
+  acceptFriendRequest: Scalars['Boolean'];
+  removeFriendRequest: Scalars['Boolean'];
 };
 
 
@@ -117,6 +127,21 @@ export type MutationCreateCommentArgs = {
   text: Scalars['String'];
 };
 
+
+export type MutationCreateFriendRequestArgs = {
+  receiverId: Scalars['Int'];
+};
+
+
+export type MutationAcceptFriendRequestArgs = {
+  userId: Scalars['Int'];
+};
+
+
+export type MutationRemoveFriendRequestArgs = {
+  userId: Scalars['Int'];
+};
+
 export type PaginatedComments = {
   __typename?: 'PaginatedComments';
   comments: Array<Comment>;
@@ -168,6 +193,9 @@ export type Query = {
   reaction?: Maybe<Reaction>;
   getPostComments: PaginatedComments;
   commentCount: Scalars['Int'];
+  friendRequests: Array<FriendRequest>;
+  getUserFriendRequests: Array<FriendRequest>;
+  getFriendRequest: UserRequest;
 };
 
 
@@ -215,6 +243,16 @@ export type QueryCommentCountArgs = {
   postId: Scalars['Int'];
 };
 
+
+export type QueryGetUserFriendRequestsArgs = {
+  userId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetFriendRequestArgs = {
+  userId: Scalars['Int'];
+};
+
 export type Reaction = {
   __typename?: 'Reaction';
   _id: Scalars['Int'];
@@ -253,6 +291,12 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type UserRequest = {
+  __typename?: 'UserRequest';
+  friendRequest?: Maybe<FriendRequest>;
+  isSender: Scalars['Boolean'];
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -262,6 +306,11 @@ export type UserResponse = {
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularFriendRequestFragment = (
+  { __typename?: 'FriendRequest' }
+  & Pick<FriendRequest, 'sender' | 'receiver' | 'status'>
 );
 
 export type RegularPostFragment = (
@@ -299,6 +348,16 @@ export type RegularUserResponseFragment = (
   )> }
 );
 
+export type AcceptFriendRequestMutationVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type AcceptFriendRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptFriendRequest'>
+);
+
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
@@ -325,6 +384,16 @@ export type CreateCommentMutation = (
     { __typename?: 'Comment' }
     & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId'>
   ) }
+);
+
+export type CreateFriendRequestMutationVariables = Exact<{
+  receiver: Scalars['Int'];
+}>;
+
+
+export type CreateFriendRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createFriendRequest'>
 );
 
 export type CreatePostMutationVariables = Exact<{
@@ -396,6 +465,16 @@ export type RegisterMutation = (
   ) }
 );
 
+export type RemoveFriendRequestMutationVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type RemoveFriendRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeFriendRequest'>
+);
+
 export type UploadUserImageMutationVariables = Exact<{
   image?: Maybe<Scalars['Upload']>;
   avatarOrBanner: Scalars['String'];
@@ -415,6 +494,23 @@ export type CommentCountQueryVariables = Exact<{
 export type CommentCountQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'commentCount'>
+);
+
+export type GetFriendRequestQueryVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type GetFriendRequestQuery = (
+  { __typename?: 'Query' }
+  & { getFriendRequest: (
+    { __typename?: 'UserRequest' }
+    & Pick<UserRequest, 'isSender'>
+    & { friendRequest?: Maybe<(
+      { __typename?: 'FriendRequest' }
+      & RegularFriendRequestFragment
+    )> }
+  ) }
 );
 
 export type GetImageQueryVariables = Exact<{
@@ -482,6 +578,19 @@ export type GetUserByIdQuery = (
   )> }
 );
 
+export type GetUserFriendRequestsQueryVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type GetUserFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { getUserFriendRequests: Array<(
+    { __typename?: 'FriendRequest' }
+    & RegularFriendRequestFragment
+  )> }
+);
+
 export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -528,6 +637,13 @@ export type ReactionQuery = (
   )> }
 );
 
+export const RegularFriendRequestFragmentDoc = gql`
+    fragment RegularFriendRequest on FriendRequest {
+  sender
+  receiver
+  status
+}
+    `;
 export const RegularReactionsFragmentDoc = gql`
     fragment RegularReactions on Post {
   like
@@ -588,6 +704,15 @@ export const RegularUserResponseFragmentDoc = gql`
 }
     ${RegularErrorFragmentDoc}
 ${RegularUserFragmentDoc}`;
+export const AcceptFriendRequestDocument = gql`
+    mutation AcceptFriendRequest($userId: Int!) {
+  acceptFriendRequest(userId: $userId)
+}
+    `;
+
+export function useAcceptFriendRequestMutation() {
+  return Urql.useMutation<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>(AcceptFriendRequestDocument);
+};
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newPassword: String!) {
   changePassword(token: $token, newPassword: $newPassword) {
@@ -612,6 +737,15 @@ export const CreateCommentDocument = gql`
 
 export function useCreateCommentMutation() {
   return Urql.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument);
+};
+export const CreateFriendRequestDocument = gql`
+    mutation CreateFriendRequest($receiver: Int!) {
+  createFriendRequest(receiverId: $receiver)
+}
+    `;
+
+export function useCreateFriendRequestMutation() {
+  return Urql.useMutation<CreateFriendRequestMutation, CreateFriendRequestMutationVariables>(CreateFriendRequestDocument);
 };
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!, $image: Upload) {
@@ -687,6 +821,15 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const RemoveFriendRequestDocument = gql`
+    mutation RemoveFriendRequest($userId: Int!) {
+  removeFriendRequest(userId: $userId)
+}
+    `;
+
+export function useRemoveFriendRequestMutation() {
+  return Urql.useMutation<RemoveFriendRequestMutation, RemoveFriendRequestMutationVariables>(RemoveFriendRequestDocument);
+};
 export const UploadUserImageDocument = gql`
     mutation UploadUserImage($image: Upload, $avatarOrBanner: String!) {
   uploadImage(image: $image, avatarOrBanner: $avatarOrBanner)
@@ -704,6 +847,20 @@ export const CommentCountDocument = gql`
 
 export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CommentCountQuery>({ query: CommentCountDocument, ...options });
+};
+export const GetFriendRequestDocument = gql`
+    query GetFriendRequest($userId: Int!) {
+  getFriendRequest(userId: $userId) {
+    friendRequest {
+      ...RegularFriendRequest
+    }
+    isSender
+  }
+}
+    ${RegularFriendRequestFragmentDoc}`;
+
+export function useGetFriendRequestQuery(options: Omit<Urql.UseQueryArgs<GetFriendRequestQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetFriendRequestQuery>({ query: GetFriendRequestDocument, ...options });
 };
 export const GetImageDocument = gql`
     query GetImage($imageId: String!) {
@@ -760,6 +917,17 @@ export const GetUserByIdDocument = gql`
 
 export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
+};
+export const GetUserFriendRequestsDocument = gql`
+    query GetUserFriendRequests($userId: Int!) {
+  getUserFriendRequests(userId: $userId) {
+    ...RegularFriendRequest
+  }
+}
+    ${RegularFriendRequestFragmentDoc}`;
+
+export function useGetUserFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetUserFriendRequestsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUserFriendRequestsQuery>({ query: GetUserFriendRequestsDocument, ...options });
 };
 export const LoggedUserDocument = gql`
     query loggedUser {
