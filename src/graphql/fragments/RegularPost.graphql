@@ -1,0 +1,14 @@
+fragment RegularPost on Post {
+  _id
+  text
+  feeling
+  activity
+  imageId
+  ...RegularReactions
+  creatorId
+  creator {
+    ...RegularUser
+  }
+  createdAt
+  updatedAt
+}
