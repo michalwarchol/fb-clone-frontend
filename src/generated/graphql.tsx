@@ -160,6 +160,7 @@ export type Query = {
   hello: Scalars['String'];
   posts: PaginatedPosts;
   post?: Maybe<Post>;
+  getPostsByCreatorId: PaginatedPosts;
   getImage: Scalars['String'];
   getUserById?: Maybe<User>;
   loggedUser?: Maybe<FullUser>;
@@ -178,6 +179,13 @@ export type QueryPostsArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryGetPostsByCreatorIdArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  creatorId: Scalars['Int'];
 };
 
 
@@ -254,6 +262,16 @@ export type UserResponse = {
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'imageId' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  & { creator: (
+    { __typename?: 'User' }
+    & RegularUserFragment
+  ) }
+  & RegularReactionsFragment
 );
 
 export type RegularReactionsFragment = (
@@ -432,6 +450,25 @@ export type GetPostCommentsQuery = (
   ) }
 );
 
+export type GetPostsByCreatorIdQueryVariables = Exact<{
+  creatorId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetPostsByCreatorIdQuery = (
+  { __typename?: 'Query' }
+  & { getPostsByCreatorId: (
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & RegularPostFragment
+    )> }
+  ) }
+);
+
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -473,11 +510,7 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'creatorId' | 'createdAt' | 'updatedAt'>
-      & { creator: (
-        { __typename?: 'User' }
-        & RegularUserFragment
-      ) }
+      & RegularPostFragment
     )> }
   ) }
 );
@@ -506,12 +539,6 @@ export const RegularReactionsFragmentDoc = gql`
   angry
 }
     `;
-export const RegularErrorFragmentDoc = gql`
-    fragment RegularError on FieldError {
-  field
-  message
-}
-    `;
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
   _id
@@ -521,6 +548,29 @@ export const RegularUserFragmentDoc = gql`
   bannerId
   createdAt
   updatedAt
+}
+    `;
+export const RegularPostFragmentDoc = gql`
+    fragment RegularPost on Post {
+  _id
+  text
+  feeling
+  activity
+  imageId
+  ...RegularReactions
+  creatorId
+  creator {
+    ...RegularUser
+  }
+  createdAt
+  updatedAt
+}
+    ${RegularReactionsFragmentDoc}
+${RegularUserFragmentDoc}`;
+export const RegularErrorFragmentDoc = gql`
+    fragment RegularError on FieldError {
+  field
+  message
 }
     `;
 export const RegularUserResponseFragmentDoc = gql`
@@ -686,6 +736,20 @@ export const GetPostCommentsDocument = gql`
 export function useGetPostCommentsQuery(options: Omit<Urql.UseQueryArgs<GetPostCommentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostCommentsQuery>({ query: GetPostCommentsDocument, ...options });
 };
+export const GetPostsByCreatorIdDocument = gql`
+    query GetPostsByCreatorId($creatorId: Int!, $limit: Int!, $cursor: String) {
+  getPostsByCreatorId(creatorId: $creatorId, limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
+      ...RegularPost
+    }
+  }
+}
+    ${RegularPostFragmentDoc}`;
+
+export function useGetPostsByCreatorIdQuery(options: Omit<Urql.UseQueryArgs<GetPostsByCreatorIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetPostsByCreatorIdQuery>({ query: GetPostsByCreatorIdDocument, ...options });
+};
 export const GetUserByIdDocument = gql`
     query GetUserById($id: Int!) {
   getUserById(id: $id) {
@@ -717,28 +781,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      _id
-      text
-      feeling
-      activity
-      imageId
-      like
-      love
-      care
-      haha
-      wow
-      sad
-      angry
-      creatorId
-      creator {
-        ...RegularUser
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }
-    ${RegularUserFragmentDoc}`;
+    ${RegularPostFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
