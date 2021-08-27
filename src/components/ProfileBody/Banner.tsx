@@ -16,12 +16,11 @@ import { User, useUploadUserImageMutation } from "../../generated/graphql";
 
 interface Props {
   editable: boolean;
-  user: User;
   avatarImage: string;
   bannerImage: string;
 }
 
-const Banner: React.FC<Props> = ({ editable, user, avatarImage, bannerImage }) => {
+const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
   const [, uploadUserImage] = useUploadUserImageMutation();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [avatarOrBanner, setAvatarOrBanner] = useState<"avatar" | "banner">(

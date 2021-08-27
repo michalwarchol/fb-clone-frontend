@@ -1,13 +1,8 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Text
-} from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useLoggedUserQuery, User } from "../../generated/graphql";
+import { useGetPostsByCreatorIdQuery, useLoggedUserQuery, User } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
+import PostContainer from "../Post/PostContainer";
 import PostCreator from "../PostCreator/PostCreator";
 import Banner from "./Banner";
 
@@ -18,10 +13,16 @@ interface Props {
   bannerImage: string;
 }
 
-const Body: React.FC<Props> = ({ editable, user, avatarImage, bannerImage }) => {
+const Body: React.FC<Props> = ({
+  editable,
+  user,
+  avatarImage,
+  bannerImage,
+}) => {
   const [{ data }] = useLoggedUserQuery({
     pause: isServer,
   });
+  const [{data: userPosts}] = useGetPostsByCreatorIdQuery({variables: {creatorId: user._id, limit: 10}});
   const [activeTab, setActiveTab] = useState<number>(1);
   return (
     <Flex
@@ -39,7 +40,11 @@ const Body: React.FC<Props> = ({ editable, user, avatarImage, bannerImage }) => 
         direction="column"
         w="100%"
       >
-        <Banner editable={editable} user={user} avatarImage={avatarImage} bannerImage={bannerImage}/>
+        <Banner
+          editable={editable}
+          avatarImage={avatarImage}
+          bannerImage={bannerImage}
+        />
         <Box w={{ base: "100%", md: "940px" }} my="20px">
           <Text
             textAlign="center"
@@ -60,7 +65,11 @@ const Body: React.FC<Props> = ({ editable, user, avatarImage, bannerImage }) => 
             </Text>
           )}
         </Box>
-        <Divider orientation="horizontal" borderColor="gray.400" w={{ base: "100%", md: "940px" }} />
+        <Divider
+          orientation="horizontal"
+          borderColor="gray.400"
+          w={{ base: "100%", md: "940px" }}
+        />
         <Flex py="4px" w={{ base: "100%", md: "940px" }}>
           <Box
             borderBottom={activeTab == 1 ? "4px solid" : undefined}
@@ -94,13 +103,27 @@ const Body: React.FC<Props> = ({ editable, user, avatarImage, bannerImage }) => 
           </Box>
         </Flex>
       </Flex>
-      <Flex direction="row" bg="primary" w={{ base: "100%", md: "940px" }} mt="16px">
-            <Box w="40%" mr="16px" bg="secondary" borderRadius="8px">
-              cos tam
-            </Box>
-            <Box w="60%" bg="secondary" borderRadius="8px">
-              <PostCreator loggedUser={data?.loggedUser} />
-            </Box>
+      <Flex
+        direction="row"
+        bg="primary"
+        w={{ base: "100%", md: "940px" }}
+        mt="16px"
+      >
+        <Box w="40%" mr="16px" bg="secondary" borderRadius="8px">
+          cos tam
+        </Box>
+        <Box w="60%" borderRadius="8px">
+          <PostCreator loggedUser={data?.loggedUser} />
+          <Box w="100%">
+            {!userPosts ? (
+              <div>loading</div>
+            ) : (
+              userPosts.getPostsByCreatorId.posts.map((post) => (
+                <PostContainer post={post} key={post._id} />
+              ))
+            )}
+          </Box>
+        </Box>
       </Flex>
     </Flex>
   );
