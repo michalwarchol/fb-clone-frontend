@@ -1,9 +1,15 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useGetPostsByCreatorIdQuery, useLoggedUserQuery, User } from "../../generated/graphql";
+import {
+  useGetPostsByCreatorIdQuery,
+  useLoggedUserQuery,
+  User,
+  UserRequest,
+} from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import PostContainer from "../Post/PostContainer";
 import PostCreator from "../PostCreator/PostCreator";
+import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
 
 interface Props {
@@ -11,6 +17,7 @@ interface Props {
   user: User;
   avatarImage: string;
   bannerImage: string;
+  isFriend: UserRequest;
 }
 
 const Body: React.FC<Props> = ({
@@ -18,12 +25,20 @@ const Body: React.FC<Props> = ({
   user,
   avatarImage,
   bannerImage,
+  isFriend
 }) => {
   const [{ data }] = useLoggedUserQuery({
     pause: isServer,
   });
-  const [{data: userPosts}] = useGetPostsByCreatorIdQuery({variables: {creatorId: user._id, limit: 10}});
+
+  const [{ data: userPosts }] = useGetPostsByCreatorIdQuery({
+    variables: { creatorId: user?._id, limit: 10 },
+    pause: !user
+  });
+
+  
   const [activeTab, setActiveTab] = useState<number>(1);
+
   return (
     <Flex
       mt="20px"
@@ -70,37 +85,43 @@ const Body: React.FC<Props> = ({
           borderColor="gray.400"
           w={{ base: "100%", md: "940px" }}
         />
-        <Flex py="4px" w={{ base: "100%", md: "940px" }}>
-          <Box
-            borderBottom={activeTab == 1 ? "4px solid" : undefined}
-            color={activeTab == 1 ? "active" : "textPrimary"}
-            borderColor="active"
-            mr="6px"
-          >
-            <Button variant="basic" py="30px" onClick={() => setActiveTab(1)}>
-              Posts
-            </Button>
-          </Box>
-          <Box
-            borderBottom={activeTab == 2 ? "4px solid" : undefined}
-            color={activeTab == 2 ? "active" : "textPrimary"}
-            borderColor="active"
-            mr="6px"
-          >
-            <Button variant="basic" py="30px" onClick={() => setActiveTab(2)}>
-              Friends
-            </Button>
-          </Box>
-          <Box
-            borderBottom={activeTab == 3 ? "4px solid" : undefined}
-            color={activeTab == 3 ? "active" : "textPrimary"}
-            borderColor="active"
-            mr="6px"
-          >
-            <Button variant="basic" py="30px" onClick={() => setActiveTab(3)}>
-              Photos
-            </Button>
-          </Box>
+        <Flex py="4px" w={{ base: "100%", md: "940px" }} justify="space-between">
+          <Flex>
+            <Box
+              borderBottom={activeTab == 1 ? "4px solid" : undefined}
+              color={activeTab == 1 ? "active" : "textPrimary"}
+              borderColor="active"
+              mr="6px"
+            >
+              <Button variant="basic" py="30px" onClick={() => setActiveTab(1)}>
+                Posts
+              </Button>
+            </Box>
+            <Box
+              borderBottom={activeTab == 2 ? "4px solid" : undefined}
+              color={activeTab == 2 ? "active" : "textPrimary"}
+              borderColor="active"
+              mr="6px"
+            >
+              <Button variant="basic" py="30px" onClick={() => setActiveTab(2)}>
+                Friends
+              </Button>
+            </Box>
+            <Box
+              borderBottom={activeTab == 3 ? "4px solid" : undefined}
+              color={activeTab == 3 ? "active" : "textPrimary"}
+              borderColor="active"
+              mr="6px"
+            >
+              <Button variant="basic" py="30px" onClick={() => setActiveTab(3)}>
+                Photos
+              </Button>
+            </Box>
+          </Flex>
+
+          <Flex align="center">
+            {!editable && <AddFriendButton user={user} isFriend={isFriend} />}
+          </Flex>
         </Flex>
       </Flex>
       <Flex
@@ -113,7 +134,7 @@ const Body: React.FC<Props> = ({
           cos tam
         </Box>
         <Box w="60%" borderRadius="8px">
-          <PostCreator loggedUser={data?.loggedUser} />
+          {editable && <PostCreator loggedUser={data?.loggedUser} />}
           <Box w="100%">
             {!userPosts ? (
               <div>loading</div>

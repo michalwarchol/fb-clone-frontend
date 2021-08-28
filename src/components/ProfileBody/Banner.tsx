@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import { User, useUploadUserImageMutation } from "../../generated/graphql";
+import { useUploadUserImageMutation } from "../../generated/graphql";
 
 interface Props {
   editable: boolean;
