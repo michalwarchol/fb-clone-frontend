@@ -4,6 +4,7 @@ import { createBreakpoints } from "@chakra-ui/theme-tools";
 const fonts = { mono: `'Menlo', monospace` };
 
 const breakpoints = createBreakpoints({
+  base: "0",
   sm: "576px",
   md: "768px",
   lg: "992px",
@@ -18,6 +19,7 @@ const theme = extendTheme({
     tertiary: "#303031",
     hover: "#3A3B3C",
     active: "#2D86FF",
+    activeBackground: "#263951",
     textPrimary: "#D5D6DA",
     textSecondary: "#ffffff",
     buttonSuccess: "#42b72a",
@@ -35,6 +37,12 @@ const theme = extendTheme({
           _hover: { backgroundColor: "hover" },
           _active: { backgroundColor: "hover" },
         },
+        active: {
+          color: "active",
+          bg: "activeBackground",
+          _hover: {backgroundColor: "blue.700", color: "blue.400"}
+
+        }
       },
     },
   },
