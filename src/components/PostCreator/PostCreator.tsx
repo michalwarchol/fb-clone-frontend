@@ -37,7 +37,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
     }
   }, [uploadedImage]);
   return (
-    <Box bg="secondary" p="10px" borderRadius="8px">
+    <Box bg="secondary" p="10px" borderRadius="8px" mb="20px">
       <Flex align="center">
         <Avatar src={loggedUser.avatarImage} />
         <Button

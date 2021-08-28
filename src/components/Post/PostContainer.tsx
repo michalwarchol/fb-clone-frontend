@@ -47,7 +47,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     <Box
       bg="secondary"
       borderRadius="8px"
-      mt="20px"
+      mb="20px"
       pt="10px"
       pb="4px"
       w="100%"
