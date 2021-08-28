@@ -117,6 +117,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
       resolvers: {
         Query: {
           posts: cursorPagination(),
+          getPostsByCreatorId: cursorPagination(),
           getPostComments: commentPagination(),
         },
       },
@@ -129,6 +130,13 @@ export const createUrqlClient = (ssrExchange: any) => ({
             );
             fieldInfos.forEach((fi) => {
               cache.invalidate("Query", "posts", fi.arguments || {});
+            });
+
+            const creatorPosts = allFields.filter(
+              (info) => info.fieldName === "getPostsByCreatorId"
+            );
+            creatorPosts.forEach((fi) => {
+              cache.invalidate("Query", "getPostsByCreatorId", fi.arguments || {});
             });
           },
           createComment: (result, args, cache, info) => {
@@ -204,7 +212,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
             return true;
           },
           uploadImage: (_result, args, cache, info) => {
-            console.log(info)
             const allFields = cache.inspectFields("Query");
             const getUserById = allFields.filter(
               (info) => info.fieldName === "getUserById"
@@ -224,6 +231,36 @@ export const createUrqlClient = (ssrExchange: any) => ({
               cache.invalidate("Query", "getImage", fi.arguments || {});
             });
           },
+          createFriendRequest: (_result, args, cache, info) => {
+            const allFields = cache.inspectFields("Query");
+            const getFriendRequest = allFields.filter(
+              (info) => info.fieldName === "getFriendRequest"
+            );
+
+            getFriendRequest.forEach((fi) => {
+              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
+            });
+          },
+          acceptFriendRequest: (_result, args, cache, info) => {
+            const allFields = cache.inspectFields("Query");
+            const getFriendRequest = allFields.filter(
+              (info) => info.fieldName === "getFriendRequest"
+            );
+
+            getFriendRequest.forEach((fi) => {
+              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
+            });
+          },
+          removeFriendRequest: (_result, args, cache, info) => {
+            const allFields = cache.inspectFields("Query");
+            const getFriendRequest = allFields.filter(
+              (info) => info.fieldName === "getFriendRequest"
+            );
+
+            getFriendRequest.forEach((fi) => {
+              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
+            });
+          }
         },
       },
     }),
