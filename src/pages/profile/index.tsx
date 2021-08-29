@@ -57,6 +57,7 @@ const Profile: NextPage<Props> = ({ id }) => {
     <Navbar loggedUser={data && data.loggedUser} />
     <Body
       editable={data.loggedUser.user._id == parseInt(id)}
+      id={parseInt(id)}
       user={user?.getUserById}
       avatarImage={avatarImage?.getImage}
       bannerImage={bannerImage?.getImage}

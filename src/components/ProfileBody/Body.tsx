@@ -11,9 +11,11 @@ import PostContainer from "../Post/PostContainer";
 import PostCreator from "../PostCreator/PostCreator";
 import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
+import FriendSection from "./FriendsSection";
 
 interface Props {
   editable: boolean;
+  id: number;
   user: User;
   avatarImage: string;
   bannerImage: string;
@@ -22,6 +24,7 @@ interface Props {
 
 const Body: React.FC<Props> = ({
   editable,
+  id,
   user,
   avatarImage,
   bannerImage,
@@ -130,8 +133,8 @@ const Body: React.FC<Props> = ({
         w={{ base: "100%", md: "940px" }}
         mt="16px"
       >
-        <Box w="40%" mr="16px" bg="secondary" borderRadius="8px">
-          cos tam
+        <Box w="40%" mr="16px">
+          <FriendSection id={id} setActiveTab={setActiveTab}/>
         </Box>
         <Box w="60%" borderRadius="8px">
           {editable && <PostCreator loggedUser={data?.loggedUser} />}
