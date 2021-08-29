@@ -1,5 +1,10 @@
-query GetUserFriendRequests($userId: Int!){
+query GetUserFriendRequests($userId: Int){
   getUserFriendRequests(userId: $userId){
-    ...RegularFriendRequest
+    friendRequest {
+      ...RegularFriendRequest
+    }
+    friend {
+      ...RegularUser
+    }
   }
 }

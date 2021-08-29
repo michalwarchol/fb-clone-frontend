@@ -44,6 +44,14 @@ export type FriendRequest = {
   status: Scalars['String'];
   sender: Scalars['Float'];
   receiver: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type FriendRequestWithFriend = {
+  __typename?: 'FriendRequestWithFriend';
+  friendRequest: FriendRequest;
+  friend: User;
 };
 
 export type FullUser = {
@@ -194,8 +202,9 @@ export type Query = {
   getPostComments: PaginatedComments;
   commentCount: Scalars['Int'];
   friendRequests: Array<FriendRequest>;
-  getUserFriendRequests: Array<FriendRequest>;
+  getUserFriendRequests: Array<FriendRequestWithFriend>;
   getFriendRequest: UserRequest;
+  friendCount: Scalars['Int'];
 };
 
 
@@ -251,6 +260,11 @@ export type QueryGetUserFriendRequestsArgs = {
 
 export type QueryGetFriendRequestArgs = {
   userId: Scalars['Int'];
+};
+
+
+export type QueryFriendCountArgs = {
+  userId?: Maybe<Scalars['Int']>;
 };
 
 export type Reaction = {
@@ -310,7 +324,7 @@ export type RegularErrorFragment = (
 
 export type RegularFriendRequestFragment = (
   { __typename?: 'FriendRequest' }
-  & Pick<FriendRequest, 'sender' | 'receiver' | 'status'>
+  & Pick<FriendRequest, 'sender' | 'receiver' | 'status' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularPostFragment = (
@@ -496,6 +510,16 @@ export type CommentCountQuery = (
   & Pick<Query, 'commentCount'>
 );
 
+export type FriendCountQueryVariables = Exact<{
+  userId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type FriendCountQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'friendCount'>
+);
+
 export type GetFriendRequestQueryVariables = Exact<{
   userId: Scalars['Int'];
 }>;
@@ -579,15 +603,21 @@ export type GetUserByIdQuery = (
 );
 
 export type GetUserFriendRequestsQueryVariables = Exact<{
-  userId: Scalars['Int'];
+  userId?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type GetUserFriendRequestsQuery = (
   { __typename?: 'Query' }
   & { getUserFriendRequests: Array<(
-    { __typename?: 'FriendRequest' }
-    & RegularFriendRequestFragment
+    { __typename?: 'FriendRequestWithFriend' }
+    & { friendRequest: (
+      { __typename?: 'FriendRequest' }
+      & RegularFriendRequestFragment
+    ), friend: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ) }
   )> }
 );
 
@@ -642,6 +672,8 @@ export const RegularFriendRequestFragmentDoc = gql`
   sender
   receiver
   status
+  createdAt
+  updatedAt
 }
     `;
 export const RegularReactionsFragmentDoc = gql`
@@ -848,6 +880,15 @@ export const CommentCountDocument = gql`
 export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CommentCountQuery>({ query: CommentCountDocument, ...options });
 };
+export const FriendCountDocument = gql`
+    query FriendCount($userId: Int) {
+  friendCount(userId: $userId)
+}
+    `;
+
+export function useFriendCountQuery(options: Omit<Urql.UseQueryArgs<FriendCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<FriendCountQuery>({ query: FriendCountDocument, ...options });
+};
 export const GetFriendRequestDocument = gql`
     query GetFriendRequest($userId: Int!) {
   getFriendRequest(userId: $userId) {
@@ -919,12 +960,18 @@ export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQ
   return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
 };
 export const GetUserFriendRequestsDocument = gql`
-    query GetUserFriendRequests($userId: Int!) {
+    query GetUserFriendRequests($userId: Int) {
   getUserFriendRequests(userId: $userId) {
-    ...RegularFriendRequest
+    friendRequest {
+      ...RegularFriendRequest
+    }
+    friend {
+      ...RegularUser
+    }
   }
 }
-    ${RegularFriendRequestFragmentDoc}`;
+    ${RegularFriendRequestFragmentDoc}
+${RegularUserFragmentDoc}`;
 
 export function useGetUserFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetUserFriendRequestsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserFriendRequestsQuery>({ query: GetUserFriendRequestsDocument, ...options });
