@@ -1,10 +1,13 @@
-query GetUserFriendRequests($userId: Int, $limit: Int){
-  getUserFriendRequests(userId: $userId, limit: $limit){
-    friendRequest {
-      ...RegularFriendRequest
-    }
-    friend {
-      ...RegularUser
+query GetUserFriendRequests($userId: Int, $limit: Int!, $skip: Int) {
+  getUserFriendRequests(userId: $userId, limit: $limit, skip: $skip) {
+    hasMore
+    friendRequestsWithFriends {
+      friendRequest {
+        ...RegularFriendRequest
+      }
+      friend {
+        ...RegularUser
+      }
     }
   }
 }

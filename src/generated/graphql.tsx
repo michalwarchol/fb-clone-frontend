@@ -162,6 +162,12 @@ export type PaginatedPosts = {
   hasMore: Scalars['Boolean'];
 };
 
+export type PaginatedRequests = {
+  __typename?: 'PaginatedRequests';
+  friendRequestsWithFriends: Array<FriendRequestWithFriend>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Post = {
   __typename?: 'Post';
   _id: Scalars['Int'];
@@ -202,7 +208,7 @@ export type Query = {
   getPostComments: PaginatedComments;
   commentCount: Scalars['Int'];
   friendRequests: Array<FriendRequest>;
-  getUserFriendRequests: Array<FriendRequestWithFriend>;
+  getUserFriendRequests: PaginatedRequests;
   getFriendRequest: UserRequest;
   friendCount: Scalars['Int'];
 };
@@ -254,8 +260,9 @@ export type QueryCommentCountArgs = {
 
 
 export type QueryGetUserFriendRequestsArgs = {
-  limit?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   userId?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -605,22 +612,27 @@ export type GetUserByIdQuery = (
 
 export type GetUserFriendRequestsQueryVariables = Exact<{
   userId?: Maybe<Scalars['Int']>;
-  limit?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type GetUserFriendRequestsQuery = (
   { __typename?: 'Query' }
-  & { getUserFriendRequests: Array<(
-    { __typename?: 'FriendRequestWithFriend' }
-    & { friendRequest: (
-      { __typename?: 'FriendRequest' }
-      & RegularFriendRequestFragment
-    ), friend: (
-      { __typename?: 'User' }
-      & RegularUserFragment
-    ) }
-  )> }
+  & { getUserFriendRequests: (
+    { __typename?: 'PaginatedRequests' }
+    & Pick<PaginatedRequests, 'hasMore'>
+    & { friendRequestsWithFriends: Array<(
+      { __typename?: 'FriendRequestWithFriend' }
+      & { friendRequest: (
+        { __typename?: 'FriendRequest' }
+        & RegularFriendRequestFragment
+      ), friend: (
+        { __typename?: 'User' }
+        & RegularUserFragment
+      ) }
+    )> }
+  ) }
 );
 
 export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
@@ -962,13 +974,16 @@ export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQ
   return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
 };
 export const GetUserFriendRequestsDocument = gql`
-    query GetUserFriendRequests($userId: Int, $limit: Int) {
-  getUserFriendRequests(userId: $userId, limit: $limit) {
-    friendRequest {
-      ...RegularFriendRequest
-    }
-    friend {
-      ...RegularUser
+    query GetUserFriendRequests($userId: Int, $limit: Int!, $skip: Int) {
+  getUserFriendRequests(userId: $userId, limit: $limit, skip: $skip) {
+    hasMore
+    friendRequestsWithFriends {
+      friendRequest {
+        ...RegularFriendRequest
+      }
+      friend {
+        ...RegularUser
+      }
     }
   }
 }
