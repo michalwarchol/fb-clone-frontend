@@ -5,9 +5,7 @@ import {
   LoggedUserQuery,
   LoggedUserDocument,
   LoginMutation,
-  RegisterMutation,
-  UploadUserImageMutation,
-  GetImageQuery,
+  RegisterMutation
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -137,6 +135,65 @@ const commentPagination = (): Resolver => {
   };
 };
 
+const friendRequestPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const fields = fieldInfos.filter((field)=>field.arguments.userId === info.variables.userId)
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+    
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItInTheCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "getUserFriendRequests"
+    );
+    info.partial = !isItInTheCache;
+    let hasMore = true;
+    const results: string[] = [];
+
+    if(fieldArgs["skip"]==undefined){
+      fields.forEach(fi=>{
+        const key = cache.resolve(entityKey, fi.fieldKey) as string;
+        const data = cache.resolve(key, "friendRequestsWithFriends") as string[];
+        const _hasMore = cache.resolve(key, "hasMore");
+        if(fi.arguments.skip==undefined){
+          if (!_hasMore) {
+            hasMore = _hasMore as boolean;
+          }
+          results.push(...data);
+        }
+      })
+      return {
+        __typename: "PaginatedRequests",
+        hasMore,
+        friendRequestsWithFriends: results,
+      }
+    }
+
+    fields.forEach((fi) => {
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, "friendRequestsWithFriends") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      if(fi.arguments.skip!=undefined){
+        if (!_hasMore) {
+          hasMore = _hasMore as boolean;
+        }
+        results.push(...data);
+      }
+    });
+    return {
+      __typename: "PaginatedRequests",
+      hasMore,
+      friendRequestsWithFriends: results,
+    };
+  };
+};
+
 export const createUrqlClient = (ssrExchange: any) => ({
   url: "http://localhost:4000/graphql",
   fetchOptions: {
@@ -149,12 +206,17 @@ export const createUrqlClient = (ssrExchange: any) => ({
         PaginatedPosts: () => null,
         PaginatedComments: () => null,
         FullUser: () => null,
+        PaginatedRequests: () => null,
+        FriendRequest: () => null,
+        UserRequest: () => null,
+        FriendRequestWithFriend: () => null
       },
       resolvers: {
         Query: {
           posts: cursorPagination(),
           getPostsByCreatorId: cursorCreatorPagination(),
           getPostComments: commentPagination(),
+          getUserFriendRequests: friendRequestPagination()
         },
       },
       updates: {
