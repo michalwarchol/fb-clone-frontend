@@ -47,8 +47,8 @@ const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
 
   return (
     <Flex position="relative" justify="center" w={{ base: "100%", lg: "940px" }}>
-      <Avatar size="2xl" src={avatarImage} zIndex="99" position="absolute" bottom="-20px"/>
-      {editable && <FormControl position="absolute" bottom="-20px" left="53%" zIndex="100" w="60px">
+      <Avatar size="2xl" src={avatarImage} zIndex="90" position="absolute" bottom="-20px"/>
+      {editable && <FormControl position="absolute" bottom="-20px" left="53%" zIndex="90" w="60px">
             <FormLabel textAlign="center">
               <IconButton
                 aria-label="photo"
