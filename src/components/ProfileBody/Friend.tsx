@@ -17,8 +17,8 @@ const Friend: React.FC<Props> = ({ data }) => {
   });
   return (
     <NextLink href="/profile/[id]" as={`/profile/${data.friend._id}`}>
-      <Box w="30%" mx="4px" cursor="pointer" mb="20px">
-        <Box w="100%px" h="100px" borderRadius="4px" overflow="hidden">
+      <Box w="30%" cursor="pointer" mb="20px">
+        <Box w="100%" h="100px" borderRadius="4px" overflow="hidden">
           <Image
             src={image?.getImage}
             w="100%"
