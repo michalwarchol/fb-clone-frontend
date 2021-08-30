@@ -36,7 +36,7 @@ const Body: React.FC<Props> = ({
       />
     );
   } else if (activeTab == 2) {
-    content = <FriendsTab />;
+    content = <FriendsTab id={id} />;
   }
 
   return (
@@ -60,7 +60,7 @@ const Body: React.FC<Props> = ({
           avatarImage={avatarImage}
           bannerImage={bannerImage}
         />
-        <Box w={{ base: "100%", lg: "940px" }} my="20px">
+        <Box w={{ base: "100%", lg: "876px" }} my="20px">
           <Text
             textAlign="center"
             fontWeight="bold"
@@ -80,7 +80,7 @@ const Body: React.FC<Props> = ({
             </Text>
           )}
         </Box>
-        <Box w={{ base: "100%", lg: "940px" }} mt="20px">
+        <Box w={{ base: "100%", lg: "876px" }} mt="20px">
           <Divider orientation="horizontal" borderColor="gray.400" />
           <Flex py="4px" justify="space-between">
             <Flex>
