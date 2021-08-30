@@ -29,7 +29,7 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
     <Flex
       direction={{ base: "column", lg: "row" }}
       bg="primary"
-      w={{ base: "100%", lg: "940px" }}
+      w={{ base: "100%", lg: "876px" }}
       mt="16px"
       align={{ base: "center", lg: "flex-start" }}
     >
