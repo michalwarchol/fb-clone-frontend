@@ -53,7 +53,7 @@ const Profile: NextPage<Props> = ({ id }) => {
 
   let body = <div></div>;
   if(data?.loggedUser){
-    body = <Box maxW="100vw" color="textPrimary" bg={"primary"}>
+    body = <Box maxW="100vw" color="textPrimary" bg={"primary"} minH="100vh">
     <Navbar loggedUser={data && data.loggedUser} />
     <Body
       editable={data.loggedUser.user._id == parseInt(id)}
