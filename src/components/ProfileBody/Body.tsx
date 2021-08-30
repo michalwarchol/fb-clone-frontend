@@ -38,7 +38,6 @@ const Body: React.FC<Props> = ({
     variables: { creatorId: user?._id, limit: 10 },
     pause: !user
   });
-
   
   const [activeTab, setActiveTab] = useState<number>(1);
 

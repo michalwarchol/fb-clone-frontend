@@ -16,7 +16,7 @@ const Content: React.FC<Props> = ({loggedUser}) => {
     <Flex maxW="1920px" justify="center" mt="40px">
       <Flex mt="20px" w={{base: "500px", md: "680px"}}>
         <Box position="fixed" left="0" w="18%" pl="4px">
-          <PageButton text={loggedUser?.user.username} image={<Avatar src={loggedUser.avatarImage} />} link={"/profile?id="+loggedUser?.user._id} />
+          <PageButton text={loggedUser?.user.username} image={<Avatar src={loggedUser.avatarImage} />} link={"/profile/"+loggedUser?.user._id} />
         </Box>
         <Flex w="100%" direction="column">
           <PostCreator loggedUser={loggedUser} />
