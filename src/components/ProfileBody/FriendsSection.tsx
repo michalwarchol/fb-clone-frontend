@@ -14,7 +14,7 @@ interface Props {
 const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
   const [{ data: count }] = useFriendCountQuery({ variables: { userId: id } });
   const [{ data: friends }] = useGetUserFriendRequestsQuery({
-    variables: { userId: id, limit: 2 },
+    variables: { userId: id, limit: 9 },
   });
 
   return (
@@ -42,7 +42,7 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
       </Text>
       <Flex justify="center">
         <Flex wrap="wrap" mt="20px" justify="space-between" w="100%">
-          {friends?.getUserFriendRequests.map((friend) => (
+          {friends?.getUserFriendRequests.friendRequestsWithFriends.map((friend) => (
             <Friend data={friend} key={friend.friend._id} />
           ))}
         </Flex>
