@@ -64,6 +64,42 @@ const cursorPagination = (): Resolver => {
   };
 };
 
+const cursorCreatorPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const fields = fieldInfos.filter((field)=>field.arguments.creatorId === info.variables.creatorId)
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItInTheCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "posts"
+    );
+    info.partial = !isItInTheCache;
+    let hasMore = true;
+    const results: string[] = [];
+    fields.forEach((fi) => {
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, "posts") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+      results.push(...data);
+    });
+    return {
+      __typename: "PaginatedPosts",
+      hasMore,
+      posts: results,
+    };
+  };
+};
+
 const commentPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;
@@ -117,7 +153,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
       resolvers: {
         Query: {
           posts: cursorPagination(),
-          getPostsByCreatorId: cursorPagination(),
+          getPostsByCreatorId: cursorCreatorPagination(),
           getPostComments: commentPagination(),
         },
       },
@@ -224,10 +260,8 @@ export const createUrqlClient = (ssrExchange: any) => ({
             const getImage = allFields.filter(
               (info) => info.fieldName === "getImage"
             );
-            console.log(getImage)
             getImage.forEach((fi) => {
               const key = cache.resolve("Query", fi.fieldKey) as string;
-              console.log(fi)
               cache.invalidate("Query", "getImage", fi.arguments || {});
             });
           },
