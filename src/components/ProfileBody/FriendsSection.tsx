@@ -14,7 +14,7 @@ interface Props {
 const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
   const [{ data: count }] = useFriendCountQuery({ variables: { userId: id } });
   const [{ data: friends }] = useGetUserFriendRequestsQuery({
-    variables: { userId: id },
+    variables: { userId: id, limit: 2 },
   });
 
   return (

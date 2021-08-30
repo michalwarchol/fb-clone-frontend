@@ -254,6 +254,7 @@ export type QueryCommentCountArgs = {
 
 
 export type QueryGetUserFriendRequestsArgs = {
+  limit?: Maybe<Scalars['Int']>;
   userId?: Maybe<Scalars['Int']>;
 };
 
@@ -604,6 +605,7 @@ export type GetUserByIdQuery = (
 
 export type GetUserFriendRequestsQueryVariables = Exact<{
   userId?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -960,8 +962,8 @@ export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQ
   return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
 };
 export const GetUserFriendRequestsDocument = gql`
-    query GetUserFriendRequests($userId: Int) {
-  getUserFriendRequests(userId: $userId) {
+    query GetUserFriendRequests($userId: Int, $limit: Int) {
+  getUserFriendRequests(userId: $userId, limit: $limit) {
     friendRequest {
       ...RegularFriendRequest
     }
