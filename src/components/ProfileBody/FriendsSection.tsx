@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import {
   useFriendCountQuery,
@@ -18,7 +18,7 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
   });
 
   return (
-    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px">
+    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w="100%">
       <Flex align="center" justify="space-between">
         <Heading
           fontSize="22px"

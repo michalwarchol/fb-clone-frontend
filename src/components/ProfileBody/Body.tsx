@@ -1,17 +1,10 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import {
-  useGetPostsByCreatorIdQuery,
-  useLoggedUserQuery,
-  User,
-  UserRequest,
-} from "../../generated/graphql";
-import { isServer } from "../../utils/isServer";
-import PostContainer from "../Post/PostContainer";
-import PostCreator from "../PostCreator/PostCreator";
+import { User, UserRequest } from "../../generated/graphql";
 import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
-import FriendSection from "./FriendsSection";
+import FriendsTab from "./FriendsTab";
+import PostsTab from "./PostsTab";
 
 interface Props {
   editable: boolean;
@@ -28,18 +21,23 @@ const Body: React.FC<Props> = ({
   user,
   avatarImage,
   bannerImage,
-  isFriend
+  isFriend,
 }) => {
-  const [{ data }] = useLoggedUserQuery({
-    pause: isServer,
-  });
-
-  const [{ data: userPosts }] = useGetPostsByCreatorIdQuery({
-    variables: { creatorId: user?._id, limit: 10 },
-    pause: !user
-  });
-  
   const [activeTab, setActiveTab] = useState<number>(1);
+
+  let content;
+  if (activeTab == 1) {
+    content = (
+      <PostsTab
+        setActiveTab={setActiveTab}
+        user={user}
+        id={id}
+        editable={editable}
+      />
+    );
+  } else if (activeTab == 2) {
+    content = <FriendsTab />;
+  }
 
   return (
     <Flex
@@ -62,7 +60,7 @@ const Body: React.FC<Props> = ({
           avatarImage={avatarImage}
           bannerImage={bannerImage}
         />
-        <Box w={{ base: "100%", md: "940px" }} my="20px">
+        <Box w={{ base: "100%", lg: "940px" }} my="20px">
           <Text
             textAlign="center"
             fontWeight="bold"
@@ -82,72 +80,61 @@ const Body: React.FC<Props> = ({
             </Text>
           )}
         </Box>
-        <Divider
-          orientation="horizontal"
-          borderColor="gray.400"
-          w={{ base: "100%", md: "940px" }}
-        />
-        <Flex py="4px" w={{ base: "100%", md: "940px" }} justify="space-between">
-          <Flex>
-            <Box
-              borderBottom={activeTab == 1 ? "4px solid" : undefined}
-              color={activeTab == 1 ? "active" : "textPrimary"}
-              borderColor="active"
-              mr="6px"
-            >
-              <Button variant="basic" py="30px" onClick={() => setActiveTab(1)}>
-                Posts
-              </Button>
-            </Box>
-            <Box
-              borderBottom={activeTab == 2 ? "4px solid" : undefined}
-              color={activeTab == 2 ? "active" : "textPrimary"}
-              borderColor="active"
-              mr="6px"
-            >
-              <Button variant="basic" py="30px" onClick={() => setActiveTab(2)}>
-                Friends
-              </Button>
-            </Box>
-            <Box
-              borderBottom={activeTab == 3 ? "4px solid" : undefined}
-              color={activeTab == 3 ? "active" : "textPrimary"}
-              borderColor="active"
-              mr="6px"
-            >
-              <Button variant="basic" py="30px" onClick={() => setActiveTab(3)}>
-                Photos
-              </Button>
-            </Box>
-          </Flex>
+        <Box w={{ base: "100%", lg: "940px" }} mt="20px">
+          <Divider orientation="horizontal" borderColor="gray.400" />
+          <Flex py="4px" justify="space-between">
+            <Flex>
+              <Box
+                borderBottom={activeTab == 1 ? "4px solid" : undefined}
+                color={activeTab == 1 ? "active" : "textPrimary"}
+                borderColor="active"
+                mr="6px"
+              >
+                <Button
+                  variant="basic"
+                  py="30px"
+                  onClick={() => setActiveTab(1)}
+                >
+                  Posts
+                </Button>
+              </Box>
+              <Box
+                borderBottom={activeTab == 2 ? "4px solid" : undefined}
+                color={activeTab == 2 ? "active" : "textPrimary"}
+                borderColor="active"
+                mr="6px"
+              >
+                <Button
+                  variant="basic"
+                  py="30px"
+                  onClick={() => setActiveTab(2)}
+                >
+                  Friends
+                </Button>
+              </Box>
+              <Box
+                borderBottom={activeTab == 3 ? "4px solid" : undefined}
+                color={activeTab == 3 ? "active" : "textPrimary"}
+                borderColor="active"
+                mr="6px"
+              >
+                <Button
+                  variant="basic"
+                  py="30px"
+                  onClick={() => setActiveTab(3)}
+                >
+                  Photos
+                </Button>
+              </Box>
+            </Flex>
 
-          <Flex align="center">
-            {!editable && <AddFriendButton user={user} isFriend={isFriend} />}
+            <Flex align="center">
+              {!editable && <AddFriendButton user={user} isFriend={isFriend} />}
+            </Flex>
           </Flex>
-        </Flex>
-      </Flex>
-      <Flex
-        direction="row"
-        bg="primary"
-        w={{ base: "100%", md: "940px" }}
-        mt="16px"
-      >
-        <Box w="40%" mr="16px">
-          <FriendSection id={id} setActiveTab={setActiveTab}/>
-        </Box>
-        <Box w="60%" borderRadius="8px">
-          {editable && <PostCreator loggedUser={data?.loggedUser} />}
-          <Box w="100%">
-            {!userPosts ? (
-              <div>loading</div>
-            ) : (
-              userPosts.getPostsByCreatorId.posts.map((post) => (
-                <PostContainer post={post} key={post._id} />
-              ))
-            )}
-          </Box>
         </Box>
       </Flex>
+      {content}
     </Flex>
   );
 };

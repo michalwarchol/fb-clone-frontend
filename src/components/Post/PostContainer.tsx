@@ -50,7 +50,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       mb="20px"
       pt="10px"
       pb="4px"
-      w="100%"
+      w={{base: "451px", sm: "500px", lg: "100%"}}
     >
       <Flex px="10px" mb="10px">
         <Avatar src={image?.getImage} />

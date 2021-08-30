@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   Image,
+  Text
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
@@ -45,9 +46,9 @@ const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
   }, [uploadedImage]);
 
   return (
-    <Flex position="relative" justify="center" w={{ base: "100%", md: "940px" }}>
+    <Flex position="relative" justify="center" w={{ base: "100%", lg: "940px" }}>
       <Avatar size="2xl" src={avatarImage} zIndex="99" position="absolute" bottom="-20px"/>
-      {editable && <FormControl position="absolute" bottom="-20px" left="60px" zIndex="100">
+      {editable && <FormControl position="absolute" bottom="-20px" left="53%" zIndex="100" w="60px">
             <FormLabel textAlign="center">
               <IconButton
                 aria-label="photo"
@@ -77,7 +78,7 @@ const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
       <Flex
         boxShadow="inset 0 -40px 80px -80px black"
         w="100%"
-        h="360px"
+        h={{base: "180px", lg: "300px"}}
         justify="center"
         align="flex-end"
         borderRadius="0 0 10px 10px"
@@ -85,7 +86,7 @@ const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
         overflow="hidden"
         Index="88"
       >
-        <Image src={bannerImage} position="absolute" objectFit="contain" />
+        <Image src={bannerImage} position="absolute" />
         <Box position="relative" bottom="-10px">
           
         </Box>
@@ -100,13 +101,14 @@ const Banner: React.FC<Props> = ({ editable, avatarImage, bannerImage }) => {
           <FormLabel textAlign="center">
             <Button
               leftIcon={<FaCamera />}
+              iconSpacing={{base: "0", lg: "8px"}}
               color="primary"
               onClick={() => {
                 bannerRef.current.value = null;
                 bannerRef.current.click();
               }}
             >
-              Add Cover Photo
+              <Text display={{base: "none", lg: "block"}}>Add Cover Photo</Text>
             </Button>
           </FormLabel>
           <InputGroup display="none">
