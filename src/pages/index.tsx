@@ -21,7 +21,7 @@ const Index = () => {
       router.replace("/login");
     } else if (!fetching && data?.loggedUser) {
       setBody(
-        <Box maxW="100vw" color="textPrimary" bg={"primary"}>
+        <Box maxW="100vw"  minH="100vh" color="textPrimary" bg={"primary"}>
           <Navbar loggedUser={data && data.loggedUser} />
           <Content loggedUser={data && data.loggedUser} />
         </Box>
