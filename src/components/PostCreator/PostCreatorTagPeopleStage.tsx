@@ -80,7 +80,7 @@ const PostCreatorTagPeopleStage: React.FC<Props> = ({ setStage, tagged, setTagge
               bg="hover"
             />
           </InputGroup>
-          <Button variant="base" color="active">
+          <Button variant="base" color="active" onClick={()=>setStage("basic")}>
             Done
           </Button>
         </Flex>

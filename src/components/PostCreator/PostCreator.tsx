@@ -15,6 +15,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FullUser } from "../../generated/graphql";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import PostCreatorModal from "./PostCreatorModal";
+import { FaUserTag } from "react-icons/fa";
 
 interface Props {
   loggedUser: FullUser;
@@ -55,9 +56,9 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
         </Button>
       </Flex>
       <Divider orientation="horizontal" mt={5} mb={5} borderColor="gray.400" />
-      <Flex color="textPrimary">
-        <FormControl w="50%">
-          <FormLabel textAlign="center">
+      <Flex color="textPrimary" justify="space-between">
+        <FormControl w="33%">
+          <FormLabel textAlign="center" mx="4px">
             <Button
               leftIcon={<MdPhotoLibrary />}
               variant="basic"
@@ -81,11 +82,24 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
             />
           </InputGroup>
         </FormControl>
-
+        <Button
+          leftIcon={<FaUserTag />}
+          variant="basic"
+          mx="4px"
+          w="33%"
+          color="blue.500"
+          onClick={() => {
+            setStage("tag");
+            onOpen();
+          }}
+        >
+          <Text color="textPrimary">Tag People</Text>
+        </Button>
         <Button
           leftIcon={<MdTagFaces />}
           variant="basic"
-          w="50%"
+          mx="4px"
+          w="33%"
           color="yellow.400"
           onClick={() => {
             setStage("activity");
