@@ -32,6 +32,7 @@ interface Props {
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;
   setImg: React.Dispatch<React.SetStateAction<File>>;
+  tagged: { _id: number; username: string }[];
 }
 
 const PostCreatorBasicStage: React.FC<Props> = ({
@@ -41,8 +42,39 @@ const PostCreatorBasicStage: React.FC<Props> = ({
   setStage,
   img,
   setImg,
+  tagged,
 }) => {
   const ref = useRef<HTMLInputElement>();
+
+  const handlePostStatus = () => {
+    let text = loggedUser && loggedUser.user.username;
+    if (
+      !!formikProps.values.feeling ||
+      !!formikProps.values.activity ||
+      tagged.length > 0
+    ) {
+      text += " is ";
+    }
+    if (!!formikProps.values.feeling) {
+      text += `feeling ${formikProps.values.feeling} `;
+    }
+
+    if (!!formikProps.values.activity) {
+      text += `${formikProps.values.activity} `;
+    }
+    if (tagged.length > 0) {
+      text += `with ${tagged[0].username}`;
+    }
+    if (tagged.length > 1) {
+      text += `, ${tagged[1].username} `;
+    }
+    if (tagged.length > 2) {
+      text += `and ${tagged.length - 2} others`;
+    }
+
+    return text;
+  };
+
   return (
     <>
       <ModalHeader textAlign="center" color="textSecondary">
@@ -58,11 +90,7 @@ const PostCreatorBasicStage: React.FC<Props> = ({
         <Flex>
           <Avatar src={loggedUser.avatarImage} />
           <Text color="textPrimary" fontWeight="bold">
-            {loggedUser && loggedUser.user.username}{" "}
-            {!!formikProps.values.feeling &&
-              `is feeling ${formikProps.values.feeling}`}
-            {!!formikProps.values.activity &&
-              `is ${formikProps.values.activity}`}
+            {handlePostStatus()}
           </Text>
         </Flex>
         <Textarea
@@ -129,7 +157,7 @@ const PostCreatorBasicStage: React.FC<Props> = ({
                   bg="tertiary"
                   mr="4px"
                   onClick={() => {
-                    ref.current.value=null;
+                    ref.current.value = null;
                     ref.current.click();
                   }}
                 />
@@ -156,6 +184,8 @@ const PostCreatorBasicStage: React.FC<Props> = ({
               bg="tertiary"
               fontSize="28px"
               borderRadius="50%"
+              mr="12px"
+              onClick={() => setStage("tag")}
             />
             <IconButton
               icon={<MdTagFaces />}
@@ -177,8 +207,8 @@ const PostCreatorBasicStage: React.FC<Props> = ({
             formikProps.isSubmitting ||
             (formikProps.values.text.length < 1 &&
               formikProps.values.activity.length < 1 &&
-              formikProps.values.feeling.length < 1 && 
-              img==null)
+              formikProps.values.feeling.length < 1 &&
+              img == null)
           }
           _disabled={{
             backgroundColor: "gray",

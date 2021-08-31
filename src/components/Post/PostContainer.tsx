@@ -14,6 +14,7 @@ import {
   Post,
   useCommentCountQuery,
   useGetImageQuery,
+  useGetUserByIdQuery,
 } from "../../generated/graphql";
 import { parseAdvancedDate } from "../../utils/parseAdvancedDate";
 import { BiComment } from "react-icons/bi";
@@ -28,6 +29,7 @@ interface PostProps {
   post: Post;
 }
 const PostContainer: React.FC<PostProps> = ({ post }) => {
+  console.log(post)
   const [openComment, setOpenComment] = useState(false);
   const [{ data }] = useCommentCountQuery({
     variables: { postId: post._id },
@@ -39,10 +41,46 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     pause: !post,
   });
 
+  const handlePostStatus = () => {
+
+    let taggedUsers = post.tagged.map(tag=>{
+      const [{data}] = useGetUserByIdQuery({variables: {id: tag}});
+      return data?.getUserById;
+    })
+
+    let text = post && post.creator.username;
+    if (
+      !!post.feeling ||
+      !!post.activity ||
+      taggedUsers.length > 0
+    ) {
+      text += " is ";
+    }
+    if (!!post.feeling) {
+      text += `feeling ${post.feeling} `;
+    }
+
+    if (!!post.activity) {
+      text += `${post.activity} `;
+    }
+    if (taggedUsers.length > 0) {
+      text += `with ${taggedUsers[0]?.username}`;
+    }
+    if (taggedUsers.length > 1) {
+      text += `, ${taggedUsers[1]?.username} `;
+    }
+    if (taggedUsers.length > 2) {
+      text += `and ${taggedUsers.length - 2} others`;
+    }
+
+    return text;
+  }
+
   const { like, love, care, haha, wow, sad, angry } = post;
   let points = like + love + care + haha + wow + sad + angry;
 
   let date = parseAdvancedDate(post.createdAt);
+
   return (
     <Box
       bg="secondary"
@@ -56,7 +94,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
         <Avatar src={image?.getImage} />
         <Flex direction="column" ml="10px">
           <Heading size="sm">
-            {post.creator.username} {post.activity}
+            {handlePostStatus()}
           </Heading>
           <Text fontSize="14px">{date}</Text>
         </Flex>

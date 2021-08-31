@@ -1,11 +1,12 @@
 import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { FullUser, useCreatePostMutation } from "../../generated/graphql";
 import PostCreatorActivityStage from "./PostCreatorActivityStage";
 import PostCreatorBasicStage from "./PostCreatorBasicStage";
 import PostCreatorDetailActivityStage from "./PostCreatorDetailActivityStage";
 import { inDetail } from "../Activities";
+import PostCreatorTagPeopleStage from "./PostCreatorTagPeopleStage";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -34,6 +35,7 @@ const PostCreatorModal: React.FC<Props> = ({
 }) => {
   const initialRef = React.useRef(null);
   const [, createPost] = useCreatePostMutation();
+  const [tagged, setTagged] = useState<{ _id: number; username: string }[]>([]);
 
   return (
     <Formik
@@ -44,6 +46,7 @@ const PostCreatorModal: React.FC<Props> = ({
             text: values.text,
             feeling: values.feeling,
             activity: values.activity,
+            tagged: tagged.map(tag=>tag._id)
           },
           image: img,
         });
@@ -61,7 +64,7 @@ const PostCreatorModal: React.FC<Props> = ({
             onOverlayClick={() => setStage("basic")}
           >
             <ModalOverlay />
-            <ModalContent maxW="500px" bg="tertiary">
+            <ModalContent maxW="500px" bg="tertiary" maxH="800px">
               {stage == "basic" && (
                 <PostCreatorBasicStage
                   formikProps={formikProps}
@@ -70,6 +73,14 @@ const PostCreatorModal: React.FC<Props> = ({
                   setStage={setStage}
                   img={img}
                   setImg={setImg}
+                  tagged={tagged}
+                />
+              )}
+              {stage == "tag" && (
+                <PostCreatorTagPeopleStage
+                  setStage={setStage}
+                  tagged={tagged}
+                  setTagged={setTagged}
                 />
               )}
               {stage == "activity" && (
