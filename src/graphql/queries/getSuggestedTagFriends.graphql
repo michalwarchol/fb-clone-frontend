@@ -1,0 +1,10 @@
+query GetSuggestedFriendTags($searchName: String){
+  getSuggestedFriendTags(searchName: $searchName) {
+    friend{
+      ...RegularUser
+    }
+    friendRequest {
+        ...RegularFriendRequest
+    }
+  }
+}

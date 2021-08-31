@@ -177,6 +177,7 @@ export type Post = {
   feeling: Scalars['String'];
   activity: Scalars['String'];
   imageId: Scalars['String'];
+  tagged: Array<Scalars['Int']>;
   like: Scalars['Float'];
   love: Scalars['Float'];
   care: Scalars['Float'];
@@ -192,6 +193,7 @@ export type PostInput = {
   text: Scalars['String'];
   feeling: Scalars['String'];
   activity: Scalars['String'];
+  tagged: Array<Scalars['Int']>;
 };
 
 export type Query = {
@@ -210,6 +212,7 @@ export type Query = {
   friendRequests: Array<FriendRequest>;
   getUserFriendRequests: PaginatedRequests;
   getFriendRequest: UserRequest;
+  getSuggestedFriendTags: Array<FriendRequestWithFriend>;
   friendCount: Scalars['Int'];
 };
 
@@ -268,6 +271,11 @@ export type QueryGetUserFriendRequestsArgs = {
 
 export type QueryGetFriendRequestArgs = {
   userId: Scalars['Int'];
+};
+
+
+export type QueryGetSuggestedFriendTagsArgs = {
+  searchName?: Maybe<Scalars['String']>;
 };
 
 
@@ -337,7 +345,7 @@ export type RegularFriendRequestFragment = (
 
 export type RegularPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'imageId' | 'creatorId' | 'createdAt' | 'updatedAt'>
+  & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'tagged' | 'imageId' | 'creatorId' | 'createdAt' | 'updatedAt'>
   & { creator: (
     { __typename?: 'User' }
     & RegularUserFragment
@@ -597,6 +605,25 @@ export type GetPostsByCreatorIdQuery = (
   ) }
 );
 
+export type GetSuggestedFriendTagsQueryVariables = Exact<{
+  searchName?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetSuggestedFriendTagsQuery = (
+  { __typename?: 'Query' }
+  & { getSuggestedFriendTags: Array<(
+    { __typename?: 'FriendRequestWithFriend' }
+    & { friend: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ), friendRequest: (
+      { __typename?: 'FriendRequest' }
+      & RegularFriendRequestFragment
+    ) }
+  )> }
+);
+
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -718,6 +745,7 @@ export const RegularPostFragmentDoc = gql`
   text
   feeling
   activity
+  tagged
   imageId
   ...RegularReactions
   creatorId
@@ -961,6 +989,23 @@ export const GetPostsByCreatorIdDocument = gql`
 
 export function useGetPostsByCreatorIdQuery(options: Omit<Urql.UseQueryArgs<GetPostsByCreatorIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostsByCreatorIdQuery>({ query: GetPostsByCreatorIdDocument, ...options });
+};
+export const GetSuggestedFriendTagsDocument = gql`
+    query GetSuggestedFriendTags($searchName: String) {
+  getSuggestedFriendTags(searchName: $searchName) {
+    friend {
+      ...RegularUser
+    }
+    friendRequest {
+      ...RegularFriendRequest
+    }
+  }
+}
+    ${RegularUserFragmentDoc}
+${RegularFriendRequestFragmentDoc}`;
+
+export function useGetSuggestedFriendTagsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendTagsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetSuggestedFriendTagsQuery>({ query: GetSuggestedFriendTagsDocument, ...options });
 };
 export const GetUserByIdDocument = gql`
     query GetUserById($id: Int!) {
