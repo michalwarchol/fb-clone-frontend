@@ -1,22 +1,47 @@
-import { Avatar, Box, Flex } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Icon } from "@chakra-ui/react";
 import React from "react";
 import { FullUser, usePostsQuery } from "../../generated/graphql";
 import PostCreator from "../PostCreator/PostCreator";
 import PostContainer from "../Post/PostContainer";
 import PageButton from "./PageButton";
 import { isServer } from "../../utils/isServer";
+import { FaUserFriends } from "react-icons/fa";
 
 interface Props {
   loggedUser: FullUser;
 }
 
-const Content: React.FC<Props> = ({loggedUser}) => {
-  const [{ data }] = usePostsQuery({ variables: { limit: 10 }, pause: isServer });
+const Content: React.FC<Props> = ({ loggedUser }) => {
+  const [{ data }] = usePostsQuery({
+    variables: { limit: 10 },
+    pause: isServer,
+  });
   return (
     <Flex maxW="1920px" justify="center" mt="40px">
-      <Flex mt="20px" w={{base: "500px", md: "680px"}}>
+      <Flex mt="20px" w={{ base: "500px", md: "680px" }}>
         <Box position="fixed" left="0" w="18%" pl="4px">
-          <PageButton text={loggedUser?.user.username} image={<Avatar src={loggedUser.avatarImage} />} link={"/profile/"+loggedUser?.user._id} />
+          <PageButton
+            text={loggedUser?.user.username}
+            image={<Avatar src={loggedUser.avatarImage} />}
+            link={"/profile/" + loggedUser?.user._id}
+          />
+          <PageButton
+            text="Friends"
+            image={
+              <Flex
+                w="48px"
+                h="48px"
+                bgGradient="linear(to-r, teal.500,green.500)"
+                color="linear(to-r, teal.500,green.500)"
+                borderRadius="50%"
+                justify="center"
+                align="center"
+              >
+                <Icon as={FaUserFriends} w="38px" h="38px" />
+              </Flex>
+            }
+            link="/friends"
+          />
         </Box>
         <Flex w="100%" direction="column">
           <PostCreator loggedUser={loggedUser} />
