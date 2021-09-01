@@ -1,6 +1,8 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { User, UserRequest } from "../../generated/graphql";
+import { useGetFriendRequestQuery, useGetImageQuery, useGetUserByIdQuery } from "../../generated/graphql";
+import { isServer } from "../../utils/isServer";
 import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
 import FriendsTab from "./FriendsTab";
@@ -9,28 +11,45 @@ import PostsTab from "./PostsTab";
 interface Props {
   editable: boolean;
   id: number;
-  user: User;
-  avatarImage: string;
-  bannerImage: string;
-  isFriend: UserRequest;
 }
 
 const Body: React.FC<Props> = ({
   editable,
   id,
-  user,
-  avatarImage,
-  bannerImage,
-  isFriend,
 }) => {
   const [activeTab, setActiveTab] = useState<number>(1);
+
+  const [{ data: user }] = useGetUserByIdQuery({
+    variables: { id },
+    pause: isServer,
+  });
+
+  const [{ data: avatarImage }] = useGetImageQuery({
+    variables: { imageId: user?.getUserById.avatarId },
+    pause: !user?.getUserById,
+  });
+
+  const [{ data: bannerImage }] = useGetImageQuery({
+    variables: { imageId: user?.getUserById.bannerId },
+    pause: !user?.getUserById,
+  });
+
+  const [{ data: isFriend }] = useGetFriendRequestQuery({
+    variables: { userId: id }
+  });
+
+  const router = useRouter();
+  let margin = "0";
+  if(router.pathname=="/friends"){
+    margin = "360px";
+  }
 
   let content;
   if (activeTab == 1) {
     content = (
       <PostsTab
         setActiveTab={setActiveTab}
-        user={user}
+        user={user?.getUserById}
         id={id}
         editable={editable}
       />
@@ -42,6 +61,7 @@ const Body: React.FC<Props> = ({
   return (
     <Flex
       mt="20px"
+      ml={margin}
       w="100%"
       justify="center"
       align="center"
@@ -57,8 +77,8 @@ const Body: React.FC<Props> = ({
       >
         <Banner
           editable={editable}
-          avatarImage={avatarImage}
-          bannerImage={bannerImage}
+          avatarImage={avatarImage?.getImage}
+          bannerImage={bannerImage?.getImage}
         />
         <Box w={{ base: "100%", lg: "876px" }} my="20px">
           <Text
@@ -67,7 +87,7 @@ const Body: React.FC<Props> = ({
             fontSize="32px"
             color="textSecondary"
           >
-            {user?.username}
+            {user?.getUserById.username}
           </Text>
           {editable && (
             <Text
@@ -129,7 +149,7 @@ const Body: React.FC<Props> = ({
             </Flex>
 
             <Flex align="center">
-              {!editable && <AddFriendButton user={user} isFriend={isFriend} />}
+              {!editable && <AddFriendButton user={user?.getUserById} isFriend={isFriend?.getFriendRequest} />}
             </Flex>
           </Flex>
         </Box>

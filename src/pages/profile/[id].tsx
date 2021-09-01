@@ -6,9 +6,6 @@ import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Body from "../../components/ProfileBody/Body";
 import {
-  useGetFriendRequestQuery,
-  useGetImageQuery,
-  useGetUserByIdQuery,
   useLoggedUserQuery,
 } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
@@ -22,27 +19,6 @@ const Profile: NextPage<Props> = ({ id }) => {
   const [{ data, fetching }] = useLoggedUserQuery({
     pause: isServer,
   });
-
-  const [{ data: user }] = useGetUserByIdQuery({
-    variables: { id: parseInt(id) },
-    pause: isServer,
-  });
-
-  const [{ data: avatarImage }] = useGetImageQuery({
-    variables: { imageId: user?.getUserById.avatarId },
-    pause: !user?.getUserById,
-  });
-
-  const [{ data: bannerImage }] = useGetImageQuery({
-    variables: { imageId: user?.getUserById.bannerId },
-    pause: !user?.getUserById,
-  });
-
-  const [{ data: isFriend }] = useGetFriendRequestQuery({
-    variables: { userId: parseInt(id) },
-    pause: !data,
-  });
-
   const router = useRouter();
 
   useEffect(() => {
@@ -58,10 +34,6 @@ const Profile: NextPage<Props> = ({ id }) => {
     <Body
       editable={data.loggedUser.user._id == parseInt(id)}
       id={parseInt(id)}
-      user={user?.getUserById}
-      avatarImage={avatarImage?.getImage}
-      bannerImage={bannerImage?.getImage}
-      isFriend={isFriend?.getFriendRequest}
     />
   </Box>
   }
