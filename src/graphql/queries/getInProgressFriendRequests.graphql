@@ -1,0 +1,10 @@
+query GetInProgressFriendRequests {
+  getInProgressFriendRequests{
+    friend {
+      ...RegularUser
+    }
+    friendRequest{
+      ...RegularFriendRequest
+    }
+  }
+}
