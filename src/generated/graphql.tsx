@@ -213,6 +213,7 @@ export type Query = {
   getUserFriendRequests: PaginatedRequests;
   getFriendRequest: UserRequest;
   getSuggestedFriendTags: Array<FriendRequestWithFriend>;
+  getInProgressFriendRequests: Array<FriendRequestWithFriend>;
   friendCount: Scalars['Int'];
 };
 
@@ -561,6 +562,23 @@ export type GetImageQueryVariables = Exact<{
 export type GetImageQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'getImage'>
+);
+
+export type GetInProgressFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInProgressFriendRequestsQuery = (
+  { __typename?: 'Query' }
+  & { getInProgressFriendRequests: Array<(
+    { __typename?: 'FriendRequestWithFriend' }
+    & { friend: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ), friendRequest: (
+      { __typename?: 'FriendRequest' }
+      & RegularFriendRequestFragment
+    ) }
+  )> }
 );
 
 export type GetPostCommentsQueryVariables = Exact<{
@@ -953,6 +971,23 @@ export const GetImageDocument = gql`
 
 export function useGetImageQuery(options: Omit<Urql.UseQueryArgs<GetImageQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetImageQuery>({ query: GetImageDocument, ...options });
+};
+export const GetInProgressFriendRequestsDocument = gql`
+    query GetInProgressFriendRequests {
+  getInProgressFriendRequests {
+    friend {
+      ...RegularUser
+    }
+    friendRequest {
+      ...RegularFriendRequest
+    }
+  }
+}
+    ${RegularUserFragmentDoc}
+${RegularFriendRequestFragmentDoc}`;
+
+export function useGetInProgressFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetInProgressFriendRequestsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetInProgressFriendRequestsQuery>({ query: GetInProgressFriendRequestsDocument, ...options });
 };
 export const GetPostCommentsDocument = gql`
     query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
