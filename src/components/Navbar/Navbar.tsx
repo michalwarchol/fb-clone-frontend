@@ -1,19 +1,22 @@
-import { Flex, Grid, GridItem } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Icon } from "@chakra-ui/react";
 import React from "react";
+import { FaFacebookF, FaUserFriends } from "react-icons/fa";
+import NextLink from "next/link";
 import { FullUser } from "../../generated/graphql";
 import Options from "./Options";
+import { AiFillHome } from "react-icons/ai";
+import PageButton from "./PageButton";
 
 interface Props {
   loggedUser: FullUser;
 }
 
-const Navbar: React.FC<Props> = ({loggedUser}) => {
+const Navbar: React.FC<Props> = ({ loggedUser }) => {
   return (
     <Grid
       templateColumns="repeat(12, 1fr)"
-      p={1}
       bg="secondary"
-      h={"48px"}
+      h={"56px"}
       position="fixed"
       w="100%"
       left="0%"
@@ -23,14 +26,30 @@ const Navbar: React.FC<Props> = ({loggedUser}) => {
       borderColor="hover"
     >
       <GridItem colStart={1} colEnd={3}>
-        logo and search
+        <NextLink href="/">
+          <Flex align="center" h="100%">
+            <Icon
+              as={FaFacebookF}
+              cursor="pointer"
+              background="active"
+              borderRadius="50%"
+              color="white"
+              pt="10px"
+              fontSize="46px"
+              ml="22px"
+            />
+          </Flex>
+        </NextLink>
       </GridItem>
-      <GridItem colStart={4} colEnd={9}>
-        subpages
+      <GridItem colStart={4} colEnd={9} p="4px 4px 0 4px">
+        <Flex justify="center" h="100%">
+          <PageButton route="/" MyIcon={AiFillHome} />
+          <PageButton route="/friends" MyIcon={FaUserFriends} />
+        </Flex>
       </GridItem>
-      <GridItem colStart={11} colEnd={13}>
-        <Flex justify="flex-end" mr="10px">
-          <Options loggedUser={loggedUser}/>
+      <GridItem colStart={9} colEnd={13}>
+        <Flex justify="flex-end" align="center" h="100%" mr="10px" p="4px">
+          <Options loggedUser={loggedUser} />
         </Flex>
       </GridItem>
     </Grid>

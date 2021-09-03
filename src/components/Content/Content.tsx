@@ -17,9 +17,9 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
     pause: isServer,
   });
   return (
-    <Flex maxW="1920px" justify="center" mt="40px">
+    <Flex maxW="1920px" justify="center" mt="56px">
       <Flex mt="20px" w={{ base: "500px", md: "680px" }}>
-        <Box position="fixed" left="0" w="18%" pl="4px">
+        <Box position="fixed" left="0" w="18%" pl="4px" display={{base: "none", xl: "block"}}>
           <PageButton
             text={loggedUser?.user.username}
             image={<Avatar src={loggedUser.avatarImage} />}

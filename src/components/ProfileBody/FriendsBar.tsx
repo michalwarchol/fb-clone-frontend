@@ -15,7 +15,7 @@ const FriendsBar: React.FC<Props> = ({ setId }) => {
       h="100vh"
       position="fixed"
       left="0"
-      pt="58px"
+      pt="68px"
       px="8px"
       bg="secondary"
       borderRight="1px"
