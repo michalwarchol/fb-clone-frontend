@@ -9,7 +9,6 @@ interface Props {
 
 const FriendsBar: React.FC<Props> = ({ setId }) => {
   const [{ data }] = useGetInProgressFriendRequestsQuery();
-  console.log(data);
   return (
     <Box
       w="360px"

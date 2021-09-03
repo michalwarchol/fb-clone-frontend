@@ -29,7 +29,6 @@ interface PostProps {
   post: Post;
 }
 const PostContainer: React.FC<PostProps> = ({ post }) => {
-  console.log(post)
   const [openComment, setOpenComment] = useState(false);
   const [{ data }] = useCommentCountQuery({
     variables: { postId: post._id },
