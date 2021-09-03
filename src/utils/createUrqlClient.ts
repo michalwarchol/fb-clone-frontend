@@ -5,7 +5,10 @@ import {
   LoggedUserQuery,
   LoggedUserDocument,
   LoginMutation,
-  RegisterMutation
+  RegisterMutation,
+  AcceptFriendRequestMutation,
+  GetInProgressFriendRequestsQuery,
+  GetInProgressFriendRequestsDocument,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -67,7 +70,9 @@ const cursorCreatorPagination = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
-    const fields = fieldInfos.filter((field)=>field.arguments.creatorId === info.variables.creatorId)
+    const fields = fieldInfos.filter(
+      (field) => field.arguments.creatorId === info.variables.creatorId
+    );
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined;
@@ -140,12 +145,13 @@ const friendRequestPagination = (): Resolver => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
     const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
-    const fields = fieldInfos.filter((field)=>field.arguments.userId === info.variables.userId)
+    const fields = fieldInfos.filter(
+      (field) => field.arguments.userId === info.variables.userId
+    );
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined;
     }
-    
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     const isItInTheCache = cache.resolve(
@@ -156,30 +162,33 @@ const friendRequestPagination = (): Resolver => {
     let hasMore = true;
     const results: string[] = [];
 
-    if(fieldArgs["skip"]==undefined){
-      fields.forEach(fi=>{
+    if (fieldArgs["skip"] == undefined) {
+      fields.forEach((fi) => {
         const key = cache.resolve(entityKey, fi.fieldKey) as string;
-        const data = cache.resolve(key, "friendRequestsWithFriends") as string[];
+        const data = cache.resolve(
+          key,
+          "friendRequestsWithFriends"
+        ) as string[];
         const _hasMore = cache.resolve(key, "hasMore");
-        if(fi.arguments.skip==undefined){
+        if (fi.arguments.skip == undefined) {
           if (!_hasMore) {
             hasMore = _hasMore as boolean;
           }
           results.push(...data);
         }
-      })
+      });
       return {
         __typename: "PaginatedRequests",
         hasMore,
         friendRequestsWithFriends: results,
-      }
+      };
     }
 
     fields.forEach((fi) => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "friendRequestsWithFriends") as string[];
       const _hasMore = cache.resolve(key, "hasMore");
-      if(fi.arguments.skip!=undefined){
+      if (fi.arguments.skip != undefined) {
         if (!_hasMore) {
           hasMore = _hasMore as boolean;
         }
@@ -209,14 +218,14 @@ export const createUrqlClient = (ssrExchange: any) => ({
         PaginatedRequests: () => null,
         FriendRequest: () => null,
         UserRequest: () => null,
-        FriendRequestWithFriend: () => null
+        FriendRequestWithFriend: () => null,
       },
       resolvers: {
         Query: {
           posts: cursorPagination(),
           getPostsByCreatorId: cursorCreatorPagination(),
           getPostComments: commentPagination(),
-          getUserFriendRequests: friendRequestPagination()
+          getUserFriendRequests: friendRequestPagination(),
         },
       },
       updates: {
@@ -234,7 +243,11 @@ export const createUrqlClient = (ssrExchange: any) => ({
               (info) => info.fieldName === "getPostsByCreatorId"
             );
             creatorPosts.forEach((fi) => {
-              cache.invalidate("Query", "getPostsByCreatorId", fi.arguments || {});
+              cache.invalidate(
+                "Query",
+                "getPostsByCreatorId",
+                fi.arguments || {}
+              );
             });
           },
           createComment: (result, args, cache, info) => {
@@ -323,7 +336,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
               (info) => info.fieldName === "getImage"
             );
             getImage.forEach((fi) => {
-              const key = cache.resolve("Query", fi.fieldKey) as string;
               cache.invalidate("Query", "getImage", fi.arguments || {});
             });
           },
@@ -346,6 +358,22 @@ export const createUrqlClient = (ssrExchange: any) => ({
             getFriendRequest.forEach((fi) => {
               cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
             });
+
+            betterUpdateQuery<
+              AcceptFriendRequestMutation,
+              GetInProgressFriendRequestsQuery
+            >(
+              cache,
+              { query: GetInProgressFriendRequestsDocument },
+              _result,
+              (result, query) => {
+                query.getInProgressFriendRequests =
+                  query.getInProgressFriendRequests.filter(
+                    (request) => request.friend._id != args.userId
+                  );
+                return query;
+              }
+            );
           },
           removeFriendRequest: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
@@ -356,7 +384,23 @@ export const createUrqlClient = (ssrExchange: any) => ({
             getFriendRequest.forEach((fi) => {
               cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
             });
-          }
+
+            betterUpdateQuery<
+              AcceptFriendRequestMutation,
+              GetInProgressFriendRequestsQuery
+            >(
+              cache,
+              { query: GetInProgressFriendRequestsDocument },
+              _result,
+              (result, query) => {
+                query.getInProgressFriendRequests =
+                  query.getInProgressFriendRequests.filter(
+                    (request) => request.friend._id != args.userId
+                  );
+                return query;
+              }
+            );
+          },
         },
       },
     }),
