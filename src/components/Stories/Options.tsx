@@ -29,37 +29,38 @@ const Options: React.FC<Props> = ({ setFont, setText, setGradient }) => {
         placeholder="Start typing"
         resize="none"
         mb="20px"
+        borderColor="hover"
         onChange={(e) => setText(e.currentTarget.value.slice(0, 250))}
         h="220px"
       />
       <Select
-        placeContent={"fdfd"}
+        borderColor="hover"
         onChange={(e) => {
           setFont(e.currentTarget.value);
           setFontFamily(e.currentTarget.value);
         }}
         fontFamily={fontFamily}
       >
-        <option style={{ fontFamily: "Courier New" }} value="Courier New">
+        <option style={{ fontFamily: "Courier New", background: "#242526", color: "#D5D6DA" }} value="Courier New">
           CLEAN
         </option>
-        <option style={{ fontFamily: "Verdana" }} value="Verdana">
+        <option style={{ fontFamily: "Verdana", background: "#242526", color: "#D5D6DA" }} value="Verdana">
           Simple
         </option>
         <option
-          style={{ fontFamily: "Brush Script MT" }}
+          style={{ fontFamily: "Brush Script MT", background: "#242526", color: "#D5D6DA" }}
           value="Brush Script MT"
         >
           Casual
         </option>
-        <option style={{ fontFamily: "Garamond" }} value="Garamond">
+        <option style={{ fontFamily: "Garamond", background: "#242526", color: "#D5D6DA" }} value="Garamond">
           Fancy
         </option>
-        <option style={{ fontFamily: "Arial Black" }} value="Arial Black">
+        <option style={{ fontFamily: "Arial Black", background: "#242526", color: "#D5D6DA" }} value="Arial Black">
           Headline
         </option>
       </Select>
-      <Box border="1px" borderRadius="6px" p="10px" mt="20px">
+      <Box border="1px" borderColor="hover" borderRadius="6px" p="10px" mt="20px">
         <Text mb="10px">Backgrounds</Text>
         <HStack {...group}>
           {bgs.map((value) => {

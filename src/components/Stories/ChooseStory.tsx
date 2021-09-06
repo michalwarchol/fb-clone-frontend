@@ -19,14 +19,13 @@ const ChooseStory: React.FC<Props> = ({ setStoryType, setUploadedImage }) => {
             MyIcon={MdPhotoLibrary}
             text="Create A Photo Story"
             type="photo"
-            onClick={setStoryType}
             bg="linear(to-r, red.500, yellow.500)"
           />
         </FormLabel>
         <InputGroup display="none">
           <Input
             type="file"
-            accept="image/png"
+            accept="image/png,image/jpeg"
             ref={ref}
             onChange={(e) => setUploadedImage(e.target.files[0])}
           />

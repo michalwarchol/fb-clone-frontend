@@ -1,13 +1,15 @@
+import { Image } from "@chakra-ui/image";
 import { Flex, Text } from "@chakra-ui/layout";
 import React from "react";
 
 interface Props {
-  text: string;
-  font: string;
-  gradient: string;
+  text?: string;
+  font?: string;
+  gradient?: string;
+  image?: File;
 }
 
-const Preview: React.FC<Props> = ({ text, gradient, font }) => {
+const Preview: React.FC<Props> = ({ text, gradient, font, image }) => {
   return (
     <Flex
       bg="secondary"
@@ -16,12 +18,14 @@ const Preview: React.FC<Props> = ({ text, gradient, font }) => {
       p="20px"
       direction="column"
       borderRadius="8px"
+      display={{ base: "none", md: "flex" }}
     >
       <Text pb="10px" fontWeight="bold">
         Preview
       </Text>
       <Flex
-        w="96%"
+        alignSelf="center"
+        w="99%"
         bg="primary"
         justify="center"
         borderRadius="8px"
@@ -33,19 +37,25 @@ const Preview: React.FC<Props> = ({ text, gradient, font }) => {
           w="420px"
           my="12px"
           borderRadius="8px"
-          bgGradient={gradient}
+          borderWidth="1px"
+          borderColor="hover"
+          bgGradient={gradient ? gradient : undefined}
           align="center"
           justify="center"
         >
-          <Text
-            fontFamily={font}
-            fontSize="30px"
-            w="100%"
-            wordBreak="break-word"
-            textAlign="center"
-          >
-            {!!text ? text : "START TYPING"}
-          </Text>
+          {image ? (
+              <Image src={URL.createObjectURL(image)} objectFit="cover" w="100%" h="100%" />
+          ) : (
+            <Text
+              fontFamily={font}
+              fontSize="30px"
+              w="100%"
+              wordBreak="break-word"
+              textAlign="center"
+            >
+              {!!text ? text : "START TYPING"}
+            </Text>
+          )}
         </Flex>
       </Flex>
     </Flex>

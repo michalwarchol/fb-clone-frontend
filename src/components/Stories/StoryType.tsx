@@ -7,7 +7,7 @@ interface Props {
   text: string;
   MyIcon: IconType;
   bg: string;
-  onClick: React.Dispatch<React.SetStateAction<"photo" | "text">>;
+  onClick?: React.Dispatch<React.SetStateAction<"photo" | "text">>;
   type: "photo" | "text";
 }
 
@@ -24,7 +24,7 @@ const StoryType: React.FC<Props> = ({ text, MyIcon, bg, onClick, type }) => {
       cursor="pointer"
       bgGradient={bg}
       _hover={{ filter: "brightness(115%)" }}
-      onClick={() => onClick(type)}
+      onClick={() => onClick && onClick(type)}
     >
       <Icon
         as={MyIcon}
@@ -37,7 +37,7 @@ const StoryType: React.FC<Props> = ({ text, MyIcon, bg, onClick, type }) => {
         fontSize="30px"
         shadow="0 1px 3px white"
       />
-      <Text color="textSecondary">{text}</Text>
+      <Text color="textSecondary" fontWeight="500">{text}</Text>
     </Flex>
   );
 };
