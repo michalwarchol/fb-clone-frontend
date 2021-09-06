@@ -77,6 +77,7 @@ export type Mutation = {
   createFriendRequest: Scalars['Boolean'];
   acceptFriendRequest: Scalars['Boolean'];
   removeFriendRequest: Scalars['Boolean'];
+  createStory: Story;
 };
 
 
@@ -150,6 +151,12 @@ export type MutationRemoveFriendRequestArgs = {
   userId: Scalars['Int'];
 };
 
+
+export type MutationCreateStoryArgs = {
+  image?: Maybe<Scalars['Upload']>;
+  input: StoryInput;
+};
+
 export type PaginatedComments = {
   __typename?: 'PaginatedComments';
   comments: Array<Comment>;
@@ -215,6 +222,7 @@ export type Query = {
   getSuggestedFriendTags: Array<FriendRequestWithFriend>;
   getInProgressFriendRequests: Array<FriendRequestWithFriend>;
   friendCount: Scalars['Int'];
+  getStories: Array<Story>;
 };
 
 
@@ -309,6 +317,27 @@ export enum ReactionType {
   Sad = 'SAD',
   Angry = 'ANGRY'
 }
+
+export type Story = {
+  __typename?: 'Story';
+  _id: Scalars['Float'];
+  userId: Scalars['Float'];
+  user: User;
+  text?: Maybe<Scalars['String']>;
+  font?: Maybe<Scalars['String']>;
+  gradient?: Maybe<Scalars['String']>;
+  time: Scalars['Float'];
+  imageId?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type StoryInput = {
+  text?: Maybe<Scalars['String']>;
+  font?: Maybe<Scalars['String']>;
+  gradient?: Maybe<Scalars['String']>;
+  time?: Maybe<Scalars['Float']>;
+};
 
 
 export type User = {
@@ -438,6 +467,20 @@ export type CreatePostMutation = (
   & { createPost: (
     { __typename?: 'Post' }
     & Pick<Post, '_id' | 'creatorId' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'createdAt' | 'updatedAt'>
+  ) }
+);
+
+export type CreateStoryMutationVariables = Exact<{
+  input: StoryInput;
+  image?: Maybe<Scalars['Upload']>;
+}>;
+
+
+export type CreateStoryMutation = (
+  { __typename?: 'Mutation' }
+  & { createStory: (
+    { __typename?: 'Story' }
+    & Pick<Story, '_id' | 'userId' | 'text' | 'font' | 'gradient' | 'time' | 'imageId' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
@@ -863,6 +906,25 @@ export const CreatePostDocument = gql`
 
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
+export const CreateStoryDocument = gql`
+    mutation CreateStory($input: StoryInput!, $image: Upload) {
+  createStory(input: $input, image: $image) {
+    _id
+    userId
+    text
+    font
+    gradient
+    time
+    imageId
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCreateStoryMutation() {
+  return Urql.useMutation<CreateStoryMutation, CreateStoryMutationVariables>(CreateStoryDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {

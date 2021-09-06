@@ -1,0 +1,13 @@
+mutation CreateStory($input: StoryInput!, $image: Upload){
+    createStory(input: $input, image: $image){
+        _id
+        userId
+        text
+        font
+        gradient
+        time
+        imageId
+        createdAt
+        updatedAt
+    }
+}
