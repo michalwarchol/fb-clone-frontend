@@ -50,16 +50,20 @@ const Body: React.FC<Props> = ({ user }) => {
   }, [uploadedImage]);
 
   const submitStory = async () => {
-    let input={};
-    if(storyType=="text"){
-      input={
+    let input = {};
+    if (storyType == "text") {
+      input = {
         text,
         font,
-        gradient
-      }
+        gradient,
+      };
     }
-    await createStory({input, image: uploadedImage })
-  }
+    await createStory({ input, image: uploadedImage });
+    setStoryType(null);
+    setText("");
+    setFont("Courier New");
+    setGradient("linear(to-r, green.200, pink.500)");
+  };
 
   return (
     <Flex h="100vh" w="100vw" color="textPrimary">
@@ -123,7 +127,14 @@ const Body: React.FC<Props> = ({ user }) => {
             >
               Discard
             </Button>
-            <Button variant="active" bg="active" color="textSecondary" w="100%" loadingText="sharing..." onClick={submitStory}>
+            <Button
+              variant="active"
+              bg="active"
+              color="textSecondary"
+              w="100%"
+              loadingText="sharing..."
+              onClick={submitStory}
+            >
               Share to Story
             </Button>
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -136,7 +147,12 @@ const Body: React.FC<Props> = ({ user }) => {
                   be saved.
                 </ModalBody>
                 <ModalFooter>
-                  <Button variant="basic" color="active" mr="10px" onClick={onClose}>
+                  <Button
+                    variant="basic"
+                    color="active"
+                    mr="10px"
+                    onClick={onClose}
+                  >
                     Continue Editing
                   </Button>
                   <Button
