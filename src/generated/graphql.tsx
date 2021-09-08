@@ -223,6 +223,7 @@ export type Query = {
   getInProgressFriendRequests: Array<FriendRequestWithFriend>;
   friendCount: Scalars['Int'];
   getStories: Array<Story>;
+  getRecentStories: Array<Story>;
 };
 
 
@@ -322,7 +323,7 @@ export type Story = {
   __typename?: 'Story';
   _id: Scalars['Float'];
   userId: Scalars['Float'];
-  user: User;
+  creator: User;
   text?: Maybe<Scalars['String']>;
   font?: Maybe<Scalars['String']>;
   gradient?: Maybe<Scalars['String']>;
@@ -386,6 +387,15 @@ export type RegularPostFragment = (
 export type RegularReactionsFragment = (
   { __typename?: 'Post' }
   & Pick<Post, 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry'>
+);
+
+export type RegularStoryFragment = (
+  { __typename?: 'Story' }
+  & Pick<Story, '_id' | 'userId' | 'text' | 'font' | 'gradient' | 'imageId' | 'time' | 'createdAt' | 'updatedAt'>
+  & { creator: (
+    { __typename?: 'User' }
+    & RegularUserFragment
+  ) }
 );
 
 export type RegularUserFragment = (
@@ -666,6 +676,21 @@ export type GetPostsByCreatorIdQuery = (
   ) }
 );
 
+export type GetRecentStoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetRecentStoriesQuery = (
+  { __typename?: 'Query' }
+  & { getRecentStories: Array<(
+    { __typename?: 'Story' }
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, '_id' | 'username'>
+    ) }
+    & RegularStoryFragment
+  )> }
+);
+
 export type GetSuggestedFriendTagsQueryVariables = Exact<{
   searchName?: Maybe<Scalars['String']>;
 }>;
@@ -818,6 +843,22 @@ export const RegularPostFragmentDoc = gql`
 }
     ${RegularReactionsFragmentDoc}
 ${RegularUserFragmentDoc}`;
+export const RegularStoryFragmentDoc = gql`
+    fragment RegularStory on Story {
+  _id
+  userId
+  text
+  font
+  gradient
+  imageId
+  time
+  creator {
+    ...RegularUser
+  }
+  createdAt
+  updatedAt
+}
+    ${RegularUserFragmentDoc}`;
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -1086,6 +1127,21 @@ export const GetPostsByCreatorIdDocument = gql`
 
 export function useGetPostsByCreatorIdQuery(options: Omit<Urql.UseQueryArgs<GetPostsByCreatorIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostsByCreatorIdQuery>({ query: GetPostsByCreatorIdDocument, ...options });
+};
+export const GetRecentStoriesDocument = gql`
+    query GetRecentStories {
+  getRecentStories {
+    ...RegularStory
+    creator {
+      _id
+      username
+    }
+  }
+}
+    ${RegularStoryFragmentDoc}`;
+
+export function useGetRecentStoriesQuery(options: Omit<Urql.UseQueryArgs<GetRecentStoriesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetRecentStoriesQuery>({ query: GetRecentStoriesDocument, ...options });
 };
 export const GetSuggestedFriendTagsDocument = gql`
     query GetSuggestedFriendTags($searchName: String) {

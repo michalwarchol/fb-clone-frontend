@@ -1,0 +1,14 @@
+fragment RegularStory on Story {
+    _id
+    userId
+    text
+    font
+    gradient
+    imageId
+    time
+    creator {
+        ...RegularUser
+    }
+    createdAt
+    updatedAt
+}
