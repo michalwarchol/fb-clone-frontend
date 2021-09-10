@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 import { useState } from "react";
 import { useGetUserFriendRequestsQuery } from "../../generated/graphql";
-import FriendNote from "./FriendNote";
+import FriendNote from "./FriendNode";
 
 interface Props {
   id: number;

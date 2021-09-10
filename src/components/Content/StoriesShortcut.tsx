@@ -6,6 +6,8 @@ import { Story } from "../../generated/graphql";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import NextLink from "next/link";
 import Shortcut from "./Shortcut";
+import { IconButton } from "@chakra-ui/button";
+import { BsArrowRight } from "react-icons/bs";
 
 interface Props {
   stories?: Story[];
@@ -13,32 +15,39 @@ interface Props {
 }
 
 const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
-    let seen = [];
-    let uniqueStories = stories?.filter((story, index, arr)=>{
-        if(seen.indexOf(story.userId)){
-            seen.push(story.userId);
-            return true;
-        }
-        return false;
-    }).slice(0,5);
+  let seen = [];
+  let uniqueStories = stories
+    ?.filter((story) => {
+      if (seen.indexOf(story.userId)) {
+        seen.push(story.userId);
+        return true;
+      }
+      return false;
+    })
+    .slice(0, 5);
 
-    console.log(uniqueStories)
   return (
-    <Flex mb="20px">
+    <Flex mb="20px" justify="space-between" position="relative">
       <NextLink href="/stories/create">
         <Box
           w="16%"
-          h={{base: "140px", md: "190px"}}
+          h={{ base: "140px", md: "190px" }}
           borderRadius="8px"
           overflow="hidden"
           cursor="pointer"
-          _hover={{ cursor: "pointer", filter: 'brightness(80%)' }}
+          _hover={{ cursor: "pointer", filter: "brightness(80%)" }}
         >
-          <Image src={myAvatar} h={{base: "60%", md: "70%"}} w="100%" objectFit="cover" />
+          <Image
+            src={myAvatar}
+            h={{ base: "60%", md: "70%" }}
+            w="100%"
+            objectFit="cover"
+            fallbackSrc="https://gravatar.com/avatar/43484bed7620ffc1fec5d482af33bfae?s=400&d=mp&r=x"
+          />
           <Flex
             position="relative"
             bg="secondary"
-            h={{base: "40%", md: "30%"}}
+            h={{ base: "40%", md: "30%" }}
             align="center"
             justify="center"
           >
@@ -59,7 +68,23 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
           </Flex>
         </Box>
       </NextLink>
-      {uniqueStories?.map((elem, i) => <Shortcut story={elem} />)}
+      {uniqueStories?.map((elem, i) => (
+        <Shortcut story={elem} key={i} />
+      ))}
+      <NextLink href="/stories">
+      <IconButton
+        aria-label="view more"
+        icon={<BsArrowRight />}
+        variant="basic"
+        borderRadius="50%"
+        bg="hover"
+        top="0"
+        bottom="0"
+        my="auto"
+        right={{base: "0", md: "-20px"}}
+        position="absolute"
+      />
+      </NextLink>
     </Flex>
   );
 };

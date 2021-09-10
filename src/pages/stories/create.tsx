@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useLoggedUserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
-import Body from "../../components/Stories/Body";
+import Body from "../../components/StoriesCreate/Body";
 
 const CreateStory: React.FC = () => {
   const [{ data, fetching }] = useLoggedUserQuery();
