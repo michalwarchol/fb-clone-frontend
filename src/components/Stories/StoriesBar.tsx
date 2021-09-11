@@ -3,31 +3,24 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import React from "react";
 import { BsPlus } from "react-icons/bs";
 import NextLink from "next/link";
-import { useGetRecentStoriesQuery } from "../../generated/graphql";
+import { Story } from "../../generated/graphql";
 import StoryNode from "./StoryNode";
 
-const StoriesBar: React.FC = () => {
+interface Props {
+  activeUserStory: number | null;
+  setActiveUserStory: React.Dispatch<React.SetStateAction<number | null>>;
+  stories: {
+    story: Story;
+    length: number;
+  }[];
+}
+
+const StoriesBar: React.FC<Props> = ({
+  activeUserStory,
+  setActiveUserStory,
+  stories
+}) => {
   
-    const [{ data }] = useGetRecentStoriesQuery();
-    let seen = [];
-  let uniqueStories = data?.getRecentStories
-    ?.filter((story) => {
-      if (!(story.userId in seen)) {
-        seen[story.userId] = 1;
-        return true;
-      }
-      seen[story.userId]+=1;
-      return false;
-    });
-
-    console.log(seen)
-
-    const stories = uniqueStories?.map((elem)=>{
-        return {
-            story: elem,
-            length: seen[elem.creator._id]
-        }
-    })
 
   return (
     <Box
@@ -70,9 +63,15 @@ const StoriesBar: React.FC = () => {
       </Box>
       <Box>
         <Text fontWeight="bold">All Stories</Text>
-        <Box>{
-                stories?.map(elem=><StoryNode story={elem} />)
-            }</Box>
+        <Box>
+          {stories?.map((elem) => (
+            <StoryNode
+              story={elem}
+              isActive={activeUserStory == elem.story.creator._id}
+              setActiveUserStory={setActiveUserStory}
+            />
+          ))}
+        </Box>
       </Box>
     </Box>
   );
