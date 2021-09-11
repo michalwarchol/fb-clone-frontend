@@ -5,18 +5,35 @@ import { Story, useGetImageQuery } from "../../generated/graphql";
 
 interface Props {
   story: {
-      story: Story,
-      length: number
-  }
+    story: Story;
+    length: number;
+  };
+  isActive: boolean;
+  setActiveUserStory: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-const StoryNode: React.FC<Props> = ({ story }) => {
+const StoryNode: React.FC<Props> = ({
+  story,
+  isActive,
+  setActiveUserStory,
+}) => {
   const [{ data: avatar }] = useGetImageQuery({
     variables: { imageId: story.story.creator.avatarId },
   });
 
+  const handleClick = () => {
+    setActiveUserStory(story.story.creator._id);
+  };
+
   return (
-    <Flex p="8px" _hover={{ bg: "hover", cursor: "pointer" }} borderRadius="8px" align="center">
+    <Flex
+      p="8px"
+      bg={isActive ? "hover" : "transparent"}
+      _hover={{ bg: "hover", cursor: "pointer" }}
+      borderRadius="8px"
+      align="center"
+      onClick={handleClick}
+    >
       <Flex
         w="60px"
         h="60px"
