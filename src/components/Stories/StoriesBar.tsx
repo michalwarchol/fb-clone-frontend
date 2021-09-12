@@ -13,12 +13,14 @@ interface Props {
     story: Story;
     length: number;
   }[];
+  setDisplayed: React.Dispatch<React.SetStateAction<number>>
 }
 
 const StoriesBar: React.FC<Props> = ({
   activeUserStory,
   setActiveUserStory,
-  stories
+  stories,
+  setDisplayed
 }) => {
   
 
@@ -64,11 +66,13 @@ const StoriesBar: React.FC<Props> = ({
       <Box>
         <Text fontWeight="bold">All Stories</Text>
         <Box>
-          {stories?.map((elem) => (
+          {stories?.map((elem, index) => (
             <StoryNode
               story={elem}
               isActive={activeUserStory == elem.story.creator._id}
               setActiveUserStory={setActiveUserStory}
+              setDisplayed={setDisplayed}
+              key={index}
             />
           ))}
         </Box>

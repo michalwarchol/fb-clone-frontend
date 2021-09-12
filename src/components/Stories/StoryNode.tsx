@@ -10,12 +10,14 @@ interface Props {
   };
   isActive: boolean;
   setActiveUserStory: React.Dispatch<React.SetStateAction<number | null>>;
+  setDisplayed: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const StoryNode: React.FC<Props> = ({
   story,
   isActive,
   setActiveUserStory,
+  setDisplayed
 }) => {
   const [{ data: avatar }] = useGetImageQuery({
     variables: { imageId: story.story.creator.avatarId },
@@ -23,6 +25,7 @@ const StoryNode: React.FC<Props> = ({
 
   const handleClick = () => {
     setActiveUserStory(story.story.creator._id);
+    setDisplayed(0);
   };
 
   return (
