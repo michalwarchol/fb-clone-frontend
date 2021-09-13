@@ -3,6 +3,7 @@ import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React from "react";
 import { Story, useGetImageQuery } from "../../generated/graphql";
+import NextLink from "next/link";
 
 interface Props {
   story: Story;
@@ -14,7 +15,9 @@ const Shortcut: React.FC<Props> = ({ story }) => {
     pause: !story.imageId,
   });
 
-  const [{data: avatar}] = useGetImageQuery({variables: {imageId: story.creator.avatarId}});
+  const [{ data: avatar }] = useGetImageQuery({
+    variables: { imageId: story.creator.avatarId },
+  });
 
   let content = <Box></Box>;
   if (story.imageId) {
@@ -35,21 +38,29 @@ const Shortcut: React.FC<Props> = ({ story }) => {
   }
 
   return (
-    <Box
-      w="16%"
-      h={{ base: "140px", md: "190px" }}
-      borderRadius="8px"
-      overflow="hidden"
-      _hover={{ cursor: "pointer", filter: "brightness(80%)" }}
-    >
-      {content}
-      <Box position="relative" w="100%" h="100%" top="-100%">
-        <Avatar position="absolute" top="5%" left="2%" size="sm" src={avatar?.getImage} />
-        <Text position="absolute" bottom="0" fontWeight="bold">
-          {story.creator.username}
-        </Text>
+    <NextLink href={`/stories?id=${story.creator._id}`}>
+      <Box
+        w="16%"
+        h={{ base: "140px", md: "190px" }}
+        borderRadius="8px"
+        overflow="hidden"
+        _hover={{ cursor: "pointer", filter: "brightness(80%)" }}
+      >
+        {content}
+        <Box position="relative" w="100%" h="100%" top="-100%">
+          <Avatar
+            position="absolute"
+            top="5%"
+            left="2%"
+            size="sm"
+            src={avatar?.getImage}
+          />
+          <Text position="absolute" bottom="0" fontWeight="bold">
+            {story.creator.username}
+          </Text>
+        </Box>
       </Box>
-    </Box>
+    </NextLink>
   );
 };
 export default Shortcut;

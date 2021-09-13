@@ -1,6 +1,6 @@
 import Icon from "@chakra-ui/icon";
 import { Flex, Text } from "@chakra-ui/layout";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoMdPhotos } from "react-icons/Io";
 import { useGetRecentStoriesQuery } from "../../generated/graphql";
 import ImageStory from "./ImageStory";
@@ -13,11 +13,21 @@ interface Props {
 }
 
 const Body: React.FC<Props> = ({ id }) => {
-  const [activeUserStory, setActiveUserStory] = useState<number | null>(
-    id ? id : null
-  );
+  const [activeUserStory, setActiveUserStory] = useState<number | null>(null);
   const [displayed, setDisplayed] = useState<number>(0);
   const [{ data }] = useGetRecentStoriesQuery();
+  let initialMount = useRef(true);
+
+  useEffect(()=>{
+    if(initialMount && data){
+      let isUser = data.getRecentStories.find(elem=>elem.creator._id==id);
+      if(isUser){
+        setActiveUserStory(id);
+        initialMount.current=false;
+      }
+    }
+  }, [])
+
   let seen = [];
   let stories = [];
   let storiesToDisplay = [];
@@ -79,8 +89,7 @@ const Body: React.FC<Props> = ({ id }) => {
       }
     });
   }
-  
-  console.log(storiesToDisplay);
+
   return (
     <Flex h="100vh">
       <StoriesBar
