@@ -1,5 +1,7 @@
+import { IconButton } from "@chakra-ui/button";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { IoIosPause, IoIosPlay } from "react-icons/Io";
 import { setStoriesInterval } from "../../utils/setStoriesInterval";
 
 interface Props {
@@ -13,7 +15,6 @@ interface Props {
   time: number;
   storiesLength: number;
   nextActiveUser: number;
-  previousActiveUser: number;
 }
 
 const TextStory: React.FC<Props> = ({
@@ -26,10 +27,10 @@ const TextStory: React.FC<Props> = ({
   setDisplayed,
   time,
   storiesLength,
-  nextActiveUser,
-  previousActiveUser,
+  nextActiveUser
 }) => {
   const [passedTime, setPassedTime] = useState<number>(0);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
   let initialMount = useRef(true);
 
   setStoriesInterval(
@@ -42,58 +43,52 @@ const TextStory: React.FC<Props> = ({
     setDisplayed,
     initialMount,
     nextActiveUser,
-    previousActiveUser
+    isPaused
   );
 
   const makeScrubbers = (time: number, passed: number) => {
-    let scrubberWidth = Math.floor(100 / storiesLength);
+    
+    let scrubberWidth = Math.floor(100 / storiesLength-1);
     let scrubbers = [];
+    let scrubberStyles = {
+      w: scrubberWidth + "%",
+      h: "6px",
+      bg: "rgba(255,255,255,0.3)",
+      borderRadius: "2px"
+    }
     for (let i = 0; i < storiesLength; i++) {
       if (i < displayed) {
         scrubbers.push(
           <Box
-            w={scrubberWidth + "%"}
-            h="10px"
-            bg="rgba(255,255,255,0.3)"
+            {...scrubberStyles}
             key={i}
           >
-            <Box bg="white" w="100%" h="100%"></Box>
+            <Box bg="white" w="100%" h="100%" borderRadius="2px"></Box>
           </Box>
         );
       } else if (i > displayed) {
         scrubbers.push(
           <Box
-            w={scrubberWidth + "%"}
-            h="10px"
-            bg="rgba(255,255,255,0.3)"
+          {...scrubberStyles}
             key={i}
           >
-            <Box bg="transparent" w="100%" h="100%"></Box>
+            <Box bg="transparent" w="100%" h="100%" borderRadius="2px"></Box>
           </Box>
         );
       } else {
         let width = (100 / time) * passed;
         scrubbers.push(
           <Box
-            w={scrubberWidth + "%"}
-            h="10px"
-            bg="rgba(255,255,255,0.3)"
+          {...scrubberStyles}
             key={i}
           >
-            <Box bg="white" w={width + "%"} h="100%"></Box>
+            <Box bg="white" w={width + "%"} h="100%" borderRadius="2px"></Box>
           </Box>
         );
       }
     }
     return (
-      <Flex
-        w="100%"
-        justify="space-between"
-        position="absolute"
-        zIndex={99}
-        pt="68px"
-        top="0"
-      >
+      <Flex w="100%" justify={scrubbers.length<=1 ? "center" : "space-between"}>
         {scrubbers}
       </Flex>
     );
@@ -112,7 +107,18 @@ const TextStory: React.FC<Props> = ({
       borderRadius="10px"
       position="relative"
     >
+      <Flex
+        w="96%"
+        position="absolute"
+        zIndex={99}
+        pt="10px"
+        top="0"
+      >
       {makeScrubbers(time, passedTime)}
+      <Flex>
+        <IconButton aria-label="pause" icon={isPaused ? <IoIosPlay /> :<IoIosPause />} onClick={()=>setIsPaused(!isPaused)} />
+      </Flex>
+      </Flex>
       <Text textAlign="center" zIndex={98}>
         {text}
       </Text>

@@ -1,26 +1,42 @@
+import { IconButton } from "@chakra-ui/button";
 import { Box, Flex } from "@chakra-ui/layout";
 import React from "react";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/Io";
 
 interface Props {
-  activeUserStory: number | null;
   setActiveUserStory: React.Dispatch<React.SetStateAction<number | null>>;
   stories: JSX.Element[];
-  nextActiveUser: number;
+  nextActiveUser: number|null;
+  previousActiveUser: number|null;
   displayed: number;
   setDisplayed: React.Dispatch<React.SetStateAction<number>>;
-  time: number;
 }
 
 const StoryDisplay: React.FC<Props> = ({
-  activeUserStory,
   setActiveUserStory,
   stories,
   nextActiveUser,
+  previousActiveUser,
   displayed,
   setDisplayed,
-  time,
 }) => {
-  
+  const goBack = () => {
+    if (displayed == 0) {
+      setDisplayed(0);
+      setActiveUserStory(previousActiveUser);
+    } else {
+      setDisplayed(displayed - 1);
+    }
+  };
+
+  const goForward = () => {
+    if (displayed + 1 >= stories.length) {
+      setDisplayed(0);
+      setActiveUserStory(nextActiveUser);
+    } else {
+      setDisplayed(displayed + 1);
+    }
+  };
   return (
     <Flex
       pl="360px"
@@ -30,6 +46,21 @@ const StoryDisplay: React.FC<Props> = ({
       h="100%"
       bg="black"
     >
+      <Box w="60px">
+      {(displayed==0 && !previousActiveUser) ? null : (
+        <IconButton
+          aria-label="back"
+          icon={<IoIosArrowBack />}
+          variant="basic"
+          borderRadius="50%"
+          fontSize="30px"
+          w="60px"
+          h="60px"
+          position="relative"
+          onClick={goBack}
+        />
+      )}
+      </Box>
       <Flex w="505px" h="96%">
         <Flex
           justify="center"
@@ -40,9 +71,23 @@ const StoryDisplay: React.FC<Props> = ({
           bg="black"
           pt="68px"
         >
-          {stories![displayed]}
+          {stories[displayed]}
         </Flex>
       </Flex>
+      <Box w="60px">
+      {(!nextActiveUser && displayed + 1 >= stories.length) ? null : (
+        <IconButton
+          aria-label="forward"
+          icon={<IoIosArrowForward />}
+          variant="basic"
+          borderRadius="50%"
+          fontSize="30px"
+          w="60px"
+          h="60px"
+          onClick={goForward}
+        />
+      )}
+      </Box>
     </Flex>
   );
 };

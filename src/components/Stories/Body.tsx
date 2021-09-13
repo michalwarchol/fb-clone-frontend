@@ -79,11 +79,6 @@ const Body: React.FC<Props> = ({ id }) => {
                   )
                 : null
             }
-            previousActiveUser={
-              activeUserStory != null 
-              ? parseInt(Object.keys(seen)[Object.keys(seen).indexOf(activeUserStory.toString())-1])
-              :null
-            }
           />
         );
       }
@@ -103,10 +98,8 @@ const Body: React.FC<Props> = ({ id }) => {
       <StoryDisplay
       displayed={displayed}
       setDisplayed={setDisplayed}
-      activeUserStory={activeUserStory}
       setActiveUserStory={setActiveUserStory}
       stories={storiesToDisplay}
-      time={userStories[displayed].time}
       nextActiveUser={
         activeUserStory != null
           ? parseInt(
@@ -115,6 +108,11 @@ const Body: React.FC<Props> = ({ id }) => {
               ]
             )
           : null
+      }
+      previousActiveUser={
+        activeUserStory != null 
+        ? parseInt(Object.keys(seen)[Object.keys(seen).indexOf(activeUserStory.toString())-1])
+        :null
       }
     />
     :
