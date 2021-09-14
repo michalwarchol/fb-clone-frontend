@@ -8,6 +8,7 @@ import NextLink from "next/link";
 import Shortcut from "./Shortcut";
 import { IconButton } from "@chakra-ui/button";
 import { BsArrowRight } from "react-icons/bs";
+import EmptyShortcut from "./EmptyShortcut";
 
 interface Props {
   stories?: Story[];
@@ -18,14 +19,18 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
   let seen = [];
   let uniqueStories = stories
     ?.filter((story) => {
-      if (seen.indexOf(story.userId)) {
+      if (seen.indexOf(story.userId)==-1) {
         seen.push(story.userId);
         return true;
       }
       return false;
     })
     .slice(0, 5);
-
+    let length = uniqueStories?.length;
+    let emptyShortcuts = [];
+    for(let i=0; i<5-length; i++){
+      emptyShortcuts.push(<EmptyShortcut />)
+    }
   return (
     <Flex mb="20px" justify="space-between" position="relative">
       <NextLink href="/stories/create">
@@ -71,6 +76,7 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
       {uniqueStories?.map((elem, i) => (
         <Shortcut story={elem} key={i} />
       ))}
+      {emptyShortcuts}
       <NextLink href="/stories">
       <IconButton
         aria-label="view more"
