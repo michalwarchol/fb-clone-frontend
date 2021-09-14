@@ -1,11 +1,16 @@
 import { Avatar, Box, Flex, Icon } from "@chakra-ui/react";
 import React from "react";
-import { FullUser, useGetRecentStoriesQuery, usePostsQuery } from "../../generated/graphql";
+import {
+  FullUser,
+  useGetRecentStoriesQuery,
+  usePostsQuery,
+} from "../../generated/graphql";
 import PostCreator from "../PostCreator/PostCreator";
 import PostContainer from "../Post/PostContainer";
 import PageButton from "./PageButton";
 import { isServer } from "../../utils/isServer";
 import { FaUserFriends } from "react-icons/fa";
+import { FcCamera } from "react-icons/fc";
 import StoriesShortcut from "./StoriesShortcut";
 
 interface Props {
@@ -18,12 +23,18 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
     pause: isServer,
   });
 
-  const [{data: stories}] = useGetRecentStoriesQuery();
+  const [{ data: stories }] = useGetRecentStoriesQuery();
 
   return (
     <Flex maxW="1920px" justify="center" mt="56px">
       <Flex mt="20px" w={{ base: "500px", md: "680px" }}>
-        <Box position="fixed" left="0" w="18%" pl="4px" display={{base: "none", xl: "block"}}>
+        <Box
+          position="fixed"
+          left="0"
+          w="18%"
+          pl="4px"
+          display={{ base: "none", xl: "block" }}
+        >
           <PageButton
             text={loggedUser?.user.username}
             image={<Avatar src={loggedUser.avatarImage} />}
@@ -46,9 +57,18 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
             }
             link="/friends"
           />
+          <PageButton
+            text="Stories"
+            image={<Icon as={FcCamera} w="48px"
+            h="48px" />}
+            link="/stories"
+          />
         </Box>
         <Flex w="100%" direction="column">
-          <StoriesShortcut stories={stories?.getRecentStories} myAvatar={loggedUser.avatarImage}/>
+          <StoriesShortcut
+            stories={stories?.getRecentStories}
+            myAvatar={loggedUser.avatarImage}
+          />
           <PostCreator loggedUser={loggedUser} />
           <Box w="100%">
             {!data ? (

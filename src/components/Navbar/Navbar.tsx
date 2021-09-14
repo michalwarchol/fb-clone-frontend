@@ -4,7 +4,7 @@ import { FaFacebookF, FaUserFriends } from "react-icons/fa";
 import NextLink from "next/link";
 import { FullUser } from "../../generated/graphql";
 import Options from "./Options";
-import { AiFillHome } from "react-icons/ai";
+import { AiFillCamera, AiFillHome } from "react-icons/ai";
 import PageButton from "./PageButton";
 
 interface Props {
@@ -45,6 +45,7 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
         <Flex justify="center" h="100%">
           <PageButton route="/" MyIcon={AiFillHome} />
           <PageButton route="/friends" MyIcon={FaUserFriends} />
+          <PageButton route="/stories" MyIcon={AiFillCamera} />
         </Flex>
       </GridItem>
       <GridItem colStart={9} colEnd={13}>

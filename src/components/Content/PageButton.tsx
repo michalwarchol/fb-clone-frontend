@@ -22,7 +22,7 @@ const PageButton: React.FC<Props> = ({ image, text, link }) => {
       }}
     >
       <Flex align="center" justify="flex-start" w="100%">
-        <Box mr="10px">{image}</Box>
+        <Box mr="16px">{image}</Box>
         {text}
       </Flex>
     </Button>
