@@ -5,6 +5,7 @@ export const setStoriesInterval = (
   setActiveUser: React.Dispatch<React.SetStateAction<number | null>>,
   time: number,
   displayed: number,
+  passedTime: number,
   setPassedTime: React.Dispatch<React.SetStateAction<number>>,
   storiesLength: number,
   setDisplayed: React.Dispatch<React.SetStateAction<number>>,
@@ -30,7 +31,7 @@ export const setStoriesInterval = (
   }, [displayed, activeUser]);
 
   useEffect(() => {
-    let myTime = 0;
+    let myTime = passedTime;
     clearTimeout(timeout);
     if (activeUser != null && !isPaused) {
       interval = setInterval(() => {
@@ -43,22 +44,17 @@ export const setStoriesInterval = (
       timeout = setTimeout(() => {
         if (storiesLength-1 > displayed) {
           setDisplayed(displayed + 1);
+          setPassedTime(0);
          }else{
+          setPassedTime(0);
           setDisplayed(0);
           setActiveUser(nextActiveUser);
          }
-      }, time);
+      }, time-passedTime);
     }
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [displayed, activeUser, /*isPaused*/]);
-
-  // useEffect(()=>{
-  //   if(isPaused){
-  //     console.log("clear")
-  //     clearInterval(interval);
-  //   }
-  // }, [isPaused])
+  }, [displayed, activeUser, isPaused, passedTime]);
 };

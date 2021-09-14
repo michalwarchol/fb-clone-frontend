@@ -18,7 +18,7 @@ const StoryDisplay: React.FC<Props> = ({
   nextActiveUser,
   previousActiveUser,
   displayed,
-  setDisplayed,
+  setDisplayed
 }) => {
   const goBack = () => {
     if (displayed == 0) {
@@ -46,7 +46,7 @@ const StoryDisplay: React.FC<Props> = ({
       h="100%"
       bg="black"
     >
-      <Box w="60px">
+      <Box w="70px">
       {(displayed==0 && !previousActiveUser) ? null : (
         <IconButton
           aria-label="back"
@@ -56,7 +56,7 @@ const StoryDisplay: React.FC<Props> = ({
           fontSize="30px"
           w="60px"
           h="60px"
-          position="relative"
+          mr="10px"
           onClick={goBack}
         />
       )}
@@ -74,7 +74,7 @@ const StoryDisplay: React.FC<Props> = ({
           {stories[displayed]}
         </Flex>
       </Flex>
-      <Box w="60px">
+      <Box w="70px">
       {(!nextActiveUser && displayed + 1 >= stories.length) ? null : (
         <IconButton
           aria-label="forward"
@@ -84,6 +84,7 @@ const StoryDisplay: React.FC<Props> = ({
           fontSize="30px"
           w="60px"
           h="60px"
+          ml="10px"
           onClick={goForward}
         />
       )}

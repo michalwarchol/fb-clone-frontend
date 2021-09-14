@@ -3,10 +3,9 @@ import { Flex, Text } from "@chakra-ui/layout";
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdPhotos } from "react-icons/Io";
 import { useGetRecentStoriesQuery } from "../../generated/graphql";
-import ImageStory from "./ImageStory";
 import StoriesBar from "./StoriesBar";
 import StoryDisplay from "./StoryDisplay";
-import TextStory from "./TextStory";
+import TextStory from "./Story";
 
 interface Props {
   id?: number;
@@ -16,6 +15,7 @@ const Body: React.FC<Props> = ({ id }) => {
   const [activeUserStory, setActiveUserStory] = useState<number | null>(null);
   const [displayed, setDisplayed] = useState<number>(0);
   const [{ data }] = useGetRecentStoriesQuery();
+
   let initialMount = useRef(true);
 
   useEffect(()=>{
@@ -55,14 +55,10 @@ const Body: React.FC<Props> = ({ id }) => {
     });
   
     storiesToDisplay = userStories.map((story, index) => {
-      if (!!story.imageId) {
-        return <ImageStory imageId={story.imageId} key={index} />;
-      } else {
+      
         return (
           <TextStory
-            text={story.text}
-            font={story.font}
-            gradient={story.gradient}
+            story={story}
             displayed={displayed}
             setDisplayed={setDisplayed}
             activeUserStory={activeUserStory}
@@ -82,7 +78,7 @@ const Body: React.FC<Props> = ({ id }) => {
           />
         );
       }
-    });
+    );
   }
 
   return (

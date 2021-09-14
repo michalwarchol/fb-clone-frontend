@@ -14,7 +14,6 @@ interface Props {
 }
 
 const Stories: NextPage<Props> = ({id}) => {
-    console.log(id)
   const [{ data, fetching }] = useLoggedUserQuery({
     pause: isServer,
   });
@@ -28,7 +27,7 @@ const Stories: NextPage<Props> = ({id}) => {
 
   let body = <div></div>;
   if(data?.loggedUser){
-    body = <Box maxW="100vw" color="textPrimary" bg={"primary"} minH="100vh">
+    body = <Box maxW="100vw" color="textPrimary" bg={"primary"} h="100vh">
     <Navbar loggedUser={data && data.loggedUser} />
     <Body id={parseInt(id)} />
   </Box>
