@@ -173,6 +173,7 @@ export type PaginatedRequests = {
   __typename?: 'PaginatedRequests';
   friendRequestsWithFriends: Array<FriendRequestWithFriend>;
   hasMore: Scalars['Boolean'];
+  mutualFriends: Scalars['Int'];
 };
 
 export type Post = {
@@ -205,7 +206,6 @@ export type PostInput = {
 
 export type Query = {
   __typename?: 'Query';
-  hello: Scalars['String'];
   posts: PaginatedPosts;
   post?: Maybe<Post>;
   getPostsByCreatorId: PaginatedPosts;
@@ -683,10 +683,6 @@ export type GetRecentStoriesQuery = (
   { __typename?: 'Query' }
   & { getRecentStories: Array<(
     { __typename?: 'Story' }
-    & { creator: (
-      { __typename?: 'User' }
-      & Pick<User, '_id' | 'username'>
-    ) }
     & RegularStoryFragment
   )> }
 );
@@ -734,7 +730,7 @@ export type GetUserFriendRequestsQuery = (
   { __typename?: 'Query' }
   & { getUserFriendRequests: (
     { __typename?: 'PaginatedRequests' }
-    & Pick<PaginatedRequests, 'hasMore'>
+    & Pick<PaginatedRequests, 'mutualFriends' | 'hasMore'>
     & { friendRequestsWithFriends: Array<(
       { __typename?: 'FriendRequestWithFriend' }
       & { friendRequest: (
@@ -1132,10 +1128,6 @@ export const GetRecentStoriesDocument = gql`
     query GetRecentStories {
   getRecentStories {
     ...RegularStory
-    creator {
-      _id
-      username
-    }
   }
 }
     ${RegularStoryFragmentDoc}`;
@@ -1174,6 +1166,7 @@ export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQ
 export const GetUserFriendRequestsDocument = gql`
     query GetUserFriendRequests($userId: Int, $limit: Int!, $skip: Int) {
   getUserFriendRequests(userId: $userId, limit: $limit, skip: $skip) {
+    mutualFriends
     hasMore
     friendRequestsWithFriends {
       friendRequest {

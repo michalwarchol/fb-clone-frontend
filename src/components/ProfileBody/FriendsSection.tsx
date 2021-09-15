@@ -16,7 +16,7 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
   const [{ data: friends }] = useGetUserFriendRequestsQuery({
     variables: { userId: id, limit: 9 },
   });
-
+  console.log(friends)
   return (
     <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w="100%">
       <Flex align="center" justify="space-between">
@@ -38,7 +38,9 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
         </Button>
       </Flex>
       <Text fontSize="18px" color="gray">
-        {count?.friendCount} {count?.friendCount == 1 ? "friend" : "friends"}
+        {count?.friendCount}
+        {count?.friendCount == 1 ? " friend" : " friends"} 
+        {friends?.getUserFriendRequests.mutualFriends>0 && ` (${friends?.getUserFriendRequests.mutualFriends} mutual)`}
       </Text>
       <Flex justify="center">
         <Flex wrap="wrap" mt="20px" justify="space-between" w="100%">
