@@ -54,6 +54,12 @@ export type FriendRequestWithFriend = {
   friend: User;
 };
 
+export type FriendSuggestion = {
+  __typename?: 'FriendSuggestion';
+  friend: User;
+  mutual: Scalars['Int'];
+};
+
 export type FullUser = {
   __typename?: 'FullUser';
   user?: Maybe<User>;
@@ -220,6 +226,7 @@ export type Query = {
   getUserFriendRequests: PaginatedRequests;
   getFriendRequest: UserRequest;
   getSuggestedFriendTags: Array<FriendRequestWithFriend>;
+  getSuggestedFriends: Array<FriendSuggestion>;
   getInProgressFriendRequests: Array<FriendRequestWithFriend>;
   friendCount: Scalars['Int'];
   getStories: Array<Story>;
@@ -687,6 +694,21 @@ export type GetRecentStoriesQuery = (
   )> }
 );
 
+export type GetSuggestedFriendsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSuggestedFriendsQuery = (
+  { __typename?: 'Query' }
+  & { getSuggestedFriends: Array<(
+    { __typename?: 'FriendSuggestion' }
+    & Pick<FriendSuggestion, 'mutual'>
+    & { friend: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ) }
+  )> }
+);
+
 export type GetSuggestedFriendTagsQueryVariables = Exact<{
   searchName?: Maybe<Scalars['String']>;
 }>;
@@ -1134,6 +1156,20 @@ export const GetRecentStoriesDocument = gql`
 
 export function useGetRecentStoriesQuery(options: Omit<Urql.UseQueryArgs<GetRecentStoriesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetRecentStoriesQuery>({ query: GetRecentStoriesDocument, ...options });
+};
+export const GetSuggestedFriendsDocument = gql`
+    query GetSuggestedFriends {
+  getSuggestedFriends {
+    friend {
+      ...RegularUser
+    }
+    mutual
+  }
+}
+    ${RegularUserFragmentDoc}`;
+
+export function useGetSuggestedFriendsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetSuggestedFriendsQuery>({ query: GetSuggestedFriendsDocument, ...options });
 };
 export const GetSuggestedFriendTagsDocument = gql`
     query GetSuggestedFriendTags($searchName: String) {

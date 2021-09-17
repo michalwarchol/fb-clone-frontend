@@ -1,0 +1,8 @@
+query GetSuggestedFriends {
+  getSuggestedFriends{
+    friend{
+      ...RegularUser
+    }
+    mutual
+  }
+}
