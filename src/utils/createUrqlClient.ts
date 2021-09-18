@@ -107,12 +107,12 @@ const commentPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName && info.arguments.postId === fieldArgs.postId);
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined;
     }
-
+    console.log(allFields)
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     const isItInTheCache = cache.resolve(
       cache.resolve(entityKey, fieldKey) as string,
@@ -122,15 +122,15 @@ const commentPagination = (): Resolver => {
     let hasMore = true;
     const results: string[] = [];
 
-    fieldInfos.forEach((fi) => {
-      const key = cache.resolve(entityKey, fi.fieldKey) as string;
-      const data = cache.resolve(key, "comments") as string[];
-      const _hasMore = cache.resolve(key, "hasMore");
-      if (!_hasMore) {
-        hasMore = _hasMore as boolean;
-      }
-      results.push(...data);
-    });
+     fieldInfos.forEach((fi) => {
+        const key = cache.resolve(entityKey, fi.fieldKey) as string;
+        const data = cache.resolve(key, "comments") as string[];
+        const _hasMore = cache.resolve(key, "hasMore");
+        if (!_hasMore) {
+          hasMore = _hasMore as boolean;
+        }
+        results.push(...data);
+     });
 
     return {
       __typename: "PaginatedComments",
@@ -219,6 +219,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
         FriendRequest: () => null,
         UserRequest: () => null,
         FriendRequestWithFriend: () => null,
+        FriendSuggestion: () => null
       },
       resolvers: {
         Query: {
@@ -260,6 +261,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
             });
           },
           logout: (_result, args, cache, info) => {
+            cache.invalidate("Query");
             betterUpdateQuery<LogoutMutation, LoggedUserQuery>(
               cache,
               { query: LoggedUserDocument },
@@ -305,20 +307,21 @@ export const createUrqlClient = (ssrExchange: any) => ({
             );
           },
           react: (_result, args, cache, info) => {
-            const { parentKey: entityKey } = info;
             const allFields = cache.inspectFields("Query");
             const fieldInfos = allFields.filter(
               (info) => info.fieldName === "reaction"
             );
-            const fieldKey = `reaction(${stringifyVariables(args)})`;
-            const isItInTheCache = cache.resolve(
-              cache.resolve(entityKey, fieldKey) as string,
-              "reaction"
-            );
-            info.partial = !isItInTheCache;
+
             fieldInfos.forEach((fi) => {
-              const key = cache.resolve("Query", fi.fieldKey) as string;
-              cache.invalidate("Query", key, fi.arguments || {});
+              cache.invalidate("Query", "reaction", fi.arguments || {});
+            });
+
+            const posts = allFields.filter(
+              (info) => info.fieldName === "posts"
+            );
+
+            posts.forEach((fi) => {
+              cache.invalidate("Query", "posts", fi.arguments || {});
             });
             return true;
           },
@@ -348,6 +351,15 @@ export const createUrqlClient = (ssrExchange: any) => ({
             getFriendRequest.forEach((fi) => {
               cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
             });
+
+            const getSuggestedFriends = allFields.filter(
+              (info) => info.fieldName === "getSuggestedFriends"
+            );
+
+            getSuggestedFriends.forEach((fi) => {
+              cache.invalidate("Query", "getSuggestedFriends", fi.arguments || {});
+            });
+
           },
           acceptFriendRequest: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
