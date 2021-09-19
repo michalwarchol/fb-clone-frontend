@@ -128,8 +128,6 @@ const commentPagination = (): Resolver => {
     fieldInfos.forEach((fi) => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "comments") as string[];
-      const xd = cache.resolve(data[0], "text");
-      console.log("xd", xd)
       const _hasMore = cache.resolve(key, "hasMore");
       if (!_hasMore) {
         hasMore = _hasMore as boolean;
@@ -258,6 +256,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
           },
           createComment: (result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
+            console.log(allFields)
             const fieldInfos = allFields.filter(
               (info) =>
                 info.fieldName === "getPostComments" &&
@@ -266,6 +265,16 @@ export const createUrqlClient = (ssrExchange: any) => ({
             fieldInfos.forEach((fi) => {
                 cache.invalidate("Query", "getPostComments", fi.arguments || {});
             });
+
+            const commentCount = allFields.filter(
+              (info) =>
+                info.fieldName === "commentCount" &&
+                info.arguments.postId === args.postId
+            );
+
+            commentCount.forEach((fi) => {
+              cache.invalidate("Query", "commentCount", fi.arguments || {});
+          });
           },
           logout: (_result, args, cache, info) => {
             cache.invalidate("Query");

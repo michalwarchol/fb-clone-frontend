@@ -37,7 +37,6 @@ const CommentSection: React.FC<Props> = ({ postId}) => {
       autosize.destroy(ref.current);
     };
   }, []);
-  console.log(variables.cursor)
   return (
     <Box>
       <Divider
