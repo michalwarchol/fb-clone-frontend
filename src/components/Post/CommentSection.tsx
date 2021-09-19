@@ -12,6 +12,7 @@ import autosize from "autosize";
 import {
   useCreateCommentMutation,
   useGetPostCommentsQuery,
+  useLoggedUserQuery,
 } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import CommentNote from "./Comment";
@@ -21,13 +22,14 @@ interface Props {
   postId: number;
 }
 
-const CommentSection: React.FC<Props> = ({ postId }) => {
-  const [variables, setVariables] = useState({ limit: 5, offset: 0 });
-  const [{ data, fetching }] = useGetPostCommentsQuery({
+const CommentSection: React.FC<Props> = ({ postId}) => {
+  const [variables, setVariables] = useState({ limit: 5, cursor: null });
+  const [{ data, fetching, }] = useGetPostCommentsQuery({
     pause: isServer,
-    variables: { postId, ...variables },
+    variables: { postId, ...variables }
   });
   const [, createComment] = useCreateCommentMutation();
+  const [{data: loggedUser}] = useLoggedUserQuery();
   const ref = useRef<HTMLTextAreaElement>();
   useEffect(() => {
     autosize(ref.current);
@@ -35,7 +37,7 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
       autosize.destroy(ref.current);
     };
   }, []);
-
+  console.log(variables.cursor)
   return (
     <Box>
       <Divider
@@ -45,14 +47,14 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
         borderColor="gray.400"
       />
       <Flex mt="20px" pb="4px">
-        <Avatar size="sm" mr="10px" />
+        <Avatar size="sm" mr="10px" src={loggedUser?.loggedUser.avatarImage} />
         <Formik
           initialValues={{ text: "" }}
           onSubmit={async (values, { setValues }) => {
             if (values.text.length < 1) {
               return;
             }
-            await createComment({ postId, text: values.text });
+            await createComment({ postId, text: values.text }, {requestPolicy: "cache-first"});
             setValues({ text: "" });
           }}
         >
@@ -101,7 +103,7 @@ const CommentSection: React.FC<Props> = ({ postId }) => {
                 onClick={() =>
                   setVariables({
                     limit: variables.limit,
-                    offset: variables.offset + 5,
+                    cursor: data.getPostComments.comments[data.getPostComments.comments.length-1].createdAt
                   })
                 }
               >
