@@ -268,7 +268,7 @@ export type QueryReactionArgs = {
 
 
 export type QueryGetPostCommentsArgs = {
-  offset?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   postId: Scalars['Int'];
 };
@@ -644,7 +644,7 @@ export type GetInProgressFriendRequestsQuery = (
 export type GetPostCommentsQueryVariables = Exact<{
   postId: Scalars['Int'];
   limit: Scalars['Int'];
-  offset?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1111,8 +1111,8 @@ export function useGetInProgressFriendRequestsQuery(options: Omit<Urql.UseQueryA
   return Urql.useQuery<GetInProgressFriendRequestsQuery>({ query: GetInProgressFriendRequestsDocument, ...options });
 };
 export const GetPostCommentsDocument = gql`
-    query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
-  getPostComments(postId: $postId, limit: $limit, offset: $offset) {
+    query getPostComments($postId: Int!, $limit: Int!, $cursor: String) {
+  getPostComments(postId: $postId, limit: $limit, cursor: $cursor) {
     hasMore
     comments {
       _id

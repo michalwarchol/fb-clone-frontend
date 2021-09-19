@@ -1,5 +1,5 @@
-query getPostComments($postId: Int!, $limit: Int!, $offset: Int) {
-  getPostComments(postId: $postId, limit: $limit, offset: $offset) {
+query getPostComments($postId: Int!, $limit: Int!, $cursor: String) {
+  getPostComments(postId: $postId, limit: $limit, cursor: $cursor) {
     hasMore
     comments {
       _id
