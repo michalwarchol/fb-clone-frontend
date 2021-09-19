@@ -24,6 +24,7 @@ import { reactionOrder } from "../../utils/reactionOrder";
 import CommentSection from "./CommentSection";
 import { isServer } from "../../utils/isServer";
 import ImageContainer from "./ImageContainer";
+import NextLink from "next/link";
 
 interface PostProps {
   post: Post;
@@ -41,18 +42,13 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
   });
 
   const handlePostStatus = () => {
-
-    let taggedUsers = post.tagged.map(tag=>{
-      const [{data}] = useGetUserByIdQuery({variables: {id: tag}});
+    let taggedUsers = post.tagged.map((tag) => {
+      const [{ data }] = useGetUserByIdQuery({ variables: { id: tag } });
       return data?.getUserById;
-    })
+    });
 
-    let text = post && post.creator.username;
-    if (
-      !!post.feeling ||
-      !!post.activity ||
-      taggedUsers.length > 0
-    ) {
+    let text = "";
+    if (!!post.feeling || !!post.activity || taggedUsers.length > 0) {
       text += " is ";
     }
     if (!!post.feeling) {
@@ -73,13 +69,12 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     }
 
     return text;
-  }
+  };
 
   const { like, love, care, haha, wow, sad, angry } = post;
   let points = like + love + care + haha + wow + sad + angry;
 
   let date = parseAdvancedDate(post.createdAt);
-
   return (
     <Box
       bg="secondary"
@@ -87,13 +82,18 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       mb="20px"
       pt="10px"
       pb="4px"
-      w={{base: "451px", sm: "500px", lg: "100%"}}
+      w={{ base: "451px", sm: "500px", lg: "100%" }}
     >
       <Flex px="10px" mb="10px">
         <Avatar src={image?.getImage} />
         <Flex direction="column" ml="10px">
-          <Heading size="sm">
-            {handlePostStatus()}
+          <Heading size="sm" display="flex">
+            <NextLink href={"/profile/"+post.creator._id}>
+              <Text _hover={{ textDecoration: "underline", cursor: "pointer" }}>
+                {post.creator.username}
+              </Text>
+            </NextLink>
+            <Text>&nbsp;{handlePostStatus()}</Text>
           </Heading>
           <Text fontSize="14px">{date}</Text>
         </Flex>
@@ -162,4 +162,4 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     </Box>
   );
 };
-export default PostContainer;
+export default React.memo(PostContainer);
