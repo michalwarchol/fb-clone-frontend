@@ -13,7 +13,6 @@ const FriendSuggestions: React.FC = () => {
   if (data) {
     a = data?.getSuggestedFriends.length - 4;
   }
-  console.log(data)
   return (
     <Box
       bg="secondary"

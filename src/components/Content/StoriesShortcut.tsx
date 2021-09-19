@@ -29,7 +29,7 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
     let length = uniqueStories?.length;
     let emptyShortcuts = [];
     for(let i=0; i<5-length; i++){
-      emptyShortcuts.push(<EmptyShortcut />)
+      emptyShortcuts.push(<EmptyShortcut key={i} />)
     }
   return (
     <Flex mb="20px" justify="space-between" position="relative">
