@@ -12,6 +12,7 @@ import { isServer } from "../../utils/isServer";
 import { FaUserFriends } from "react-icons/fa";
 import { FcCamera } from "react-icons/fc";
 import StoriesShortcut from "./StoriesShortcut";
+import FriendSuggestions from "../FriendSuggestions/FriendSuggestions";
 
 interface Props {
   loggedUser: FullUser;
@@ -70,6 +71,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
             myAvatar={loggedUser.avatarImage}
           />
           <PostCreator loggedUser={loggedUser} />
+          <FriendSuggestions />
           <Box w="100%">
             {!data ? (
               <div>loading</div>
