@@ -78,12 +78,6 @@ const cursorCreatorPagination = (): Resolver => {
       return undefined;
     }
 
-    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isItInTheCache = cache.resolve(
-      cache.resolve(entityKey, fieldKey) as string,
-      "posts"
-    );
-    info.partial = !isItInTheCache;
     let hasMore = true;
     const results: string[] = [];
     fields.forEach((fi) => {
@@ -95,6 +89,14 @@ const cursorCreatorPagination = (): Resolver => {
       }
       results.push(...data);
     });
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItInTheCache = cache.resolve(
+      cache.resolve(entityKey, fieldKey) as string,
+      "posts"
+    );
+    info.partial = !isItInTheCache;
+
     return {
       __typename: "PaginatedPosts",
       hasMore,
@@ -107,30 +109,33 @@ const commentPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName && info.arguments.postId === fieldArgs.postId);
+    const fieldInfos = allFields.filter(
+      (info) =>
+        info.fieldName === fieldName &&
+        info.arguments.postId === fieldArgs.postId
+    );
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined;
     }
-    console.log(allFields)
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isItInTheCache = cache.resolve(
-      cache.resolve(entityKey, fieldKey) as string,
-      "getPostComments"
-    );
+    const isItInTheCache = cache.resolve(entityKey, fieldKey) as string;
     info.partial = !isItInTheCache;
+
     let hasMore = true;
     const results: string[] = [];
 
-     fieldInfos.forEach((fi) => {
-        const key = cache.resolve(entityKey, fi.fieldKey) as string;
-        const data = cache.resolve(key, "comments") as string[];
-        const _hasMore = cache.resolve(key, "hasMore");
-        if (!_hasMore) {
-          hasMore = _hasMore as boolean;
-        }
-        results.push(...data);
-     });
+    fieldInfos.forEach((fi) => {
+      const key = cache.resolve(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, "comments") as string[];
+      const xd = cache.resolve(data[0], "text");
+      console.log("xd", xd)
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+      results.push(...data);
+    });
 
     return {
       __typename: "PaginatedComments",
@@ -219,7 +224,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
         FriendRequest: () => null,
         UserRequest: () => null,
         FriendRequestWithFriend: () => null,
-        FriendSuggestion: () => null
+        FriendSuggestion: () => null,
       },
       resolvers: {
         Query: {
@@ -254,10 +259,12 @@ export const createUrqlClient = (ssrExchange: any) => ({
           createComment: (result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
             const fieldInfos = allFields.filter(
-              (info) => info.fieldName === "getPostComments"
+              (info) =>
+                info.fieldName === "getPostComments" &&
+                info.arguments.postId === args.postId
             );
             fieldInfos.forEach((fi) => {
-              cache.invalidate("Query", "getPostComments", fi.arguments || {});
+                cache.invalidate("Query", "getPostComments", fi.arguments || {});
             });
           },
           logout: (_result, args, cache, info) => {
@@ -357,9 +364,12 @@ export const createUrqlClient = (ssrExchange: any) => ({
             );
 
             getSuggestedFriends.forEach((fi) => {
-              cache.invalidate("Query", "getSuggestedFriends", fi.arguments || {});
+              cache.invalidate(
+                "Query",
+                "getSuggestedFriends",
+                fi.arguments || {}
+              );
             });
-
           },
           acceptFriendRequest: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");

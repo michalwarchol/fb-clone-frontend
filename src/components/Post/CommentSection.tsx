@@ -56,6 +56,10 @@ const CommentSection: React.FC<Props> = ({ postId}) => {
             }
             await createComment({ postId, text: values.text }, {requestPolicy: "cache-first"});
             setValues({ text: "" });
+            setVariables({
+              limit: data?.getPostComments.comments.length,
+              cursor: null
+            })
           }}
         >
           {({ handleSubmit, handleChange, values }) => (
@@ -102,7 +106,7 @@ const CommentSection: React.FC<Props> = ({ postId}) => {
                 fontWeight="500"
                 onClick={() =>
                   setVariables({
-                    limit: variables.limit,
+                    limit: 5,
                     cursor: data.getPostComments.comments[data.getPostComments.comments.length-1].createdAt
                   })
                 }
