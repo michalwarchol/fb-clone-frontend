@@ -24,7 +24,8 @@ import {
 import Options from "./Options";
 import { AiFillCamera, AiFillHome } from "react-icons/ai";
 import PageButton from "./PageButton";
-import { MdSearch } from "react-icons/md";
+import { MdMenu, MdSearch } from "react-icons/md";
+import { useRouter } from "next/router";
 
 interface Props {
   loggedUser: FullUser;
@@ -37,6 +38,12 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
   const [{ data: searchedUsers }] = useSearchUsersByUsernameQuery({
     variables: { username: search },
   });
+  const router = useRouter();
+  let bookmarksLink = "/bookmarks";
+  if(router.pathname=="/bookmarks"){
+    bookmarksLink="/";
+  }
+
   return (
     <Grid
       templateColumns="repeat(12, 1fr)"
@@ -50,7 +57,7 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
       borderBottom="1px solid"
       borderColor="hover"
     >
-      <GridItem colStart={1} colEnd={3}>
+      <GridItem colStart={1} colEnd={4}>
         <Flex h="100%" align="center">
           <NextLink href="/">
             <Flex align="center" h="100%">
@@ -103,12 +110,28 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-          <InputGroup ml="20px" pb={1} onClick={() => onOpen()}>
+          <InputGroup
+            ml="20px"
+            pb={1}
+            onClick={() => onOpen()}
+            w={{ base: "40px", xl: "60%" }}
+            h="80%"
+          >
             <InputLeftElement pointerEvents="none" children={<MdSearch />} />
             <Input
               name="search"
               onChange={(e) => {
                 setSearch(e.currentTarget.value);
+              }}
+              _focus={{
+                base: {
+                  width: "260px",
+                  height: "44px",
+                  position: "absolute",
+                  paddingLeft: "10px",
+                  zIndex: "99",
+                },
+                xl: { width: "100%", height: "initial", position: "initial", paddingLeft: "10px" },
               }}
               onBlur={onClose}
               autoComplete="off"
@@ -120,15 +143,19 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
               _placeholder={{ textColor: "textPrimary" }}
               borderRadius="16px"
               bgColor="hover"
+              pr="0px"
             />
           </InputGroup>
         </Flex>
       </GridItem>
       <GridItem colStart={4} colEnd={9} p="4px 4px 0 4px">
-        <Flex justify="center" h="100%">
+        <Flex justify="center" h="100%" display={{base: "none", xl: "flex"}}>
           <PageButton route="/" MyIcon={AiFillHome} />
           <PageButton route="/friends" MyIcon={FaUserFriends} />
           <PageButton route="/stories" MyIcon={AiFillCamera} />
+        </Flex>
+        <Flex ml="20px" h="100%" display={{base: "flex", xl: "none"}}>
+          <PageButton route={bookmarksLink} MyIcon={MdMenu} />
         </Flex>
       </GridItem>
       <GridItem colStart={9} colEnd={13}>
