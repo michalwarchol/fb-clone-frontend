@@ -217,6 +217,7 @@ export type Query = {
   getPostsByCreatorId: PaginatedPosts;
   getImage: Scalars['String'];
   getUserById?: Maybe<User>;
+  searchUsersByUsername: Array<SearchedUser>;
   loggedUser?: Maybe<FullUser>;
   reactions: Array<Reaction>;
   reaction?: Maybe<Reaction>;
@@ -259,6 +260,11 @@ export type QueryGetImageArgs = {
 
 export type QueryGetUserByIdArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QuerySearchUsersByUsernameArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -325,6 +331,13 @@ export enum ReactionType {
   Sad = 'SAD',
   Angry = 'ANGRY'
 }
+
+export type SearchedUser = {
+  __typename?: 'SearchedUser';
+  _id: Scalars['Int'];
+  username: Scalars['String'];
+  avatarImage?: Maybe<Scalars['String']>;
+};
 
 export type Story = {
   __typename?: 'Story';
@@ -575,6 +588,19 @@ export type UploadUserImageMutationVariables = Exact<{
 export type UploadUserImageMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'uploadImage'>
+);
+
+export type SearchUsersByUsernameQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type SearchUsersByUsernameQuery = (
+  { __typename?: 'Query' }
+  & { searchUsersByUsername: Array<(
+    { __typename?: 'SearchedUser' }
+    & Pick<SearchedUser, '_id' | 'username' | 'avatarImage'>
+  )> }
 );
 
 export type CommentCountQueryVariables = Exact<{
@@ -1051,6 +1077,19 @@ export const UploadUserImageDocument = gql`
 
 export function useUploadUserImageMutation() {
   return Urql.useMutation<UploadUserImageMutation, UploadUserImageMutationVariables>(UploadUserImageDocument);
+};
+export const SearchUsersByUsernameDocument = gql`
+    query SearchUsersByUsername($username: String!) {
+  searchUsersByUsername(username: $username) {
+    _id
+    username
+    avatarImage
+  }
+}
+    `;
+
+export function useSearchUsersByUsernameQuery(options: Omit<Urql.UseQueryArgs<SearchUsersByUsernameQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<SearchUsersByUsernameQuery>({ query: SearchUsersByUsernameDocument, ...options });
 };
 export const CommentCountDocument = gql`
     query CommentCount($postId: Int!) {
