@@ -1,0 +1,8 @@
+query GetUserNotifications {
+  getUserNotifications {
+    ...RegularNotification
+    triggerUser{
+      ...RegularUser
+    }
+  }
+}

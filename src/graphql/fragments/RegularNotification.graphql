@@ -1,0 +1,11 @@
+fragment RegularNotification on Notification {
+    _id
+    info
+    type
+    status
+    link
+    receiverId
+    triggerId
+    createdAt
+    updatedAt
+}

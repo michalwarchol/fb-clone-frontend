@@ -84,6 +84,7 @@ export type Mutation = {
   acceptFriendRequest: Scalars['Boolean'];
   removeFriendRequest: Scalars['Boolean'];
   createStory: Story;
+  createNotification: Notification;
 };
 
 
@@ -163,6 +164,41 @@ export type MutationCreateStoryArgs = {
   input: StoryInput;
 };
 
+
+export type MutationCreateNotificationArgs = {
+  input: NotificationInput;
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['Int'];
+  info: Scalars['String'];
+  type: NotificationType;
+  status: Scalars['String'];
+  receiverId: Scalars['Int'];
+  triggerId: Scalars['Int'];
+  triggerUser: User;
+  link: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type NotificationInput = {
+  info: Scalars['String'];
+  type: NotificationType;
+  receiverId: Scalars['Int'];
+  link?: Maybe<Scalars['String']>;
+};
+
+/** Types of notifications you can get */
+export enum NotificationType {
+  Info = 'INFO',
+  Reaction = 'REACTION',
+  Comment = 'COMMENT',
+  FriendReq = 'FRIEND_REQ',
+  FriendAccept = 'FRIEND_ACCEPT'
+}
+
 export type PaginatedComments = {
   __typename?: 'PaginatedComments';
   comments: Array<Comment>;
@@ -232,6 +268,9 @@ export type Query = {
   friendCount: Scalars['Int'];
   getStories: Array<Story>;
   getRecentStories: Array<Story>;
+  getNotifications: Array<Notification>;
+  getUserNotifications: Array<Notification>;
+  getNewNotificationsCount: Scalars['Int'];
 };
 
 
@@ -394,6 +433,11 @@ export type RegularFriendRequestFragment = (
   & Pick<FriendRequest, 'sender' | 'receiver' | 'status' | 'createdAt' | 'updatedAt'>
 );
 
+export type RegularNotificationFragment = (
+  { __typename?: 'Notification' }
+  & Pick<Notification, '_id' | 'info' | 'type' | 'status' | 'link' | 'receiverId' | 'triggerId' | 'createdAt' | 'updatedAt'>
+);
+
 export type RegularPostFragment = (
   { __typename?: 'Post' }
   & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'tagged' | 'imageId' | 'creatorId' | 'createdAt' | 'updatedAt'>
@@ -484,6 +528,19 @@ export type CreateFriendRequestMutationVariables = Exact<{
 export type CreateFriendRequestMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'createFriendRequest'>
+);
+
+export type CreateNotificationMutationVariables = Exact<{
+  input: NotificationInput;
+}>;
+
+
+export type CreateNotificationMutation = (
+  { __typename?: 'Mutation' }
+  & { createNotification: (
+    { __typename?: 'Notification' }
+    & RegularNotificationFragment
+  ) }
 );
 
 export type CreatePostMutationVariables = Exact<{
@@ -667,6 +724,14 @@ export type GetInProgressFriendRequestsQuery = (
   )> }
 );
 
+export type GetNewNotificationsCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetNewNotificationsCountQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getNewNotificationsCount'>
+);
+
 export type GetPostCommentsQueryVariables = Exact<{
   postId: Scalars['Int'];
   limit: Scalars['Int'];
@@ -792,6 +857,21 @@ export type GetUserFriendRequestsQuery = (
   ) }
 );
 
+export type GetUserNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserNotificationsQuery = (
+  { __typename?: 'Query' }
+  & { getUserNotifications: Array<(
+    { __typename?: 'Notification' }
+    & { triggerUser: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ) }
+    & RegularNotificationFragment
+  )> }
+);
+
 export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -843,6 +923,19 @@ export const RegularFriendRequestFragmentDoc = gql`
   sender
   receiver
   status
+  createdAt
+  updatedAt
+}
+    `;
+export const RegularNotificationFragmentDoc = gql`
+    fragment RegularNotification on Notification {
+  _id
+  info
+  type
+  status
+  link
+  receiverId
+  triggerId
   createdAt
   updatedAt
 }
@@ -966,6 +1059,17 @@ export const CreateFriendRequestDocument = gql`
 
 export function useCreateFriendRequestMutation() {
   return Urql.useMutation<CreateFriendRequestMutation, CreateFriendRequestMutationVariables>(CreateFriendRequestDocument);
+};
+export const CreateNotificationDocument = gql`
+    mutation CreateNotification($input: NotificationInput!) {
+  createNotification(input: $input) {
+    ...RegularNotification
+  }
+}
+    ${RegularNotificationFragmentDoc}`;
+
+export function useCreateNotificationMutation() {
+  return Urql.useMutation<CreateNotificationMutation, CreateNotificationMutationVariables>(CreateNotificationDocument);
 };
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!, $image: Upload) {
@@ -1149,6 +1253,15 @@ ${RegularFriendRequestFragmentDoc}`;
 export function useGetInProgressFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetInProgressFriendRequestsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetInProgressFriendRequestsQuery>({ query: GetInProgressFriendRequestsDocument, ...options });
 };
+export const GetNewNotificationsCountDocument = gql`
+    query GetNewNotificationsCount {
+  getNewNotificationsCount
+}
+    `;
+
+export function useGetNewNotificationsCountQuery(options: Omit<Urql.UseQueryArgs<GetNewNotificationsCountQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetNewNotificationsCountQuery>({ query: GetNewNotificationsCountDocument, ...options });
+};
 export const GetPostCommentsDocument = gql`
     query getPostComments($postId: Int!, $limit: Int!, $cursor: String) {
   getPostComments(postId: $postId, limit: $limit, cursor: $cursor) {
@@ -1258,6 +1371,21 @@ ${RegularUserFragmentDoc}`;
 
 export function useGetUserFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetUserFriendRequestsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserFriendRequestsQuery>({ query: GetUserFriendRequestsDocument, ...options });
+};
+export const GetUserNotificationsDocument = gql`
+    query GetUserNotifications {
+  getUserNotifications {
+    ...RegularNotification
+    triggerUser {
+      ...RegularUser
+    }
+  }
+}
+    ${RegularNotificationFragmentDoc}
+${RegularUserFragmentDoc}`;
+
+export function useGetUserNotificationsQuery(options: Omit<Urql.UseQueryArgs<GetUserNotificationsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetUserNotificationsQuery>({ query: GetUserNotificationsDocument, ...options });
 };
 export const LoggedUserDocument = gql`
     query loggedUser {
