@@ -64,6 +64,7 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
                 receiverId: creatorId,
                 type: NotificationType.Comment,
                 link: "/profile/"+creatorId,
+                postId
               },
             });
             setValues({ text: "" });

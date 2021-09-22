@@ -64,7 +64,8 @@ const ReactionButton: React.FC<Props> = ({ postId, creatorId }) => {
         info: "reacted on your post.",
         receiverId: creatorId,
         type: NotificationType.Reaction,
-        link: "/profile/"+creatorId
+        link: "/profile/"+creatorId,
+        postId
       },
     });
     close();
