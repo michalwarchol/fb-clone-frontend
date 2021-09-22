@@ -256,7 +256,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
           },
           createComment: (result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
-            console.log(allFields)
             const fieldInfos = allFields.filter(
               (info) =>
                 info.fieldName === "getPostComments" &&
@@ -432,6 +431,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
               }
             );
           },
+          updateNotificationStatus: (_result, args, cache, info) => {
+            cache.invalidate("Query", "getNewNotificationsCount");
+          }
         },
       },
     }),
