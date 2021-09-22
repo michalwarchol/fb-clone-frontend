@@ -1,0 +1,3 @@
+mutation UpdateNotificationStatus($notifications: [Int!]!) {
+	updateNotificationStatus(notifications: $notifications)
+}
