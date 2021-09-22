@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useGetFriendRequestQuery, useGetImageQuery, useGetUserByIdQuery } from "../../generated/graphql";
+import { FullUser, useGetFriendRequestQuery, useGetImageQuery, useGetUserByIdQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
@@ -11,11 +11,13 @@ import PostsTab from "./PostsTab";
 interface Props {
   editable: boolean;
   id: number;
+  loggedUser: FullUser;
 }
 
 const Body: React.FC<Props> = ({
   editable,
   id,
+  loggedUser
 }) => {
   const [activeTab, setActiveTab] = useState<number>(1);
 
@@ -149,7 +151,7 @@ const Body: React.FC<Props> = ({
             </Flex>
 
             <Flex align="center">
-              {!editable && <AddFriendButton user={user?.getUserById} isFriend={isFriend?.getFriendRequest} />}
+              {!editable && <AddFriendButton user={user?.getUserById} isFriend={isFriend?.getFriendRequest} loggedUserId={loggedUser.user._id} />}
             </Flex>
           </Flex>
         </Box>

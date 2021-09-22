@@ -132,7 +132,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       />
       <Grid templateColumns="1fr 1fr 1fr" px="10px">
         <GridItem mr="4px">
-          <ReactionButton postId={post._id} />
+          <ReactionButton postId={post._id} creatorId={post.creatorId} />
         </GridItem>
         <GridItem mr="4px">
           <Button
@@ -158,7 +158,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
           </Button>
         </GridItem>
       </Grid>
-      <Box>{openComment && <CommentSection postId={post._id} />}</Box>
+      <Box>{openComment && <CommentSection postId={post._id} creatorId={post.creatorId} />}</Box>
     </Box>
   );
 };

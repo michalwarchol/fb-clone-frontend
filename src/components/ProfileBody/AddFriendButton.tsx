@@ -11,8 +11,10 @@ import React, { useState } from "react";
 import { BiUserCheck } from "react-icons/bi";
 import { FaCheck, FaUserCheck, FaUserPlus } from "react-icons/fa";
 import {
+  NotificationType,
   useAcceptFriendRequestMutation,
   useCreateFriendRequestMutation,
+  useCreateNotificationMutation,
   User,
   useRemoveFriendRequestMutation,
   UserRequest,
@@ -21,6 +23,7 @@ import {
 interface Props {
   user: User;
   isFriend: UserRequest;
+  loggedUserId: number;
 }
 
 //STATES
@@ -29,22 +32,35 @@ interface Props {
 // 3. no friends, user sent a request and status=in-progress
 // 4. friends
 
-const AddFriendButton: React.FC<Props> = ({ user, isFriend }) => {
+const AddFriendButton: React.FC<Props> = ({ user, isFriend, loggedUserId }) => {
   const [{ fetching: createFetching }, createFriendRequest] =
     useCreateFriendRequestMutation();
   const [{ fetching: removeFetching }, removeFriendRequest] =
     useRemoveFriendRequestMutation();
   const [{ fetching: acceptFetching }, acceptFriendRequest] =
     useAcceptFriendRequestMutation();
+  const [, createNotification] = useCreateNotificationMutation();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddFriend = async () => {
     await createFriendRequest({ receiver: user._id });
+    await createNotification({input: {
+      info: "sent you a friend request.",
+      receiverId: user._id,
+      type: NotificationType.FriendReq,
+      link: "/friends"
+    }})
   };
 
   const handleAcceptRequest = async () => {
     await acceptFriendRequest({ userId: user._id });
+    await createNotification({input: {
+      info: "accepted your friend request.",
+      receiverId: user._id,
+      type: NotificationType.FriendAccept,
+      link: "/profile/"+loggedUserId
+    }})
     setIsOpen(false);
   };
 

@@ -17,7 +17,7 @@ import {
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { useRegisterMutation } from "../../generated/graphql";
+import { NotificationType, useCreateNotificationMutation, useRegisterMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 import InputField from "../InputField";
 import BirthdaySelect from "./BirthdaySelect";
@@ -26,6 +26,7 @@ import GenderSelect from "./GenderSelect";
 const RegisterModal: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [, register] = useRegisterMutation();
+  const [, createNotification] = useCreateNotificationMutation();
   const router = useRouter();
 
   return (
@@ -72,6 +73,11 @@ const RegisterModal: React.FC = () => {
                 if (response.data?.register.errors) {
                   setErrors(toErrorMap(response.data.register.errors));
                 } else if (response.data?.register.loggedUser) {
+                  await createNotification({input: {
+                    info: "Welcome to Clonebook.",
+                    receiverId: response.data.register.loggedUser.user._id,
+                    type: NotificationType.Info
+                  }})
                   router.push("/");
                 }
               }}

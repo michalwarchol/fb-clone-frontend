@@ -1,6 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-import { useState } from "react";
 import { useGetUserFriendRequestsQuery } from "../../generated/graphql";
 import FriendNote from "./FriendNode";
 
@@ -9,10 +8,9 @@ interface Props {
 }
 
 const FriendsTab: React.FC<Props> = ({ id }) => {
-  const [skip, setSkip] = useState(0);
   const limit = 10;
   const [{ data }] = useGetUserFriendRequestsQuery({
-    variables: { userId: id, limit, skip },
+    variables: { userId: id, limit, skip: 0 },
   });
 
   return (

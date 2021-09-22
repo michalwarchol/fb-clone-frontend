@@ -31,9 +31,9 @@ const Friends: React.FC = () => {
       <Box maxW="100vw" color="textPrimary" bg={"primary"} minH="100vh">
         <Navbar loggedUser={data && data.loggedUser} />
         <Flex>
-          <FriendsBar setId={setId} />
+          <FriendsBar setId={setId} loggedUserId={data.loggedUser.user._id} />
           {id != null ? (
-            <Body editable={data.loggedUser.user._id == id} id={id} />
+            <Body editable={data.loggedUser.user._id == id} id={id} loggedUser={data.loggedUser} />
           ) : (
             <Flex
               ml="360px"

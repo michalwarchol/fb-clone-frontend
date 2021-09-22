@@ -19,7 +19,9 @@ import {
   FaThumbsUp,
 } from "react-icons/fa";
 import {
+  NotificationType,
   ReactionType,
+  useCreateNotificationMutation,
   useReactionQuery,
   useReactMutation,
 } from "../../generated/graphql";
@@ -39,14 +41,16 @@ const styles = {
 
 interface Props {
   postId: number;
+  creatorId: number;
 }
 
-const ReactionButton: React.FC<Props> = ({ postId }) => {
+const ReactionButton: React.FC<Props> = ({ postId, creatorId }) => {
   const [{ data }] = useReactionQuery({
     variables: { postId },
     pause: isServer,
   });
   const [, react] = useReactMutation();
+  const [, createNotification] = useCreateNotificationMutation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const open = () => setIsOpen(true);
   const close = () => setIsOpen(false);
@@ -54,6 +58,14 @@ const ReactionButton: React.FC<Props> = ({ postId }) => {
   const handleLikeButton = async (index: string) => {
     await react({
       variables: { postId, value: 1, reaction: ReactionType[index] },
+    });
+    await createNotification({
+      input: {
+        info: "reacted on your post.",
+        receiverId: creatorId,
+        type: NotificationType.Reaction,
+        link: "/profile/"+creatorId
+      },
     });
     close();
   };

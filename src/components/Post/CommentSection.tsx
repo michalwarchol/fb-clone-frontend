@@ -10,7 +10,9 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import autosize from "autosize";
 import {
+  NotificationType,
   useCreateCommentMutation,
+  useCreateNotificationMutation,
   useGetPostCommentsQuery,
   useLoggedUserQuery,
 } from "../../generated/graphql";
@@ -20,15 +22,17 @@ import { Form, Formik } from "formik";
 
 interface Props {
   postId: number;
+  creatorId: number;
 }
 
-const CommentSection: React.FC<Props> = ({ postId}) => {
+const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
   const [variables, setVariables] = useState({ limit: 5, cursor: null });
   const [{ data, fetching, }] = useGetPostCommentsQuery({
     pause: isServer,
     variables: { postId, ...variables }
   });
   const [, createComment] = useCreateCommentMutation();
+  const [, createNotification] = useCreateNotificationMutation();
   const [{data: loggedUser}] = useLoggedUserQuery();
   const ref = useRef<HTMLTextAreaElement>();
   useEffect(() => {
@@ -54,6 +58,14 @@ const CommentSection: React.FC<Props> = ({ postId}) => {
               return;
             }
             await createComment({ postId, text: values.text }, {requestPolicy: "cache-first"});
+            await createNotification({
+              input: {
+                info: "commented your post.",
+                receiverId: creatorId,
+                type: NotificationType.Comment,
+                link: "/profile/"+creatorId,
+              },
+            });
             setValues({ text: "" });
             setVariables({
               limit: data?.getPostComments.comments.length,

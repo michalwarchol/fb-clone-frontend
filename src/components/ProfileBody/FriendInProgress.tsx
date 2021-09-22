@@ -2,34 +2,43 @@ import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import React, { SyntheticEvent } from "react";
 import {
   FriendRequestWithFriend,
+  NotificationType,
   useAcceptFriendRequestMutation,
+  useCreateNotificationMutation,
   useGetImageQuery,
   useRemoveFriendRequestMutation,
 } from "../../generated/graphql";
 
 interface Props {
   data: FriendRequestWithFriend;
+  loggedUserId: number;
   setId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const FriendInProgress: React.FC<Props> = ({ data, setId }) => {
+const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
   const [{ data: avatar }] = useGetImageQuery({
     variables: { imageId: data?.friend.avatarId },
     pause: !data,
   });
+  const [, acceptRequest] = useAcceptFriendRequestMutation();
+  const [, removeRequest] = useRemoveFriendRequestMutation();
+  const [, createNotification] = useCreateNotificationMutation();
 
   const confirm = async (e: SyntheticEvent) => {
     e.stopPropagation();
     await acceptRequest({ userId: data.friend._id });
+    await createNotification({input: {
+      info: "accepted your friend request.",
+      receiverId: data.friend._id,
+      type: NotificationType.FriendAccept,
+      link: "/profile/"+loggedUserId
+    }})
   };
 
   const remove = async (e: SyntheticEvent) => {
     e.stopPropagation();
     await removeRequest({ userId: data.friend._id });
   };
-
-  const [, acceptRequest] = useAcceptFriendRequestMutation();
-  const [, removeRequest] = useRemoveFriendRequestMutation();
 
   return (
     <Flex
