@@ -103,7 +103,7 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
             {count && count.getNewNotificationsCount > 0 && !notsOpened && (
               <Badge
                 position="absolute"
-                bottom="0"
+                top="0"
                 left="30px"
                 bg="red.500"
                 color="textPrimary"
