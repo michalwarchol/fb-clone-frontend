@@ -24,11 +24,13 @@ import {
   useGetNewNotificationsCountQuery,
   useGetUserNotificationsQuery,
   useLogoutMutation,
+  useUpdateNotificationStatusMutation,
 } from "../../generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import NextLink from "next/link";
 import { MdNotificationsActive } from "react-icons/md";
 import NotificationNode from "./Notification";
+import { isServer } from "../../utils/isServer";
 
 interface Props {
   loggedUser: FullUser;
@@ -36,10 +38,23 @@ interface Props {
 
 const Options: React.FC<Props> = ({ loggedUser }) => {
   const [{ data }] = useGetUserNotificationsQuery();
-  const [{ data: count }] = useGetNewNotificationsCountQuery();
+  const [{ data: count }] = useGetNewNotificationsCountQuery({pause: isServer,});
   const [, logout] = useLogoutMutation();
+  const [, updateNotificationStatus] = useUpdateNotificationStatusMutation();
   const router = useRouter();
   const [notsOpened, setNotsOpened] = useState(false);
+
+  const updateNotifications = async () => {
+    const notifications = data.getUserNotifications.filter((notification)=>{
+      if(notification.status=="sent"){
+        return true;
+      }
+      return false;
+    })
+    if(notifications.length>0){
+      await updateNotificationStatus({notifications: notifications.map((n)=>(n._id))});
+    }
+  }
 
   return (
     <Flex align="center">
@@ -81,7 +96,7 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
       </NextLink>
       <Popover closeOnEsc closeOnBlur>
         <PopoverTrigger>
-          <Box position="relative">
+          <Box position="relative" onClick={updateNotifications}>
             <IconButton
               aria-label="notifications"
               borderRadius="50%"
