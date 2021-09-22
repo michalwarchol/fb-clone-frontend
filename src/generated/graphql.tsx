@@ -84,7 +84,8 @@ export type Mutation = {
   acceptFriendRequest: Scalars['Boolean'];
   removeFriendRequest: Scalars['Boolean'];
   createStory: Story;
-  createNotification: Notification;
+  createNotification: Scalars['Boolean'];
+  updateNotificationStatus: Scalars['Boolean'];
 };
 
 
@@ -169,6 +170,11 @@ export type MutationCreateNotificationArgs = {
   input: NotificationInput;
 };
 
+
+export type MutationUpdateNotificationStatusArgs = {
+  notifications: Array<Scalars['Int']>;
+};
+
 export type Notification = {
   __typename?: 'Notification';
   _id: Scalars['Int'];
@@ -176,6 +182,7 @@ export type Notification = {
   type: NotificationType;
   status: Scalars['String'];
   receiverId: Scalars['Int'];
+  postId?: Maybe<Scalars['Int']>;
   triggerId: Scalars['Int'];
   triggerUser: User;
   link: Scalars['String'];
@@ -188,6 +195,7 @@ export type NotificationInput = {
   type: NotificationType;
   receiverId: Scalars['Int'];
   link?: Maybe<Scalars['String']>;
+  postId?: Maybe<Scalars['Int']>;
 };
 
 /** Types of notifications you can get */
@@ -435,7 +443,7 @@ export type RegularFriendRequestFragment = (
 
 export type RegularNotificationFragment = (
   { __typename?: 'Notification' }
-  & Pick<Notification, '_id' | 'info' | 'type' | 'status' | 'link' | 'receiverId' | 'triggerId' | 'createdAt' | 'updatedAt'>
+  & Pick<Notification, '_id' | 'info' | 'type' | 'status' | 'link' | 'postId' | 'receiverId' | 'triggerId' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularPostFragment = (
@@ -537,10 +545,7 @@ export type CreateNotificationMutationVariables = Exact<{
 
 export type CreateNotificationMutation = (
   { __typename?: 'Mutation' }
-  & { createNotification: (
-    { __typename?: 'Notification' }
-    & RegularNotificationFragment
-  ) }
+  & Pick<Mutation, 'createNotification'>
 );
 
 export type CreatePostMutationVariables = Exact<{
@@ -634,6 +639,16 @@ export type RemoveFriendRequestMutationVariables = Exact<{
 export type RemoveFriendRequestMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'removeFriendRequest'>
+);
+
+export type UpdateNotificationStatusMutationVariables = Exact<{
+  notifications: Array<Scalars['Int']> | Scalars['Int'];
+}>;
+
+
+export type UpdateNotificationStatusMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateNotificationStatus'>
 );
 
 export type UploadUserImageMutationVariables = Exact<{
@@ -934,6 +949,7 @@ export const RegularNotificationFragmentDoc = gql`
   type
   status
   link
+  postId
   receiverId
   triggerId
   createdAt
@@ -1062,11 +1078,9 @@ export function useCreateFriendRequestMutation() {
 };
 export const CreateNotificationDocument = gql`
     mutation CreateNotification($input: NotificationInput!) {
-  createNotification(input: $input) {
-    ...RegularNotification
-  }
+  createNotification(input: $input)
 }
-    ${RegularNotificationFragmentDoc}`;
+    `;
 
 export function useCreateNotificationMutation() {
   return Urql.useMutation<CreateNotificationMutation, CreateNotificationMutationVariables>(CreateNotificationDocument);
@@ -1172,6 +1186,15 @@ export const RemoveFriendRequestDocument = gql`
 
 export function useRemoveFriendRequestMutation() {
   return Urql.useMutation<RemoveFriendRequestMutation, RemoveFriendRequestMutationVariables>(RemoveFriendRequestDocument);
+};
+export const UpdateNotificationStatusDocument = gql`
+    mutation UpdateNotificationStatus($notifications: [Int!]!) {
+  updateNotificationStatus(notifications: $notifications)
+}
+    `;
+
+export function useUpdateNotificationStatusMutation() {
+  return Urql.useMutation<UpdateNotificationStatusMutation, UpdateNotificationStatusMutationVariables>(UpdateNotificationStatusDocument);
 };
 export const UploadUserImageDocument = gql`
     mutation UploadUserImage($image: Upload, $avatarOrBanner: String!) {

@@ -4,6 +4,7 @@ fragment RegularNotification on Notification {
     type
     status
     link
+    postId
     receiverId
     triggerId
     createdAt

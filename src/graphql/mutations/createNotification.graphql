@@ -1,5 +1,3 @@
 mutation CreateNotification ($input: NotificationInput!) {
-  createNotification(input: $input){
-    ...RegularNotification
-  }
+  createNotification(input: $input)
 }
