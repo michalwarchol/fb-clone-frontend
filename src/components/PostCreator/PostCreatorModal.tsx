@@ -1,7 +1,12 @@
 import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
-import { FullUser, useCreatePostMutation } from "../../generated/graphql";
+import {
+  FullUser,
+  NotificationType,
+  useCreateNotificationMutation,
+  useCreatePostMutation,
+} from "../../generated/graphql";
 import PostCreatorActivityStage from "./PostCreatorActivityStage";
 import PostCreatorBasicStage from "./PostCreatorBasicStage";
 import PostCreatorDetailActivityStage from "./PostCreatorDetailActivityStage";
@@ -35,21 +40,37 @@ const PostCreatorModal: React.FC<Props> = ({
 }) => {
   const initialRef = React.useRef(null);
   const [, createPost] = useCreatePostMutation();
+  const [, createNotification] = useCreateNotificationMutation();
   const [tagged, setTagged] = useState<{ _id: number; username: string }[]>([]);
 
   return (
     <Formik
       initialValues={{ text: "", feeling: "", activity: "", prefix: "" }}
       onSubmit={async (values) => {
-        await createPost({
+        const post = await createPost({
           input: {
             text: values.text,
             feeling: values.feeling,
             activity: values.activity,
-            tagged: tagged.map(tag=>tag._id)
+            tagged: tagged.map((tag) => tag._id),
           },
           image: img,
         });
+
+        Promise.all(
+          tagged.map(async (tag) => {
+            await createNotification({
+              input: {
+                receiverId: tag._id,
+                info: "tagged you in a post.",
+                type: NotificationType.Tag,
+                postId: post.data.createPost._id,
+                link: "/profile/"+user.user._id
+              },
+            });
+          })
+        );
+
         onClose();
       }}
     >
