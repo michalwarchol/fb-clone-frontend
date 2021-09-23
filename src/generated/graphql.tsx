@@ -204,7 +204,8 @@ export enum NotificationType {
   Reaction = 'REACTION',
   Comment = 'COMMENT',
   FriendReq = 'FRIEND_REQ',
-  FriendAccept = 'FRIEND_ACCEPT'
+  FriendAccept = 'FRIEND_ACCEPT',
+  Tag = 'TAG'
 }
 
 export type PaginatedComments = {
