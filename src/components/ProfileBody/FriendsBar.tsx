@@ -12,21 +12,22 @@ const FriendsBar: React.FC<Props> = ({ setId, loggedUserId }) => {
   const [{ data }] = useGetInProgressFriendRequestsQuery();
   return (
     <Box
-      w="360px"
+      minW="360px"
       h="100vh"
-      position="fixed"
-      left="0"
       pt="68px"
       px="8px"
       bg="secondary"
       borderRight="1px"
       borderColor="hover"
+      display="inline-block"
+      position="sticky"
+      top="0"
     >
       <Heading fontSize="26px" mb="10px">
         Friends
       </Heading>
       <Text>{data?.getInProgressFriendRequests.length} Friend Requests</Text>
-      <Box>
+      <Box w="100%">
         {data &&
           data.getInProgressFriendRequests.map((friend) => (
             <FriendInProgress

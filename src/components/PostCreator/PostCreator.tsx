@@ -38,7 +38,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
     }
   }, [uploadedImage]);
   return (
-    <Box bg="secondary" p="10px" borderRadius="8px" mb="20px" w={{base: "451px", sm: "500px", lg: "100%"}} w-min="">
+    <Box bg="secondary" p="10px" borderRadius="8px" mb="20px" w="100%" w-min="">
       <Flex align="center">
         <Avatar src={loggedUser.avatarImage} />
         <Button
@@ -76,7 +76,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
           <InputGroup display="none">
             <Input
               type="file"
-              accept="image/png"
+              accept="image/png, image/jpeg"
               ref={ref}
               onChange={(e) => setUploadedImage(e.target.files[0])}
             />

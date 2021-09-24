@@ -27,7 +27,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
   const [{ data: stories }] = useGetRecentStoriesQuery();
 
   return (
-    <Flex maxW="1920px" justify="center" mt="56px">
+    <Flex maxW="1920px" justify="center" mt="56px" w={{ base: "500px", md: "100%" }}>
       <Flex mt="20px" w={{ base: "500px", md: "680px" }}>
         <Box
           position="fixed"
@@ -72,7 +72,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
           />
           <PostCreator loggedUser={loggedUser} />
           <FriendSuggestions />
-          <Box w="100%">
+          <Flex w="100%" direction="column" align="center">
             {!data ? (
               <div>loading</div>
             ) : (
@@ -80,7 +80,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
                 <PostContainer post={post} key={post._id} />
               ))
             )}
-          </Box>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

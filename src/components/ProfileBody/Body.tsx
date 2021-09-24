@@ -1,5 +1,4 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { FullUser, useGetFriendRequestQuery, useGetImageQuery, useGetUserByIdQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
@@ -40,12 +39,6 @@ const Body: React.FC<Props> = ({
     variables: { userId: id }
   });
 
-  const router = useRouter();
-  let margin = "0";
-  if(router.pathname=="/friends"){
-    margin = "360px";
-  }
-
   let content;
   if (activeTab == 1) {
     content = (
@@ -63,12 +56,12 @@ const Body: React.FC<Props> = ({
   return (
     <Flex
       mt="20px"
-      ml={margin}
       w="100%"
       justify="center"
       align="center"
       bg="primary"
       direction="column"
+      overflowY="hidden"
     >
       <Flex
         bg="secondary"
@@ -132,20 +125,6 @@ const Body: React.FC<Props> = ({
                   onClick={() => setActiveTab(2)}
                 >
                   Friends
-                </Button>
-              </Box>
-              <Box
-                borderBottom={activeTab == 3 ? "4px solid" : undefined}
-                color={activeTab == 3 ? "active" : "textPrimary"}
-                borderColor="active"
-                mr="6px"
-              >
-                <Button
-                  variant="basic"
-                  py="30px"
-                  onClick={() => setActiveTab(3)}
-                >
-                  Photos
                 </Button>
               </Box>
             </Flex>

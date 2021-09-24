@@ -33,11 +33,11 @@ const Friends: React.FC = () => {
         <Flex>
           <FriendsBar setId={setId} loggedUserId={data.loggedUser.user._id} />
           {id != null ? (
-            <Body editable={data.loggedUser.user._id == id} id={id} loggedUser={data.loggedUser} />
+            <Flex w="100%" align="start" bg="primary">
+              <Body editable={data.loggedUser.user._id == id} id={id} loggedUser={data.loggedUser} />
+            </Flex>
           ) : (
             <Flex
-              ml="360px"
-              w="100%"
               h="100vh"
               align="center"
               justify="center"

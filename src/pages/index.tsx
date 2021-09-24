@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Navbar from "../components/Navbar/Navbar";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -21,10 +21,10 @@ const Index = () => {
       router.replace("/login");
     } else if (!fetching && data?.loggedUser) {
       setBody(
-        <Box maxW="100vw"  minH="100vh" color="textPrimary" bg={"primary"}>
+        <Flex maxW="100vw"  minH="100vh" color="textPrimary" bg={"primary"} justify="center" overflowY="hidden">
           <Navbar loggedUser={data && data.loggedUser} />
           <Content loggedUser={data && data.loggedUser} />
-        </Box>
+        </Flex>
       );
     }
   }, [fetching, data, router]);

@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Body from "../../components/ProfileBody/Body";
-import {
-  useLoggedUserQuery,
-} from "../../generated/graphql";
+import { useLoggedUserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { isServer } from "../../utils/isServer";
 
@@ -28,15 +26,23 @@ const Profile: NextPage<Props> = ({ id }) => {
   }, [fetching, data]);
 
   let body = <div></div>;
-  if(data?.loggedUser){
-    body = <Box maxW="100vw" color="textPrimary" bg={"primary"} minH="100vh">
-    <Navbar loggedUser={data && data.loggedUser} />
-    <Body
-      loggedUser={data && data.loggedUser}
-      editable={data.loggedUser.user._id == parseInt(id)}
-      id={parseInt(id)}
-    />
-  </Box>
+  if (data?.loggedUser) {
+    body = (
+      <Box
+        maxW="100vw"
+        color="textPrimary"
+        bg="primary"
+        minH="100vh"
+        overflowY="hidden"
+      >
+        <Navbar loggedUser={data && data.loggedUser} />
+        <Body
+          loggedUser={data && data.loggedUser}
+          editable={data.loggedUser.user._id == parseInt(id)}
+          id={parseInt(id)}
+        />
+      </Box>
+    );
   }
   return <div>{body}</div>;
 };

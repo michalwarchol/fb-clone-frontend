@@ -29,19 +29,19 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
     <Flex
       direction={{ base: "column", lg: "row" }}
       bg="primary"
-      w={{ base: "100%", lg: "876px" }}
+      w={{ lg: "876px" }}
       mt="16px"
       align={{ base: "center", lg: "flex-start" }}
+      justify="space-between"
     >
       <Flex
-        w={{ base: "451px", sm: "500px", lg: "40%" }}
+        w={{base: "100%", lg: "70%"}}
         mr={{ base: "0px", lg: "16px" }}
         mb={{ base: "16px", lg: "0" }}
       >
         <FriendSection id={id} setActiveTab={setActiveTab} />
       </Flex>
       <Flex
-        w={{ base: "90%", md: "60%" }}
         borderRadius="8px"
         direction="column"
         align="center"

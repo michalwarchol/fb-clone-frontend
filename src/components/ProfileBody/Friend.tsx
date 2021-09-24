@@ -1,4 +1,4 @@
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import {
   FriendRequestWithFriend,
@@ -17,18 +17,17 @@ const Friend: React.FC<Props> = ({ data }) => {
   });
   return (
     <NextLink href="/profile/[id]" as={`/profile/${data.friend._id}`}>
-      <Box w="30%" cursor="pointer" mb="20px">
-        <Box w="100%" h={{base: "150px", lg: "90px"}} borderRadius="4px" overflow="hidden">
+      <Flex w={{base: "50%", lg: "30%"}} cursor="pointer" mb="20px" direction="column" align="center">
+        <Box w={{base: "120px", lg: "90px"}} h={{base: "120px", lg: "90px"}} borderRadius="4px" overflow="hidden">
           <Image
             src={image?.getImage}
-            w="100%"
-            h="100%"
+            boxSize="100%"
             objectFit="cover"
             fallbackSrc="https://gravatar.com/avatar/43484bed7620ffc1fec5d482af33bfae?s=400&d=mp&r=x"
           />
         </Box>
         <Text>{data?.friend.username}</Text>
-      </Box>
+      </Flex>
     </NextLink>
   );
 };

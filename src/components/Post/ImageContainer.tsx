@@ -1,4 +1,4 @@
-import { Box, Image } from "@chakra-ui/react";
+import { Image, Stack } from "@chakra-ui/react";
 import React from "react";
 import { useGetImageQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
@@ -13,13 +13,13 @@ const ImageContainer: React.FC<Props> = ({ imageId }) => {
     pause: isServer,
   });
   return (
-    <Box mt="10px">
+    <Stack mt="10px">
       <Image
         src={imageUrl ? imageUrl.getImage : ""}
         fallbackSrc="https://via.placeholder.com/800/?text="
         fit="fill"
       />
-    </Box>
+    </Stack>
   );
 };
 

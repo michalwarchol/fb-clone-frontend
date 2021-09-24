@@ -32,7 +32,7 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
       emptyShortcuts.push(<EmptyShortcut key={i} />)
     }
   return (
-    <Flex mb="20px" justify="space-between" position="relative">
+    <Flex mb="20px" justify="space-between" position="relative"w={{base: "490px", md: "100%"}}>
       <NextLink href="/stories/create">
         <Box
           w="16%"

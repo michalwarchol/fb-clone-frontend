@@ -30,7 +30,7 @@ const FriendSuggestions: React.FC = () => {
           fontSize="30px"
           w="60px"
           h="60px"
-          left="-40px"
+          left={{base: "0", sm: "-40px"}}
           top="50%"
           ml="10px"
           zIndex="11"
@@ -47,7 +47,7 @@ const FriendSuggestions: React.FC = () => {
           fontSize="30px"
           w="60px"
           h="60px"
-          right="-30px"
+          right={{base: "0", sm: "-30px"}}
           top="50%"
           ml="10px"
           zIndex="11"

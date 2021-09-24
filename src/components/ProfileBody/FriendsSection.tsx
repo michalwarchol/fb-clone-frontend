@@ -16,9 +16,8 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
   const [{ data: friends }] = useGetUserFriendRequestsQuery({
     variables: { userId: id, limit: 9 },
   });
-  console.log(friends)
   return (
-    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w="100%">
+    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w={{base: "100%", lg: "96%"}}>
       <Flex align="center" justify="space-between">
         <Heading
           fontSize="22px"

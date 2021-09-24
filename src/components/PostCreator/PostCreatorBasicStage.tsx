@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Box,
   Button,
   CircularProgress,
   CloseButton,
@@ -14,6 +13,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalHeader,
+  Stack,
   Text,
   Textarea,
 } from "@chakra-ui/react";
@@ -86,7 +86,21 @@ const PostCreatorBasicStage: React.FC<Props> = ({
         _hover={{ backgroundColor: "hover" }}
       />
       <Divider orientation="horizontal" my="10px" borderColor="hover" />
-      <ModalBody>
+      <ModalBody
+        overflowY="scroll"
+        css={{
+          "&::-webkit-scrollbar": {
+            width: "4px",
+          },
+          "&::-webkit-scrollbar-track": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#111",
+            borderRadius: "24px",
+          },
+        }}
+      >
         <Flex>
           <Avatar src={loggedUser.avatarImage} />
           <Text color="textPrimary" fontWeight="bold">
@@ -108,11 +122,11 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           h={!!img ? "60px" : "200px"}
         />
         {!!img && (
-          <Box>
+          <Stack position="relative">
             <CloseButton
               position="absolute"
-              right="30px"
-              mt="10px"
+              right="10px"
+              mt="20px"
               bg="tertiary"
               color="primary"
               borderRadius="50%"
@@ -126,8 +140,12 @@ const PostCreatorBasicStage: React.FC<Props> = ({
                 setImg(null);
               }}
             />
-            <Image src={URL.createObjectURL(img)} />
-          </Box>
+            <Image
+              src={URL.createObjectURL(img)}
+              w="100%"
+              objectFit="contain"
+            />
+          </Stack>
         )}
 
         <Flex
@@ -165,7 +183,7 @@ const PostCreatorBasicStage: React.FC<Props> = ({
               <InputGroup display="none">
                 <Input
                   type="file"
-                  accept="image/png"
+                  accept="image/png, image/jpeg"
                   placeholder="filesss"
                   ref={ref}
                   onChange={(e) => {
