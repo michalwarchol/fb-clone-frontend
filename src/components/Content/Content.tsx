@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Icon } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
 import React from "react";
 import {
   FullUser,
@@ -27,13 +27,19 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
   const [{ data: stories }] = useGetRecentStoriesQuery();
 
   return (
-    <Flex maxW="1920px" justify="center" mt="56px" w={{ base: "500px", md: "100%" }}>
+    <Flex
+      maxW="1920px"
+      justify="center"
+      mt="56px"
+      w={{ base: "500px", md: "100%" }}
+    >
       <Flex mt="20px" w={{ base: "500px", md: "680px" }}>
         <Box
           position="fixed"
           left="0"
           w="18%"
           pl="4px"
+          h="100vh"
           display={{ base: "none", xl: "block" }}
         >
           <PageButton
@@ -60,10 +66,13 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
           />
           <PageButton
             text="Stories"
-            image={<Icon as={FcCamera} w="48px"
-            h="48px" />}
+            image={<Icon as={FcCamera} w="48px" h="48px" />}
             link="/stories"
           />
+          <Text position="absolute" bottom="90px" fontSize="14px" ml="10px">
+            Michał Warchoł &copy; {new Date().getFullYear()}. All rights
+            reserved.
+          </Text>
         </Box>
         <Flex w="100%" direction="column">
           <StoriesShortcut
