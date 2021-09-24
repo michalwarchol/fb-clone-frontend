@@ -18,7 +18,6 @@ import {
 } from "../../generated/graphql";
 import { parseAdvancedDate } from "../../utils/parseAdvancedDate";
 import { BiComment } from "react-icons/bi";
-import { RiShareForwardLine } from "react-icons/ri";
 import ReactionButton from "./ReactionButton";
 import { reactionOrder } from "../../utils/reactionOrder";
 import CommentSection from "./CommentSection";
@@ -82,7 +81,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       mb="20px"
       pt="10px"
       pb="4px"
-      w={{ base: "451px", sm: "500px", lg: "100%" }}
+      w="100%"
     >
       <Flex px="10px" mb="10px">
         <Avatar src={image?.getImage} />
@@ -130,7 +129,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
         mb="4px"
         borderColor="gray.400"
       />
-      <Grid templateColumns="1fr 1fr 1fr" px="10px">
+      <Grid templateColumns="1fr 1fr" px="10px">
         <GridItem mr="4px">
           <ReactionButton postId={post._id} creatorId={post.creatorId} />
         </GridItem>
@@ -144,17 +143,6 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
             onClick={() => setOpenComment(true)}
           >
             Comment
-          </Button>
-        </GridItem>
-        <GridItem>
-          <Button
-            bg="secondary"
-            _hover={{ backgroundColor: "hover" }}
-            _active={{ backgroundColor: "hover" }}
-            w="100%"
-            leftIcon={<RiShareForwardLine />}
-          >
-            Share
           </Button>
         </GridItem>
       </Grid>
