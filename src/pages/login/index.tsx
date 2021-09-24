@@ -38,10 +38,13 @@ const Login: React.FC = () => {
                 clonebook
               </Heading>
               <Text fontWeight="400" fontSize="32px">
-                Recent logins
+                Information
               </Text>
               <Text color="gray.500">
-                Click your picture or add an account.
+                Never enter your personal data on an unknown webside.
+              </Text>
+              <Text color="gray.500">
+                Email is required only in case you forgot your password. Consider using a fake one.
               </Text>
             </Box>
           </GridItem>

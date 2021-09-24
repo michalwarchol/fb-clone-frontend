@@ -2,12 +2,15 @@ import {
   Box,
   Flex,
   HStack,
+  Icon,
   RadioProps,
   Text,
+  Tooltip,
   useRadio,
   useRadioGroup,
 } from "@chakra-ui/react";
 import React from "react";
+import { BsInfoCircle } from "react-icons/bs";
 import {IoMdRadioButtonOff, IoMdRadioButtonOn} from "react-icons/Io"
 
 type RadioCardProps = RadioProps;
@@ -49,9 +52,16 @@ const GenderSelect: React.FC = () => {
 
   return (
     <>
-      <Text fontSize="12px" mt="10px">
-        Gender
-      </Text>
+      <Flex align="center" mt="10px" mb="4px">
+        <Text fontSize="12px">
+          Gender
+        </Text>
+        <Tooltip label="This field is optional" placement="right">
+          <HStack w="10px" ml="4px">
+            <Icon as={BsInfoCircle} />
+          </HStack>
+        </Tooltip>
+      </Flex>
       <HStack {...group} justify="space-between">
             {options.map((value)=>{
                 const radio = getRadioProps({value});

@@ -1,27 +1,43 @@
-import { Select, Stack, Text } from "@chakra-ui/react";
+import {
+  Icon,
+  Select,
+  Stack,
+  Text,
+  Tooltip,
+  HStack,
+  Flex,
+} from "@chakra-ui/react";
 import React from "react";
+import { BsInfoCircle } from "react-icons/bs";
 
 const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 const BirthdaySelect: React.FC = () => {
   return (
     <>
-      <Text fontSize="12px" mt="10px">
-        Birthday
-      </Text>
+      <Flex align="center" mt="10px" mb="4px">
+        <Text fontSize="12px">
+          Birthday
+        </Text>
+        <Tooltip label="This field is optional" placement="right">
+          <HStack w="10px" ml="4px">
+            <Icon as={BsInfoCircle} />
+          </HStack>
+        </Tooltip>
+      </Flex>
       <Stack direction="row" align="space-between">
         <Select placeholder="Month" borderColor="gray.300">
           {months.map((elem, index) => (
