@@ -15,6 +15,9 @@ const Options: React.FC<Props> = ({ setFont, setText, setGradient }) => {
   const bgs = [
     "linear(to-r, green.200, pink.500)",
     "linear(to-l, #7928CA, #FF0080)",
+    "radial-gradient(circle, rgba(71,149,249,1) 0%, rgba(237,223,116,1) 100%)",
+    "radial-gradient(circle, rgba(249,71,71,1) 0%, rgba(237,236,116,1) 100%)",
+    "linear-gradient(153deg, rgba(71,164,249,1) 25%, rgba(233,63,109,1) 74%)"
   ];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
