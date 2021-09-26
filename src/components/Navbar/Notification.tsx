@@ -43,7 +43,7 @@ const NotificationNode: React.FC<Props> = ({ notification }) => {
             </Flex>
           </Box>
           <Box>
-            <Text>{makeNotificationInfo(notification)}</Text>
+            {makeNotificationInfo(notification)}
             <Text color="active">
               {parseAdvancedDate(notification.createdAt)}
             </Text>
