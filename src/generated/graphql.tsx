@@ -284,6 +284,7 @@ export type Query = {
 
 
 export type QueryPostsArgs = {
+  creatorId?: Maybe<Scalars['Int']>;
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -771,25 +772,6 @@ export type GetPostCommentsQuery = (
   ) }
 );
 
-export type GetPostsByCreatorIdQueryVariables = Exact<{
-  creatorId: Scalars['Int'];
-  limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
-}>;
-
-
-export type GetPostsByCreatorIdQuery = (
-  { __typename?: 'Query' }
-  & { getPostsByCreatorId: (
-    { __typename?: 'PaginatedPosts' }
-    & Pick<PaginatedPosts, 'hasMore'>
-    & { posts: Array<(
-      { __typename?: 'Post' }
-      & RegularPostFragment
-    )> }
-  ) }
-);
-
 export type GetRecentStoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -906,6 +888,7 @@ export type LoggedUserQuery = (
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
+  creatorId?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -1308,20 +1291,6 @@ export const GetPostCommentsDocument = gql`
 export function useGetPostCommentsQuery(options: Omit<Urql.UseQueryArgs<GetPostCommentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostCommentsQuery>({ query: GetPostCommentsDocument, ...options });
 };
-export const GetPostsByCreatorIdDocument = gql`
-    query GetPostsByCreatorId($creatorId: Int!, $limit: Int!, $cursor: String) {
-  getPostsByCreatorId(creatorId: $creatorId, limit: $limit, cursor: $cursor) {
-    hasMore
-    posts {
-      ...RegularPost
-    }
-  }
-}
-    ${RegularPostFragmentDoc}`;
-
-export function useGetPostsByCreatorIdQuery(options: Omit<Urql.UseQueryArgs<GetPostsByCreatorIdQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<GetPostsByCreatorIdQuery>({ query: GetPostsByCreatorIdDocument, ...options });
-};
 export const GetRecentStoriesDocument = gql`
     query GetRecentStories {
   getRecentStories {
@@ -1427,8 +1396,8 @@ export function useLoggedUserQuery(options: Omit<Urql.UseQueryArgs<LoggedUserQue
   return Urql.useQuery<LoggedUserQuery>({ query: LoggedUserDocument, ...options });
 };
 export const PostsDocument = gql`
-    query Posts($limit: Int!, $cursor: String) {
-  posts(limit: $limit, cursor: $cursor) {
+    query Posts($limit: Int!, $cursor: String, $creatorId: Int) {
+  posts(limit: $limit, cursor: $cursor, creatorId: $creatorId) {
     hasMore
     posts {
       ...RegularPost
