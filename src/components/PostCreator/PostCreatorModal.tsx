@@ -46,7 +46,7 @@ const PostCreatorModal: React.FC<Props> = ({
   return (
     <Formik
       initialValues={{ text: "", feeling: "", activity: "", prefix: "" }}
-      onSubmit={async (values) => {
+      onSubmit={async (values, {resetForm}) => {
         const post = await createPost({
           input: {
             text: values.text,
@@ -70,7 +70,9 @@ const PostCreatorModal: React.FC<Props> = ({
             });
           })
         );
-
+        resetForm({values: { text: "", feeling: "", activity: "", prefix: "" }});
+        setImg(null);
+        setTagged([]);
         onClose();
       }}
     >
