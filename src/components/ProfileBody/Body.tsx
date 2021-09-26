@@ -1,6 +1,11 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { FullUser, useGetFriendRequestQuery, useGetImageQuery, useGetUserByIdQuery } from "../../generated/graphql";
+import {
+  FullUser,
+  useGetFriendRequestQuery,
+  useGetImageQuery,
+  useGetUserByIdQuery,
+} from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import AddFriendButton from "./AddFriendButton";
 import Banner from "./Banner";
@@ -13,11 +18,7 @@ interface Props {
   loggedUser: FullUser;
 }
 
-const Body: React.FC<Props> = ({
-  editable,
-  id,
-  loggedUser
-}) => {
+const Body: React.FC<Props> = ({ editable, id, loggedUser }) => {
   const [activeTab, setActiveTab] = useState<number>(1);
 
   const [{ data: user }] = useGetUserByIdQuery({
@@ -36,20 +37,18 @@ const Body: React.FC<Props> = ({
   });
 
   const [{ data: isFriend }] = useGetFriendRequestQuery({
-    variables: { userId: id }
+    variables: { userId: id },
   });
 
-  let content;
-  if (activeTab == 1) {
-    content = (
-      <PostsTab
-        setActiveTab={setActiveTab}
-        user={user?.getUserById}
-        id={id}
-        editable={editable}
-      />
-    );
-  } else if (activeTab == 2) {
+  let content = (
+    <PostsTab
+      setActiveTab={setActiveTab}
+      user={user?.getUserById}
+      id={id}
+      editable={editable}
+    />
+  );
+  if (activeTab == 2) {
     content = <FriendsTab id={id} />;
   }
 
@@ -130,7 +129,13 @@ const Body: React.FC<Props> = ({
             </Flex>
 
             <Flex align="center">
-              {!editable && <AddFriendButton user={user?.getUserById} isFriend={isFriend?.getFriendRequest} loggedUserId={loggedUser.user._id} />}
+              {!editable && (
+                <AddFriendButton
+                  user={user?.getUserById}
+                  isFriend={isFriend?.getFriendRequest}
+                  loggedUserId={loggedUser.user._id}
+                />
+              )}
             </Flex>
           </Flex>
         </Box>
