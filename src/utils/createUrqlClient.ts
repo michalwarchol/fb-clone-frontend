@@ -1,5 +1,5 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
-import { dedupExchange, Exchange, stringifyVariables } from "urql";
+import { dedupExchange, Exchange, stringifyVariables, gql } from "urql";
 import {
   LogoutMutation,
   LoggedUserQuery,
@@ -9,6 +9,7 @@ import {
   AcceptFriendRequestMutation,
   GetInProgressFriendRequestsQuery,
   GetInProgressFriendRequestsDocument,
+  ReactionInput,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -52,51 +53,20 @@ const cursorPagination = (): Resolver => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "posts") as string[];
       const _hasMore = cache.resolve(key, "hasMore");
-      if (!_hasMore) {
-        hasMore = _hasMore as boolean;
+      
+      if(fieldArgs.creatorId && fi.arguments.creatorId && fieldArgs.creatorId==fi.arguments.creatorId){
+        if (!_hasMore) {
+          hasMore = _hasMore as boolean;
+        }
+        results.push(...data);
+      }else if(!fieldArgs.creatorId && !fi.arguments.creatorId){
+        if (!_hasMore) {
+          hasMore = _hasMore as boolean;
+        }
+        results.push(...data);
       }
-      results.push(...data);
+
     });
-    return {
-      __typename: "PaginatedPosts",
-      hasMore,
-      posts: results,
-    };
-  };
-};
-
-const cursorCreatorPagination = (): Resolver => {
-  return (_parent, fieldArgs, cache, info) => {
-    const { parentKey: entityKey, fieldName } = info;
-    const allFields = cache.inspectFields(entityKey);
-    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
-    const fields = fieldInfos.filter(
-      (field) => field.arguments.creatorId === info.variables.creatorId
-    );
-    const size = fieldInfos.length;
-    if (size === 0) {
-      return undefined;
-    }
-
-    let hasMore = true;
-    const results: string[] = [];
-    fields.forEach((fi) => {
-      const key = cache.resolve(entityKey, fi.fieldKey) as string;
-      const data = cache.resolve(key, "posts") as string[];
-      const _hasMore = cache.resolve(key, "hasMore");
-      if (!_hasMore) {
-        hasMore = _hasMore as boolean;
-      }
-      results.push(...data);
-    });
-
-    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isItInTheCache = cache.resolve(
-      cache.resolve(entityKey, fieldKey) as string,
-      "posts"
-    );
-    info.partial = !isItInTheCache;
-
     return {
       __typename: "PaginatedPosts",
       hasMore,
@@ -227,7 +197,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
       resolvers: {
         Query: {
           posts: cursorPagination(),
-          getPostsByCreatorId: cursorCreatorPagination(),
           getPostComments: commentPagination(),
           getUserFriendRequests: friendRequestPagination(),
         },
@@ -301,6 +270,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 }
               }
             );
+            cache.invalidate("Query");
           },
 
           register: (_result, args, cache, info) => {
@@ -323,6 +293,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
           },
           react: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
+            console.log(allFields)
             const fieldInfos = allFields.filter(
               (info) => info.fieldName === "reaction"
             );
@@ -330,15 +301,6 @@ export const createUrqlClient = (ssrExchange: any) => ({
             fieldInfos.forEach((fi) => {
               cache.invalidate("Query", "reaction", fi.arguments || {});
             });
-
-            const posts = allFields.filter(
-              (info) => info.fieldName === "posts"
-            );
-
-            posts.forEach((fi) => {
-              cache.invalidate("Query", "posts", fi.arguments || {});
-            });
-            return true;
           },
           uploadImage: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");

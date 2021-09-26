@@ -1,5 +1,5 @@
 import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import {
   FullUser,
   useGetRecentStoriesQuery,
@@ -13,18 +13,31 @@ import { FaUserFriends } from "react-icons/fa";
 import { FcCamera } from "react-icons/fc";
 import StoriesShortcut from "./StoriesShortcut";
 import FriendSuggestions from "../FriendSuggestions/FriendSuggestions";
+import { useScrollPosition } from "../../utils/useScrollPosition";
 
 interface Props {
   loggedUser: FullUser;
 }
 
 const Content: React.FC<Props> = ({ loggedUser }) => {
-  const [{ data }] = usePostsQuery({
-    variables: { limit: 10 },
+  const [variables, setVariables] = useState({ limit: 10, cursor: null });
+  const [{ data, fetching }] = usePostsQuery({
+    variables,
     pause: isServer,
   });
 
   const [{ data: stories }] = useGetRecentStoriesQuery();
+  const getMorePosts = () => {
+    setVariables({
+      limit: variables.limit,
+      cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+    });
+  };
+  useScrollPosition(
+    [data?.posts.hasMore, data?.posts.posts],
+    data?.posts.hasMore && !fetching,
+    getMorePosts
+  );
 
   return (
     <Flex
@@ -88,6 +101,11 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
               data.posts.posts.map((post) => (
                 <PostContainer post={post} key={post._id} />
               ))
+            )}
+            {data && !data.posts.hasMore && (
+              <Box mb="10px">
+                <Text>No more posts to display</Text>
+              </Box>
             )}
           </Flex>
         </Flex>
