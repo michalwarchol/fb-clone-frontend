@@ -1,39 +1,43 @@
-# Example app with [chakra-ui](https://github.com/chakra-ui/chakra-ui) and Typescript
+# Frontside of my app called clonebook 
+============
+![GitHub top language](https://img.shields.io/github/languages/top/michalwarchol/fb-clone-frontend) 
+![GitHub](https://img.shields.io/github/license/michalwarchol/fb-clone-frontend)
 
-This example features how to use [chakra-ui](https://github.com/chakra-ui/chakra-ui) as the component library within a Next.js app with typescript.
+---
+## Table of contents
+* [General info](#general-info)
+* [Techstack](#techstack)
+* [Setup](#Setup)
+* [License](#License)
+* [Quick view](#quick-view)
 
-Next.js and chakra-ui have built-in TypeScript declarations, so we'll get autocompletion for their modules straight away.
+---
+## General info
+Clonebook app is a web project. Its goal is to imitate some of facebook features like creating posts, adding friends etc. Its design should look similar to facebook.
 
-We are connecting the Next.js `_app.js` with `chakra-ui`'s Provider and theme so the pages can have app-wide dark/light mode. We are also creating some components which shows the usage of `chakra-ui`'s style props.
+---
+## Techstack
+* [React](https://reactjs.org/)
+* [Next.js](https://nextjs.org/)
+* [Typescript](https://www.typescriptlang.org/)
+* [Chakra UI](https://chakra-ui.com/)
+* [Graphql](https://graphql.org/)
+* [urql](https://formidable.com/open-source/urql/)
 
-## Preview
+---
+## Setup
+1. Clone the repo
+2. Open a terminal in the cloned repo directory and type `yarn` to download all needed deps
+3. Run `yarn dev`
+4. Open `localhost:3000` in your browser
+Hint: You need to clone also [backend repo](https://github.com/michalwarchol/fb-clone-backend) and run it to get full content.
 
-Preview the example live on [StackBlitz](http://stackblitz.com/):
+---
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-chakra-ui-typescript)
+## License
+> You can check out the full license [here](https://github.com/michalwarchol/fb-clone-frontend/blob/main/LICENSE)
+This project is licensed under the terms of the **MIT** license.
 
-## Deploy your own
-
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-chakra-ui-typescript&project-name=with-chakra-ui-typescript&repository-name=with-chakra-ui-typescript)
-
-## How to use
-
-### Using `create-next-app`
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-chakra-ui-typescript with-chakra-ui-typescript-app
-# or
-yarn create next-app --example with-chakra-ui-typescript with-chakra-ui-typescript-app
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
-
-## Notes
-
-Chakra has supported Gradients and RTL in `v1.1`. To utilize RTL, [add RTL direction and swap](https://chakra-ui.com/docs/features/rtl-support).
-
-If you don't have multi-direction app, you should make `<Html lang="ar" dir="rtl">` inside `_document.ts`.
+---
+## Quick view
+Displayed when ready...
