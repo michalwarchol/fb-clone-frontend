@@ -158,6 +158,7 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
           boxSizing="border-box"
           bg={"tertiary"}
           icon={<TiArrowSortedDown />}
+          
           _hover={{
             bg: "hover",
           }}
@@ -168,13 +169,17 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
           }}
         />
         <MenuList w="360px" px="8px" bg="secondary" border={0}>
-          <MenuItem>drugi</MenuItem>
           <MenuItem
             onClick={() => {
               logout();
-              router.push("/login");
+              router.reload();
             }}
+            bg="secondary"
             borderRadius="8px"
+            _focus={{backgroundColor: "secondary"}}
+            _active={{
+              bg: "hover",
+            }}
             _hover={{
               bg: "hover",
             }}
