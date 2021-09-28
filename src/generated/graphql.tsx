@@ -259,8 +259,8 @@ export type Query = {
   __typename?: 'Query';
   posts: PaginatedPosts;
   post?: Maybe<Post>;
-  getPostsByCreatorId: PaginatedPosts;
   getImage: Scalars['String'];
+  getUsers: Array<User>;
   getUserById?: Maybe<User>;
   searchUsersByUsername: Array<SearchedUser>;
   loggedUser?: Maybe<FullUser>;
@@ -292,13 +292,6 @@ export type QueryPostsArgs = {
 
 export type QueryPostArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryGetPostsByCreatorIdArgs = {
-  cursor?: Maybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  creatorId: Scalars['Int'];
 };
 
 
