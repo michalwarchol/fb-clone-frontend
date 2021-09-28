@@ -4,6 +4,7 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import React from "react";
 import { Story, useGetImageQuery } from "../../generated/graphql";
 import NextLink from "next/link";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   story: Story;
@@ -21,7 +22,13 @@ const Shortcut: React.FC<Props> = ({ story }) => {
 
   let content = <Box></Box>;
   if (story.imageId) {
-    content = <Image src={data?.getImage} objectFit="cover" h="100%" />;
+    content = (
+      <Image
+        src={data?.getImage ? base64ToObjectURL(data?.getImage) : null}
+        objectFit="cover"
+        h="100%"
+      />
+    );
   } else {
     content = (
       <Flex
@@ -53,7 +60,7 @@ const Shortcut: React.FC<Props> = ({ story }) => {
             top="5%"
             left="2%"
             size="sm"
-            src={avatar?.getImage}
+            src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
           />
           <Text position="absolute" bottom="0" fontWeight="bold">
             {story.creator.username}

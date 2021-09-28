@@ -26,6 +26,7 @@ import { AiFillCamera, AiFillHome } from "react-icons/ai";
 import PageButton from "./PageButton";
 import { MdMenu, MdSearch } from "react-icons/md";
 import { useRouter } from "next/router";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   loggedUser: FullUser;
@@ -40,8 +41,8 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
   });
   const router = useRouter();
   let bookmarksLink = "/bookmarks";
-  if(router.pathname=="/bookmarks"){
-    bookmarksLink="/";
+  if (router.pathname == "/bookmarks") {
+    bookmarksLink = "/";
   }
 
   return (
@@ -99,7 +100,15 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
                           cursor: "pointer",
                         }}
                       >
-                        <Avatar size="md" src={user.avatarImage} mr="10px" />
+                        <Avatar
+                          size="md"
+                          src={
+                            user.avatarImage
+                              ? base64ToObjectURL(user.avatarImage)
+                              : null
+                          }
+                          mr="10px"
+                        />
                         <Text textAlign="center">{user.username}</Text>
                       </Flex>
                     </NextLink>
@@ -131,7 +140,12 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
                   paddingLeft: "10px",
                   zIndex: "99",
                 },
-                xl: { width: "100%", height: "initial", position: "initial", paddingLeft: "10px" },
+                xl: {
+                  width: "100%",
+                  height: "initial",
+                  position: "initial",
+                  paddingLeft: "10px",
+                },
               }}
               onBlur={onClose}
               autoComplete="off"
@@ -149,12 +163,12 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
         </Flex>
       </GridItem>
       <GridItem colStart={4} colEnd={9} p="4px 4px 0 4px">
-        <Flex justify="center" h="100%" display={{base: "none", xl: "flex"}}>
+        <Flex justify="center" h="100%" display={{ base: "none", xl: "flex" }}>
           <PageButton route="/" MyIcon={AiFillHome} />
           <PageButton route="/friends" MyIcon={FaUserFriends} />
           <PageButton route="/stories" MyIcon={AiFillCamera} />
         </Flex>
-        <Flex ml="20px" h="100%" display={{base: "flex", xl: "none"}}>
+        <Flex ml="20px" h="100%" display={{ base: "flex", xl: "none" }}>
           <PageButton route={bookmarksLink} MyIcon={MdMenu} />
         </Flex>
       </GridItem>

@@ -24,6 +24,7 @@ import CommentSection from "./CommentSection";
 import { isServer } from "../../utils/isServer";
 import ImageContainer from "./ImageContainer";
 import NextLink from "next/link";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface PostProps {
   post: Post;
@@ -84,10 +85,12 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       w="100%"
     >
       <Flex px="10px" mb="10px">
-        <Avatar src={image?.getImage} />
+        <Avatar
+          src={image?.getImage ? base64ToObjectURL(image.getImage) : null}
+        />
         <Flex direction="column" ml="10px">
           <Heading size="sm" display="flex">
-            <NextLink href={"/profile/"+post.creator._id}>
+            <NextLink href={"/profile/" + post.creator._id}>
               <Text _hover={{ textDecoration: "underline", cursor: "pointer" }}>
                 {post.creator.username}
               </Text>
@@ -146,7 +149,11 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
           </Button>
         </GridItem>
       </Grid>
-      <Box>{openComment && <CommentSection postId={post._id} creatorId={post.creatorId} />}</Box>
+      <Box>
+        {openComment && (
+          <CommentSection postId={post._id} creatorId={post.creatorId} />
+        )}
+      </Box>
     </Box>
   );
 };

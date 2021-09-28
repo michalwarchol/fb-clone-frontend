@@ -38,6 +38,7 @@ const Friends: React.FC = () => {
             </Flex>
           ) : (
             <Flex
+              w="100%"
               h="100vh"
               align="center"
               justify="center"

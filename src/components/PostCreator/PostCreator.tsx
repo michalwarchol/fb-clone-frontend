@@ -16,6 +16,7 @@ import { FullUser } from "../../generated/graphql";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import PostCreatorModal from "./PostCreatorModal";
 import { FaUserTag } from "react-icons/fa";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   loggedUser: FullUser;
@@ -40,7 +41,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
   return (
     <Box bg="secondary" p="10px" borderRadius="8px" mb="20px" w="100%" w-min="">
       <Flex align="center">
-        <Avatar src={loggedUser.avatarImage} />
+        <Avatar src={loggedUser.avatarImage ? base64ToObjectURL(loggedUser.avatarImage) : null} />
         <Button
           borderRadius="20px"
           bg="tertiary"

@@ -14,6 +14,7 @@ import { FcCamera } from "react-icons/fc";
 import StoriesShortcut from "./StoriesShortcut";
 import FriendSuggestions from "../FriendSuggestions/FriendSuggestions";
 import { useScrollPosition } from "../../utils/useScrollPosition";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   loggedUser: FullUser;
@@ -57,7 +58,15 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
         >
           <PageButton
             text={loggedUser?.user.username}
-            image={<Avatar src={loggedUser.avatarImage} />}
+            image={
+              <Avatar
+                src={
+                  loggedUser?.avatarImage
+                    ? base64ToObjectURL(loggedUser.avatarImage)
+                    : null
+                }
+              />
+            }
             link={"/profile/" + loggedUser?.user._id}
           />
           <PageButton

@@ -5,6 +5,7 @@ import {
   useGetImageQuery,
 } from "../../generated/graphql";
 import NextLink from "next/link";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   friendRequestWithFriend: FriendRequestWithFriend;
@@ -16,13 +17,7 @@ const FriendNote: React.FC<Props> = ({ friendRequestWithFriend }) => {
   });
 
   return (
-    <Box
-      w="48%"
-      borderRadius="8px"
-      border="1px solid gray"
-      m="4px"
-      p="20px"
-    >
+    <Box w="48%" borderRadius="8px" border="1px solid gray" m="4px" p="20px">
       <Flex w="100%">
         <Box
           w={{ base: "36px", lg: "80px" }}
@@ -35,7 +30,7 @@ const FriendNote: React.FC<Props> = ({ friendRequestWithFriend }) => {
             as={`/profile/${friendRequestWithFriend.friend._id}`}
           >
             <Image
-              src={image?.getImage}
+              src={image?.getImage ? base64ToObjectURL(image.getImage) : null}
               w="100%"
               h="100%"
               objectFit="cover"

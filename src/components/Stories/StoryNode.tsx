@@ -2,6 +2,7 @@ import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React from "react";
 import { Story, useGetImageQuery } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   story: {
@@ -17,7 +18,7 @@ const StoryNode: React.FC<Props> = ({
   story,
   isActive,
   setActiveUserStory,
-  setDisplayed
+  setDisplayed,
 }) => {
   const [{ data: avatar }] = useGetImageQuery({
     variables: { imageId: story.story.creator.avatarId },
@@ -55,7 +56,7 @@ const StoryNode: React.FC<Props> = ({
           h="100%"
           borderRadius="50%"
           objectFit="cover"
-          src={avatar?.getImage}
+          src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
           fallbackSrc="https://gravatar.com/avatar/43484bed7620ffc1fec5d482af33bfae?s=400&d=mp&r=x"
         />
       </Flex>

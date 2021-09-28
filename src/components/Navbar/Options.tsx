@@ -31,6 +31,7 @@ import NextLink from "next/link";
 import { MdNotificationsActive } from "react-icons/md";
 import NotificationNode from "./Notification";
 import { isServer } from "../../utils/isServer";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   loggedUser: FullUser;
@@ -38,23 +39,27 @@ interface Props {
 
 const Options: React.FC<Props> = ({ loggedUser }) => {
   const [{ data }] = useGetUserNotificationsQuery();
-  const [{ data: count }] = useGetNewNotificationsCountQuery({pause: isServer,});
+  const [{ data: count }] = useGetNewNotificationsCountQuery({
+    pause: isServer,
+  });
   const [, logout] = useLogoutMutation();
   const [, updateNotificationStatus] = useUpdateNotificationStatusMutation();
   const router = useRouter();
   const [notsOpened, setNotsOpened] = useState(false);
 
   const updateNotifications = async () => {
-    const notifications = data.getUserNotifications.filter((notification)=>{
-      if(notification.status=="sent"){
+    const notifications = data.getUserNotifications.filter((notification) => {
+      if (notification.status == "sent") {
         return true;
       }
       return false;
-    })
-    if(notifications.length>0){
-      await updateNotificationStatus({notifications: notifications.map((n)=>(n._id))});
+    });
+    if (notifications.length > 0) {
+      await updateNotificationStatus({
+        notifications: notifications.map((n) => n._id),
+      });
     }
-  }
+  };
 
   return (
     <Flex align="center">
@@ -90,7 +95,15 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
               : { backgroundColor: "hover" }
           }
         >
-          <Avatar src={loggedUser.avatarImage} size="sm" mr="4px" />
+          <Avatar
+            src={
+              loggedUser.avatarImage
+                ? base64ToObjectURL(loggedUser.avatarImage)
+                : null
+            }
+            size="sm"
+            mr="4px"
+          />
           <Text fontWeight="bold">{loggedUser?.user.username}</Text>
         </Flex>
       </NextLink>
@@ -158,7 +171,6 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
           boxSizing="border-box"
           bg={"tertiary"}
           icon={<TiArrowSortedDown />}
-          
           _hover={{
             bg: "hover",
           }}
@@ -176,7 +188,7 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
             }}
             bg="secondary"
             borderRadius="8px"
-            _focus={{backgroundColor: "secondary"}}
+            _focus={{ backgroundColor: "secondary" }}
             _active={{
               bg: "hover",
             }}

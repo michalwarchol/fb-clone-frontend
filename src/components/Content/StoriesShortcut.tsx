@@ -9,6 +9,7 @@ import Shortcut from "./Shortcut";
 import { IconButton } from "@chakra-ui/button";
 import { BsArrowRight } from "react-icons/bs";
 import EmptyShortcut from "./EmptyShortcut";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   stories?: Story[];
@@ -43,7 +44,7 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
           _hover={{ cursor: "pointer", filter: "brightness(80%)" }}
         >
           <Image
-            src={myAvatar}
+            src={base64ToObjectURL(myAvatar)}
             h={{ base: "60%", md: "70%" }}
             w="100%"
             objectFit="cover"

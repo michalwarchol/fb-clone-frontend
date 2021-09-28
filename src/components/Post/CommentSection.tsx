@@ -5,7 +5,7 @@ import {
   Flex,
   Spinner,
   Text,
-  Textarea
+  Textarea,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import autosize from "autosize";
@@ -19,6 +19,7 @@ import {
 import { isServer } from "../../utils/isServer";
 import CommentNote from "./Comment";
 import { Form, Formik } from "formik";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   postId: number;
@@ -27,13 +28,13 @@ interface Props {
 
 const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
   const [variables, setVariables] = useState({ limit: 5, cursor: null });
-  const [{ data, fetching, }] = useGetPostCommentsQuery({
+  const [{ data, fetching }] = useGetPostCommentsQuery({
     pause: isServer,
-    variables: { postId, ...variables }
+    variables: { postId, ...variables },
   });
   const [, createComment] = useCreateCommentMutation();
   const [, createNotification] = useCreateNotificationMutation();
-  const [{data: loggedUser}] = useLoggedUserQuery();
+  const [{ data: loggedUser }] = useLoggedUserQuery();
   const ref = useRef<HTMLTextAreaElement>();
   useEffect(() => {
     autosize(ref.current);
@@ -50,28 +51,39 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
         borderColor="gray.400"
       />
       <Flex mt="20px" pb="4px">
-        <Avatar size="sm" mr="10px" src={loggedUser?.loggedUser.avatarImage} />
+        <Avatar
+          size="sm"
+          mr="10px"
+          src={
+            loggedUser?.loggedUser.avatarImage
+              ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
+              : null
+          }
+        />
         <Formik
           initialValues={{ text: "" }}
           onSubmit={async (values, { setValues }) => {
             if (values.text.length < 1) {
               return;
             }
-            await createComment({ postId, text: values.text }, {requestPolicy: "cache-first"});
+            await createComment(
+              { postId, text: values.text },
+              { requestPolicy: "cache-first" }
+            );
             await createNotification({
               input: {
                 info: "commented your post.",
                 receiverId: creatorId,
                 type: NotificationType.Comment,
-                link: "/profile/"+creatorId,
-                postId
+                link: "/profile/" + creatorId,
+                postId,
               },
             });
             setValues({ text: "" });
             setVariables({
               limit: data?.getPostComments.comments.length,
-              cursor: null
-            })
+              cursor: null,
+            });
           }}
         >
           {({ handleSubmit, handleChange, values }) => (
@@ -119,7 +131,10 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
                 onClick={() =>
                   setVariables({
                     limit: 5,
-                    cursor: data.getPostComments.comments[data.getPostComments.comments.length-1].createdAt
+                    cursor:
+                      data.getPostComments.comments[
+                        data.getPostComments.comments.length - 1
+                      ].createdAt,
                   })
                 }
               >
@@ -127,9 +142,13 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
                 {fetching && <Spinner color="textPrimary" size="sm" />}
               </Text>
             )}
-            <Text _hover={{ textDecoration: "underline", cursor: "pointer" }} fontWeight="500" onClick={()=>{
+            <Text
+              _hover={{ textDecoration: "underline", cursor: "pointer" }}
+              fontWeight="500"
+              onClick={() => {
                 ref.current.focus();
-            }}>
+              }}
+            >
               Write a comment...
             </Text>
           </Box>

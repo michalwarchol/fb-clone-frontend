@@ -8,6 +8,7 @@ import {
   useGetImageQuery,
   useRemoveFriendRequestMutation,
 } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   data: FriendRequestWithFriend;
@@ -27,12 +28,14 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
   const confirm = async (e: SyntheticEvent) => {
     e.stopPropagation();
     await acceptRequest({ userId: data.friend._id });
-    await createNotification({input: {
-      info: "accepted your friend request.",
-      receiverId: data.friend._id,
-      type: NotificationType.FriendAccept,
-      link: "/profile/"+loggedUserId
-    }})
+    await createNotification({
+      input: {
+        info: "accepted your friend request.",
+        receiverId: data.friend._id,
+        type: NotificationType.FriendAccept,
+        link: "/profile/" + loggedUserId,
+      },
+    });
   };
 
   const remove = async (e: SyntheticEvent) => {
@@ -47,7 +50,7 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
       cursor="pointer"
       px="8px"
       borderRadius="8px"
-      onClick={()=>setId(data.friend._id)}
+      onClick={() => setId(data.friend._id)}
     >
       <Flex align="center" w="20%">
         <Image
@@ -55,7 +58,7 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
           w="60px"
           h="60px"
           objectFit="cover"
-          src={avatar?.getImage}
+          src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
           fallbackSrc="https://gravatar.com/avatar/43484bed7620ffc1fec5d482af33bfae?s=400&d=mp&r=x"
         />
       </Flex>
@@ -64,7 +67,13 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
           <Text fontWeight="bold">{data?.friend.username}</Text>
         </Box>
         <Flex justify="space-between">
-          <Button bg="active" px="30px" h="36px" onClick={confirm} _hover={{backgroundColor: "active"}}>
+          <Button
+            bg="active"
+            px="30px"
+            h="36px"
+            onClick={confirm}
+            _hover={{ backgroundColor: "active" }}
+          >
             Confirm
           </Button>
           <Button

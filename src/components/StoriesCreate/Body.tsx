@@ -21,6 +21,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/modal";
 import { useDisclosure } from "@chakra-ui/hooks";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   user: FullUser;
@@ -104,7 +105,13 @@ const Body: React.FC<Props> = ({ user }) => {
         <Box py="30px" borderBottom="1px" borderColor="hover" px="10px">
           <Heading fontSize="28px">Your Story</Heading>
           <Flex align="center" mt="20px">
-            <Avatar src={user.avatarImage} mr="10px" size="lg" />
+            <Avatar
+              src={
+                user.avatarImage ? base64ToObjectURL(user.avatarImage) : null
+              }
+              mr="10px"
+              size="lg"
+            />
             <Text fontWeight="bold">{user.user.username}</Text>
           </Flex>
         </Box>

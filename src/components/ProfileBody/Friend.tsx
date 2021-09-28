@@ -5,6 +5,7 @@ import {
   useGetImageQuery,
 } from "../../generated/graphql";
 import NextLink from "next/link";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   data: FriendRequestWithFriend;
@@ -17,10 +18,21 @@ const Friend: React.FC<Props> = ({ data }) => {
   });
   return (
     <NextLink href="/profile/[id]" as={`/profile/${data.friend._id}`}>
-      <Flex w={{base: "50%", lg: "30%"}} cursor="pointer" mb="20px" direction="column" align="center">
-        <Box w={{base: "120px", lg: "90px"}} h={{base: "120px", lg: "90px"}} borderRadius="4px" overflow="hidden">
+      <Flex
+        w={{ base: "50%", lg: "30%" }}
+        cursor="pointer"
+        mb="20px"
+        direction="column"
+        align="center"
+      >
+        <Box
+          w={{ base: "120px", lg: "90px" }}
+          h={{ base: "120px", lg: "90px" }}
+          borderRadius="4px"
+          overflow="hidden"
+        >
           <Image
-            src={image?.getImage}
+            src={image?.getImage ? base64ToObjectURL(image.getImage) : null}
             boxSize="100%"
             objectFit="cover"
             fallbackSrc="https://gravatar.com/avatar/43484bed7620ffc1fec5d482af33bfae?s=400&d=mp&r=x"

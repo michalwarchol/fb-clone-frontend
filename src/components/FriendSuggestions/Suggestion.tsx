@@ -11,6 +11,7 @@ import {
   useCreateNotificationMutation,
   useGetImageQuery,
 } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   friend: FriendSuggestion;
@@ -57,7 +58,7 @@ const Suggestion: React.FC<Props> = ({ friend }) => {
       <Box w="100%">
         <Box h="220px" w="160px" borderRadius="8px" overflow="hidden">
           <Image
-            src={avatar?.getImage}
+            src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
             w="100%"
             h="100%"
             objectFit="cover"

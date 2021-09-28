@@ -22,6 +22,7 @@ import React, { MutableRefObject, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import { FullUser } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 import Image from "../Image";
 import { FormProps } from "./PostCreatorModal";
 
@@ -102,7 +103,13 @@ const PostCreatorBasicStage: React.FC<Props> = ({
         }}
       >
         <Flex>
-          <Avatar src={loggedUser.avatarImage} />
+          <Avatar
+            src={
+              loggedUser.avatarImage
+                ? base64ToObjectURL(loggedUser.avatarImage)
+                : null
+            }
+          />
           <Text color="textPrimary" fontWeight="bold">
             {handlePostStatus()}
           </Text>

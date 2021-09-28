@@ -4,6 +4,7 @@ import {
   FriendRequestWithFriend,
   useGetImageQuery,
 } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   friend: FriendRequestWithFriend;
@@ -57,7 +58,10 @@ const SuggestedFriendNote: React.FC<Props> = ({
       borderRadius="8px"
       onClick={handleClick}
     >
-      <Avatar size="md" src={avatar?.getImage} />
+      <Avatar
+        size="md"
+        src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
+      />
       <Text color="textPrimary" ml="10px">
         {friend.friend.username}
       </Text>

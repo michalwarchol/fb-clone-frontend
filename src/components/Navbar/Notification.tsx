@@ -11,6 +11,7 @@ import {
 import { makeNotificationInfo } from "../../utils/makeNotificationInfo";
 import { parseAdvancedDate } from "../../utils/parseAdvancedDate";
 import NextLink from "next/link";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   notification: Notification;
@@ -23,12 +24,21 @@ const NotificationNode: React.FC<Props> = ({ notification }) => {
 
   let image = <Icon as={FaFlag} bg="active" w="30px" h="30px" />;
   if (notification.type != NotificationType.Info) {
-    image = <Avatar src={avatar?.getImage} size="lg" />;
+    image = (
+      <Avatar
+        src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
+        size="lg"
+      />
+    );
   }
 
   return (
     <NextLink href={notification.link}>
-      <Box p="8px" borderRadius="8px" _hover={{ backgroundColor: "hover" }}>
+      <Box
+        p="8px"
+        borderRadius="8px"
+        _hover={{ backgroundColor: "hover", cursor: "pointer" }}
+      >
         <Flex>
           <Box mr="10px">
             <Flex
