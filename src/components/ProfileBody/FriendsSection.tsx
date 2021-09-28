@@ -17,7 +17,7 @@ const FriendSection: React.FC<Props> = ({ id, setActiveTab }) => {
     variables: { userId: id, limit: 9 },
   });
   return (
-    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w={{base: "100%", lg: "96%"}}>
+    <Box pt="20px" px="16px" bg="secondary" borderRadius="8px" w="100%">
       <Flex align="center" justify="space-between">
         <Heading
           fontSize="22px"
