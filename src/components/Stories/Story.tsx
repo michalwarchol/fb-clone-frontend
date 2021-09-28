@@ -3,9 +3,10 @@ import { IconButton } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { IoIosPause, IoIosPlay } from "react-icons/Io";
 import { Story, useGetImageQuery } from "../../generated/graphql";
+import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 import { setStoriesInterval } from "../../utils/setStoriesInterval";
 
 interface Props {
@@ -39,6 +40,9 @@ const TextStory: React.FC<Props> = ({
     variables: { imageId: story.creator.avatarId },
   });
   let initialMount = useRef(true);
+
+  const avatar = useMemo(()=>base64ToObjectURL(data?.getImage), [data]);
+  const storyImage = useMemo(()=>base64ToObjectURL(image?.getImage), [image]);
 
   setStoriesInterval(
     activeUserStory,
@@ -119,7 +123,9 @@ const TextStory: React.FC<Props> = ({
         <Flex mt="10px" justify="space-between" align="center">
           <Flex align="center">
             <Box mr="10px">
-              <Avatar src={data?.getImage} />
+              <Avatar
+                src={avatar}
+              />
             </Box>
             <Text fontSize="20px" fontWeight="bold">
               {story.creator.username}
@@ -139,7 +145,7 @@ const TextStory: React.FC<Props> = ({
 
       {!!story?.imageId ? (
         <Image
-          src={image?.getImage}
+          src={storyImage}
           objectFit="cover"
           w="100%"
           h="100%"
