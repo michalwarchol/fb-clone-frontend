@@ -83,16 +83,6 @@ const Body: React.FC<Props> = ({ editable, id, loggedUser }) => {
           >
             {user?.getUserById.username}
           </Text>
-          {editable && (
-            <Text
-              color="active"
-              fontWeight="500"
-              textAlign="center"
-              _hover={{ textDecoration: "underline", cursor: "pointer" }}
-            >
-              Add Bio
-            </Text>
-          )}
         </Box>
         <Box w={{ base: "100%", lg: "876px" }} mt="20px">
           <Divider orientation="horizontal" borderColor="gray.400" />
