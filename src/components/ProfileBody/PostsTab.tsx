@@ -23,7 +23,6 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
     pause: isServer,
   });
   const [variables, setVariables] = useState({ limit: 10, cursor: null });
-  console.log(variables);
   const [{ data: userPosts }] = usePostsQuery({
     variables: { ...variables, creatorId: id },
     pause: !user,
@@ -51,13 +50,13 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
       justify="space-between"
     >
       <Flex
-        w={{ base: "100%", lg: "70%" }}
+        w={{ base: "100%", lg: "40%" }}
         mr={{ base: "0px", lg: "16px" }}
         mb={{ base: "16px", lg: "0" }}
       >
         <FriendSection id={id} setActiveTab={setActiveTab} />
       </Flex>
-      <Flex borderRadius="8px" direction="column" align="center">
+      <Flex borderRadius="8px" direction="column" align="center" w={{ base: "100%", lg: "60%" }}>
         {editable && <PostCreator loggedUser={data?.loggedUser} />}
         <Flex w="100%" direction="column" align="center">
           {!userPosts ? (
