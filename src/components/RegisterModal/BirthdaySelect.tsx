@@ -41,20 +41,20 @@ const BirthdaySelect: React.FC = () => {
       <Stack direction="row" align="space-between">
         <Select placeholder="Month" borderColor="gray.300">
           {months.map((elem, index) => (
-            <option value={index}>{elem}</option>
+            <option value={index} key={index}>{elem}</option>
           ))}
         </Select>
 
         <Select placeholder="Day" borderColor="gray.300">
-          {Array.from(Array(31).keys()).map((elem) => (
-            <option value={elem}>{elem + 1}</option>
+          {Array.from(Array(31).keys()).map((elem, index) => (
+            <option value={elem} key={index}>{elem + 1}</option>
           ))}
         </Select>
 
         <Select placeholder="Year" borderColor="gray.300">
           {Array.from(Array(new Date().getFullYear() - 1904).keys()).map(
-            (elem) => (
-              <option value={elem}>{new Date().getFullYear() - elem}</option>
+            (elem, index) => (
+              <option value={elem} key={index}>{new Date().getFullYear() - elem}</option>
             )
           )}
         </Select>

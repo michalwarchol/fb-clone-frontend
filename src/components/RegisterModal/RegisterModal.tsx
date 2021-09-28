@@ -17,7 +17,11 @@ import {
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
-import { NotificationType, useCreateNotificationMutation, useRegisterMutation } from "../../generated/graphql";
+import {
+  NotificationType,
+  useCreateNotificationMutation,
+  useRegisterMutation,
+} from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 import InputField from "../InputField";
 import BirthdaySelect from "./BirthdaySelect";
@@ -73,11 +77,13 @@ const RegisterModal: React.FC = () => {
                 if (response.data?.register.errors) {
                   setErrors(toErrorMap(response.data.register.errors));
                 } else if (response.data?.register.loggedUser) {
-                  await createNotification({input: {
-                    info: "Welcome to Clonebook.",
-                    receiverId: response.data.register.loggedUser.user._id,
-                    type: NotificationType.Info
-                  }})
+                  await createNotification({
+                    input: {
+                      info: "Welcome to Clonebook.",
+                      receiverId: response.data.register.loggedUser.user._id,
+                      type: NotificationType.Info,
+                    },
+                  });
                   router.push("/");
                 }
               }}
@@ -141,7 +147,7 @@ const RegisterModal: React.FC = () => {
                         fontWeight="bold"
                         transition="filter 0.1s ease-in-out"
                         _active={{
-                          bg: "success"
+                          bg: "success",
                         }}
                         _hover={{
                           filter: "brightness(0.9)",
