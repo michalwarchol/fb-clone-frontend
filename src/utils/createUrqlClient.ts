@@ -312,9 +312,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
               myReaction.fieldKey
             ) as string;
 
+            cache.invalidate("Query", "reaction", myReaction.arguments);
             if (!resolvedReaction) {
               //if previous reaction doesn't exist, then only increase next reaction
-              cache.invalidate("Query", "reaction", myReaction.arguments);
               const thisPost = cache.readFragment(
                 gql`
               fragment ____ on Post {
