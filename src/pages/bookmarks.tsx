@@ -11,6 +11,7 @@ import { FaUserFriends } from 'react-icons/fa';
 import { FcCamera } from 'react-icons/fc';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { base64ToObjectURL } from '../utils/base64ToObjectURL';
 
 const Bookmarks:React.FC = () => {
     const [{ data, fetching }] = useLoggedUserQuery({
@@ -29,7 +30,7 @@ const Bookmarks:React.FC = () => {
               <Box mt="56px">
               <PageButton
             text={data.loggedUser.user.username}
-            image={<Avatar src={data.loggedUser.avatarImage} />}
+            image={<Avatar src={base64ToObjectURL(data.loggedUser.avatarImage)} />}
             link={"/profile/" + data.loggedUser?.user._id}
           />
           <PageButton
