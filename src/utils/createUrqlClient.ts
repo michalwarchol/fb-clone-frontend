@@ -53,19 +53,22 @@ const cursorPagination = (): Resolver => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
       const data = cache.resolve(key, "posts") as string[];
       const _hasMore = cache.resolve(key, "hasMore");
-      
-      if(fieldArgs.creatorId && fi.arguments.creatorId && fieldArgs.creatorId==fi.arguments.creatorId){
+
+      if (
+        fieldArgs.creatorId &&
+        fi.arguments.creatorId &&
+        fieldArgs.creatorId == fi.arguments.creatorId
+      ) {
         if (!_hasMore) {
           hasMore = _hasMore as boolean;
         }
         results.push(...data);
-      }else if(!fieldArgs.creatorId && !fi.arguments.creatorId){
+      } else if (!fieldArgs.creatorId && !fi.arguments.creatorId) {
         if (!_hasMore) {
           hasMore = _hasMore as boolean;
         }
         results.push(...data);
       }
-
     });
     return {
       __typename: "PaginatedPosts",
@@ -231,7 +234,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 info.arguments.postId === args.postId
             );
             fieldInfos.forEach((fi) => {
-                cache.invalidate("Query", "getPostComments", fi.arguments || {});
+              cache.invalidate("Query", "getPostComments", fi.arguments || {});
             });
 
             const commentCount = allFields.filter(
@@ -242,7 +245,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
 
             commentCount.forEach((fi) => {
               cache.invalidate("Query", "commentCount", fi.arguments || {});
-          });
+            });
           },
           logout: (_result, args, cache, info) => {
             cache.invalidate("Query");
@@ -292,16 +295,101 @@ export const createUrqlClient = (ssrExchange: any) => ({
             );
           },
           react: (_result, args, cache, info) => {
+            const { postId, reaction } = args.variables as ReactionInput;
             const allFields = cache.inspectFields("Query");
-            console.log(allFields)
-            const fieldInfos = allFields.filter(
+
+            const reactions = allFields.filter(
               (info) => info.fieldName === "reaction"
             );
 
-            fieldInfos.forEach((fi) => {
-              cache.invalidate("Query", "reaction", fi.arguments || {});
-            });
+            const postReaction = reactions.filter(
+              (r) => r.arguments.postId == postId
+            );
+
+            const myReaction = postReaction[0];
+            const resolvedReaction = cache.resolve(
+              "Query",
+              myReaction.fieldKey
+            ) as string;
+
+            if (!resolvedReaction) {
+              //if previous reaction doesn't exist, then only increase next reaction
+              cache.invalidate("Query", "reaction", myReaction.arguments);
+              const thisPost = cache.readFragment(
+                gql`
+              fragment ____ on Post {
+                _id
+                ${reaction.toLowerCase()}
+              }
+            `,
+                { _id: postId as number } as any
+              );
+              cache.writeFragment(
+                gql`
+                fragment _ on Post {
+                  _id
+                  ${reaction.toLowerCase()}
+                }
+              `,
+                {
+                  _id: postId,
+                  [reaction.toLowerCase()]:
+                    thisPost[reaction.toLowerCase()] + 1,
+                }
+              );
+              return;
+            }
+
+            const previousReaction = cache.resolve(
+              resolvedReaction,
+              "reaction"
+            );
+            const thisPost = cache.readFragment(
+              gql`
+              fragment ___ on Post {
+                _id
+                ${previousReaction as string}
+                ${reaction.toLowerCase()}
+              }
+            `,
+              { _id: postId }
+            );
+            if ((previousReaction as string) == reaction.toLowerCase()) {
+              //if previous reaction is the same as next reaction then only decrease the reaction
+              cache.writeFragment(
+                gql`
+              fragment ___ on Post {
+                _id
+                ${previousReaction as string}
+              }
+            `,
+                {
+                  _id: postId,
+                  [previousReaction as string]:
+                    thisPost[previousReaction as string] - 1,
+                }
+              );
+
+              return;
+            }
+            //if previous reaction is different from next reaction, then decrease previous and increase next
+            cache.writeFragment(
+              gql`
+              fragment ___ on Post {
+                _id
+                ${previousReaction as string}
+                ${reaction.toLowerCase()}
+              }
+            `,
+              {
+                _id: postId,
+                [previousReaction as string]:
+                  thisPost[previousReaction as string] - 1,
+                [reaction.toLowerCase()]: thisPost[reaction.toLowerCase()] + 1,
+              }
+            );
           },
+
           uploadImage: (_result, args, cache, info) => {
             const allFields = cache.inspectFields("Query");
             const getUserById = allFields.filter(
@@ -395,7 +483,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
           },
           updateNotificationStatus: (_result, args, cache, info) => {
             cache.invalidate("Query", "getNewNotificationsCount");
-          }
+          },
         },
       },
     }),
