@@ -1,5 +1,5 @@
 import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FullUser,
   useGetRecentStoriesQuery,
@@ -40,6 +40,8 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
     getMorePosts
   );
 
+  const avatar = useMemo(()=>base64ToObjectURL(loggedUser?.avatarImage), [loggedUser]);
+
   return (
     <Flex
       maxW="1920px"
@@ -60,11 +62,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
             text={loggedUser?.user.username}
             image={
               <Avatar
-                src={
-                  loggedUser?.avatarImage
-                    ? base64ToObjectURL(loggedUser.avatarImage)
-                    : null
-                }
+                src={avatar}
               />
             }
             link={"/profile/" + loggedUser?.user._id}

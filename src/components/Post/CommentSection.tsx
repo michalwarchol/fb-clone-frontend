@@ -7,7 +7,7 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import autosize from "autosize";
 import {
   NotificationType,
@@ -35,6 +35,10 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
   const [, createComment] = useCreateCommentMutation();
   const [, createNotification] = useCreateNotificationMutation();
   const [{ data: loggedUser }] = useLoggedUserQuery();
+  const avatar = useMemo(
+    () => base64ToObjectURL(loggedUser?.loggedUser.avatarImage),
+    [loggedUser]
+  );
   const ref = useRef<HTMLTextAreaElement>();
   useEffect(() => {
     autosize(ref.current);
@@ -51,15 +55,7 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
         borderColor="gray.400"
       />
       <Flex mt="20px" pb="4px">
-        <Avatar
-          size="sm"
-          mr="10px"
-          src={
-            loggedUser?.loggedUser.avatarImage
-              ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
-              : null
-          }
-        />
+        <Avatar size="sm" mr="10px" src={avatar} />
         <Formik
           initialValues={{ text: "" }}
           onSubmit={async (values, { setValues }) => {
@@ -67,8 +63,7 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
               return;
             }
             await createComment(
-              { postId, text: values.text },
-              { requestPolicy: "cache-first" }
+              { postId, text: values.text }
             );
             await createNotification({
               input: {

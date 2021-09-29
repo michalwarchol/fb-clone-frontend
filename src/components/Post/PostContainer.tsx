@@ -9,7 +9,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Post,
   useCommentCountQuery,
@@ -40,6 +40,8 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
     variables: { imageId: post.creator.avatarId },
     pause: !post,
   });
+
+  const avatar = useMemo(() => base64ToObjectURL(image?.getImage), [image]);
 
   const handlePostStatus = () => {
     let taggedUsers = post.tagged.map((tag) => {
@@ -85,9 +87,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
       w="100%"
     >
       <Flex px="10px" mb="10px">
-        <Avatar
-          src={image?.getImage ? base64ToObjectURL(image.getImage) : null}
-        />
+        <Avatar src={avatar} />
         <Flex direction="column" ml="10px">
           <Heading size="sm" display="flex">
             <NextLink href={"/profile/" + post.creator._id}>
@@ -149,7 +149,7 @@ const PostContainer: React.FC<PostProps> = ({ post }) => {
           </Button>
         </GridItem>
       </Grid>
-      <Box>
+      <Box px="10px">
         {openComment && (
           <CommentSection postId={post._id} creatorId={post.creatorId} />
         )}
