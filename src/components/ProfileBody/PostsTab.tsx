@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
   useLoggedUserQuery,
@@ -60,7 +60,7 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
         {editable && <PostCreator loggedUser={data?.loggedUser} />}
         <Flex w="100%" direction="column" align="center">
           {!userPosts ? (
-            <div>loading</div>
+            <Box p="10px" borderRadius="50%" bg="secondary"><Spinner color="active" size="xl" /></Box>
           ) : (
             userPosts.posts.posts.map((post) => (
               <PostContainer post={post} key={post._id} />
@@ -68,7 +68,7 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
           )}
           {userPosts && !userPosts.posts.hasMore && (
             <Box mb="10px">
-              <Text>No more posts to display</Text>
+              <Text fontSize="20px">No more posts to display</Text>
             </Box>
           )}
         </Flex>

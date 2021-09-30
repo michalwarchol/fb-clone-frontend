@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import {
   FullUser,
@@ -103,7 +103,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
           <FriendSuggestions />
           <Flex w="100%" direction="column" align="center">
             {!data ? (
-              <div>loading</div>
+              <Box p="10px" borderRadius="50%" bg="secondary"><Spinner color="active" size="xl" /></Box>
             ) : (
               data.posts.posts.map((post) => (
                 <PostContainer post={post} key={post._id} />
