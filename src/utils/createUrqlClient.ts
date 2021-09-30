@@ -10,6 +10,10 @@ import {
   GetInProgressFriendRequestsQuery,
   GetInProgressFriendRequestsDocument,
   ReactionInput,
+  CreateCommentMutation,
+  GetPostCommentsQuery,
+  GetPostCommentsDocument,
+  CommentCountDocument,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
@@ -227,25 +231,35 @@ export const createUrqlClient = (ssrExchange: any) => ({
             });
           },
           createComment: (result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const fieldInfos = allFields.filter(
-              (info) =>
-                info.fieldName === "getPostComments" &&
-                info.arguments.postId === args.postId
+            const loggedUser = cache.readQuery({
+              query: LoggedUserDocument,
+            }) as any;
+            cache.updateQuery(
+              {
+                query: GetPostCommentsDocument,
+                variables: { limit: 5, postId: args.postId },
+              },
+              (data) => {
+                (data.getPostComments as any).comments.unshift({
+                  ...(result.createComment as any),
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  creator: loggedUser.loggedUser.user,
+                });
+                return data;
+              }
             );
-            fieldInfos.forEach((fi) => {
-              cache.invalidate("Query", "getPostComments", fi.arguments || {});
-            });
-
-            const commentCount = allFields.filter(
-              (info) =>
-                info.fieldName === "commentCount" &&
-                info.arguments.postId === args.postId
+            cache.updateQuery(
+              {
+                query: CommentCountDocument,
+                variables: { postId: args.postId },
+              },
+              (data) => {
+                const newData = data;
+                (newData.commentCount as number) += 1;
+                return newData;
+              }
             );
-
-            commentCount.forEach((fi) => {
-              cache.invalidate("Query", "commentCount", fi.arguments || {});
-            });
           },
           logout: (_result, args, cache, info) => {
             cache.invalidate("Query");

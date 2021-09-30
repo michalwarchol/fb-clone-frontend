@@ -75,10 +75,6 @@ const CommentSection: React.FC<Props> = ({ postId, creatorId }) => {
               },
             });
             setValues({ text: "" });
-            setVariables({
-              limit: data?.getPostComments.comments.length,
-              cursor: null,
-            });
           }}
         >
           {({ handleSubmit, handleChange, values }) => (
