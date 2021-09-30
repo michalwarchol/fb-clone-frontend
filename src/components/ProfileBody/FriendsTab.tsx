@@ -32,7 +32,7 @@ const FriendsTab: React.FC<Props> = ({ id }) => {
           ))}
         </Flex>
         {!data?.getUserFriendRequests.hasMore && (
-          <Text textAlign="center" fontSize="24px" fontWeight="bold">
+          <Text textAlign="center" fontSize="24px" fontWeight="bold" pb="10px">
             No more friends to show
           </Text>
         )}
