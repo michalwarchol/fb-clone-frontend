@@ -19,7 +19,6 @@ import InputField from "../../components/InputField";
 import RegisterModal from "../../components/RegisterModal/RegisterModal";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { withUrqlClient } from "next-urql";
-import NextLink from "next/link";
 
 const Login: React.FC = () => {
   const [, login] = useLoginMutation();
@@ -44,7 +43,7 @@ const Login: React.FC = () => {
                 Never enter your personal data on an unknown webside.
               </Text>
               <Text color="gray.500">
-                Email is required only in case you forgot your password. Consider using a fake one.
+                We don't use your email to anything.
               </Text>
             </Box>
           </GridItem>
@@ -111,17 +110,6 @@ const Login: React.FC = () => {
                           "Log in"
                         )}
                       </Button>
-                      <Box
-                        color="active"
-                        fontSize="14px"
-                        textAlign="center"
-                        mt={4}
-                        fontWeight="400"
-                      >
-                        <NextLink href="login/recover">
-                          <Text _hover={{textDecoration: "underline", cursor: "pointer"}} display="inline-block">Forgot password?</Text>
-                        </NextLink>
-                      </Box>
                       <Divider
                         orientation="horizontal"
                         mt={5}
