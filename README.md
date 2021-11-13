@@ -33,5 +33,25 @@ Hint: You need to clone also [backend repo](https://github.com/michalwarchol/fb-
 This project is licensed under the terms of the **MIT** license.
 
 ## Quick view
-Displayed when ready...
-![Alt text](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/home.png?raw=true "Title")
+Home page of fb-clone includes posts, stories and quick access to everything else.
+![Home](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/home.png?raw=true "Home")
+
+You can create posts with images, tag friends, and express your emotions :D
+![create post](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/postcreate.png?raw=true "Create Post")
+
+Posts are displayed in home page. You can react on them as well as commet.
+![Posts](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/posts.png?raw=true "Posts")
+
+You can see your profile, change profile pic and banner.
+![Profile](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/profile.png?raw=true "Profile")
+
+You can create stories. There is multiple background choose and different headlines. You can also create story with image.
+![Story creator](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/storycreator.png?raw=true "Story Creator")
+
+See stories of your friends :D
+![Stories](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/stories.png?raw=true "Stories")
+
+Receive notifications from your friends
+![Notifications](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/notifications.png?raw=true "Notifications")
+
+That's all for now. This project took me so long, that I really want to show how much effort a gave it.
