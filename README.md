@@ -34,4 +34,4 @@ This project is licensed under the terms of the **MIT** license.
 
 ## Quick view
 Displayed when ready...
-![Alt text](screens/home.PNG?raw=true "Title")
+![Alt text](https://github.com/michalwarchol/fb-clone-frontend/blob/main/screens/home.png?raw=true "Title")
