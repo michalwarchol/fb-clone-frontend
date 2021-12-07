@@ -1,7 +1,7 @@
 import Icon from "@chakra-ui/icon";
 import { Flex, Text } from "@chakra-ui/layout";
 import React, { useEffect, useRef, useState } from "react";
-import { IoMdPhotos } from "react-icons/Io";
+import { IoMdPhotos } from "react-icons/io";
 import { useGetRecentStoriesQuery } from "../../generated/graphql";
 import StoriesBar from "./StoriesBar";
 import StoryDisplay from "./StoryDisplay";

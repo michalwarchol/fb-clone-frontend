@@ -21,14 +21,13 @@ import { FormikProps } from "formik";
 import React, { MutableRefObject, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
-import { FullUser } from "../../generated/graphql";
+import { useLoggedUserQuery } from "../../generated/graphql";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 import Image from "../Image";
 import { FormProps } from "./PostCreatorModal";
 
 interface Props {
   formikProps: FormikProps<FormProps>;
-  loggedUser: FullUser;
   initialRef: MutableRefObject<any>;
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;
@@ -38,7 +37,6 @@ interface Props {
 
 const PostCreatorBasicStage: React.FC<Props> = ({
   formikProps,
-  loggedUser,
   initialRef,
   setStage,
   img,
@@ -47,8 +45,10 @@ const PostCreatorBasicStage: React.FC<Props> = ({
 }) => {
   const ref = useRef<HTMLInputElement>();
 
+  const [{ data: loggedUser }] = useLoggedUserQuery();
+
   const handlePostStatus = () => {
-    let text = loggedUser && loggedUser.user.username;
+    let text = loggedUser && loggedUser.loggedUser.user.username;
     if (
       !!formikProps.values.feeling ||
       !!formikProps.values.activity ||
@@ -105,8 +105,8 @@ const PostCreatorBasicStage: React.FC<Props> = ({
         <Flex>
           <Avatar
             src={
-              loggedUser.avatarImage
-                ? base64ToObjectURL(loggedUser.avatarImage)
+              loggedUser.loggedUser.avatarImage
+                ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
                 : null
             }
           />
@@ -115,7 +115,9 @@ const PostCreatorBasicStage: React.FC<Props> = ({
           </Text>
         </Flex>
         <Textarea
-          placeholder={"What's on your mind, " + loggedUser.user.username}
+          placeholder={
+            "What's on your mind, " + loggedUser.loggedUser.user.username
+          }
           resize="none"
           border="none"
           ref={initialRef}

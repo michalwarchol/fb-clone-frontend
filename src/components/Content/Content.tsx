@@ -1,8 +1,8 @@
 import { Avatar, Box, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import {
-  FullUser,
   useGetRecentStoriesQuery,
+  useLoggedUserQuery,
   usePostsQuery,
 } from "../../generated/graphql";
 import PostCreator from "../PostCreator/PostCreator";
@@ -16,16 +16,13 @@ import FriendSuggestions from "../FriendSuggestions/FriendSuggestions";
 import { useScrollPosition } from "../../utils/useScrollPosition";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
-interface Props {
-  loggedUser: FullUser;
-}
-
-const Content: React.FC<Props> = ({ loggedUser }) => {
+const Content: React.FC = () => {
   const [variables, setVariables] = useState({ limit: 10, cursor: null });
   const [{ data, fetching }] = usePostsQuery({
     variables,
     pause: isServer,
   });
+  const [{data: loggedUser}] = useLoggedUserQuery();
 
   const [{ data: stories }] = useGetRecentStoriesQuery();
   const getMorePosts = () => {
@@ -40,7 +37,7 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
     getMorePosts
   );
 
-  const avatar = useMemo(()=>base64ToObjectURL(loggedUser?.avatarImage), [loggedUser]);
+  const avatar = useMemo(()=>base64ToObjectURL(loggedUser.loggedUser?.avatarImage), [loggedUser]);
 
   return (
     <Flex
@@ -59,13 +56,13 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
           display={{ base: "none", xl: "block" }}
         >
           <PageButton
-            text={loggedUser?.user.username}
+            text={loggedUser.loggedUser?.user.username}
             image={
               <Avatar
                 src={avatar}
               />
             }
-            link={"/profile/" + loggedUser?.user._id}
+            link={"/profile/" + loggedUser.loggedUser?.user._id}
           />
           <PageButton
             text="Friends"
@@ -97,9 +94,9 @@ const Content: React.FC<Props> = ({ loggedUser }) => {
         <Flex w="100%" direction="column">
           <StoriesShortcut
             stories={stories?.getRecentStories}
-            myAvatar={loggedUser.avatarImage}
+            myAvatar={loggedUser.loggedUser.avatarImage}
           />
-          <PostCreator loggedUser={loggedUser} />
+          <PostCreator />
           <FriendSuggestions />
           <Flex w="100%" direction="column" align="center">
             {!data ? (

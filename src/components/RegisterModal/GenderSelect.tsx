@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { BsInfoCircle } from "react-icons/bs";
-import {IoMdRadioButtonOff, IoMdRadioButtonOn} from "react-icons/Io"
+import {IoMdRadioButtonOff, IoMdRadioButtonOn} from "react-icons/io"
 
 type RadioCardProps = RadioProps;
 

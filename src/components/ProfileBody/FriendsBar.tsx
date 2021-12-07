@@ -5,10 +5,9 @@ import FriendInProgress from "./FriendInProgress";
 
 interface Props {
   setId: React.Dispatch<React.SetStateAction<number>>;
-  loggedUserId: number;
 }
 
-const FriendsBar: React.FC<Props> = ({ setId, loggedUserId }) => {
+const FriendsBar: React.FC<Props> = ({ setId }) => {
   const [{ data }] = useGetInProgressFriendRequestsQuery();
   return (
     <Box
@@ -34,7 +33,6 @@ const FriendsBar: React.FC<Props> = ({ setId, loggedUserId }) => {
               data={friend}
               setId={setId}
               key={friend.friend._id}
-              loggedUserId={loggedUserId}
             />
           ))}
       </Box>

@@ -1,11 +1,9 @@
 import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
-  useLoggedUserQuery,
   usePostsQuery,
   User,
 } from "../../generated/graphql";
-import { isServer } from "../../utils/isServer";
 import { useScrollPosition } from "../../utils/useScrollPosition";
 import PostContainer from "../Post/PostContainer";
 import PostCreator from "../PostCreator/PostCreator";
@@ -19,9 +17,6 @@ interface Props {
 }
 
 const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
-  const [{ data }] = useLoggedUserQuery({
-    pause: isServer,
-  });
   const [variables, setVariables] = useState({ limit: 10, cursor: null });
   const [{ data: userPosts }] = usePostsQuery({
     variables: { ...variables, creatorId: id },
@@ -57,7 +52,7 @@ const PostsTab: React.FC<Props> = ({ setActiveTab, id, editable, user }) => {
         <FriendSection id={id} setActiveTab={setActiveTab} />
       </Flex>
       <Flex borderRadius="8px" direction="column" align="center" w={{ base: "100%", lg: "60%" }}>
-        {editable && <PostCreator loggedUser={data?.loggedUser} />}
+        {editable && <PostCreator />}
         <Flex w="100%" direction="column" align="center">
           {!userPosts ? (
             <Box p="10px" borderRadius="50%" bg="secondary"><Spinner color="active" size="xl" /></Box>

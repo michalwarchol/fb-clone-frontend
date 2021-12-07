@@ -1,50 +1,38 @@
 import { Box } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { withUrqlClient } from "next-urql";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Body from "../../components/ProfileBody/Body";
 import { useLoggedUserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { isServer } from "../../utils/isServer";
+import { withAuth } from "../../utils/withAuth";
 
 interface Props {
   id?: string;
 }
 
 const Profile: NextPage<Props> = ({ id }) => {
-  const [{ data, fetching }] = useLoggedUserQuery({
+  const [{ data }] = useLoggedUserQuery({
     pause: isServer,
   });
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!fetching && !data?.loggedUser) {
-      router.replace("/login");
-    }
-  }, [fetching, data]);
-
-  let body = <div></div>;
-  if (data?.loggedUser) {
-    body = (
-      <Box
-        maxW="100vw"
-        color="textPrimary"
-        bg="primary"
-        minH="100vh"
-        overflowY="hidden"
-      >
-        <Navbar loggedUser={data && data.loggedUser} />
-        <Body
-          loggedUser={data && data.loggedUser}
-          editable={data.loggedUser.user._id == parseInt(id)}
-          id={parseInt(id)}
-        />
-      </Box>
-    );
-  }
-  return <div>{body}</div>;
+  return (
+    <Box
+      maxW="100vw"
+      color="textPrimary"
+      bg="primary"
+      minH="100vh"
+      overflowY="hidden"
+    >
+      <Navbar />
+      <Body
+        editable={data.loggedUser.user._id == parseInt(id)}
+        id={parseInt(id)}
+      />
+    </Box>
+  );
 };
 
 Profile.getInitialProps = async ({ query }) => {
@@ -53,4 +41,6 @@ Profile.getInitialProps = async ({ query }) => {
   };
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Profile);
+export default withUrqlClient(createUrqlClient, { ssr: true })(
+  withAuth(Profile)
+);

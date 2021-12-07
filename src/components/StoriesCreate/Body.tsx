@@ -3,7 +3,7 @@ import { Button, IconButton } from "@chakra-ui/button";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import React, { useEffect, useRef, useState } from "react";
 import { MdClose } from "react-icons/md";
-import { FullUser, useCreateStoryMutation } from "../../generated/graphql";
+import { useCreateStoryMutation, useLoggedUserQuery } from "../../generated/graphql";
 import ChooseStory from "./ChooseStory";
 import Options from "./Options";
 import Preview from "./Preview";
@@ -23,11 +23,7 @@ import {
 import { useDisclosure } from "@chakra-ui/hooks";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
-interface Props {
-  user: FullUser;
-}
-
-const Body: React.FC<Props> = ({ user }) => {
+const Body: React.FC = () => {
   const [storyType, setStoryType] = useState<"photo" | "text" | null>(null);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const initialMount = useRef(true);
@@ -40,6 +36,7 @@ const Body: React.FC<Props> = ({ user }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [{data: loggedUser}] = useLoggedUserQuery();
   const [, createStory] = useCreateStoryMutation();
 
   useEffect(() => {
@@ -107,12 +104,12 @@ const Body: React.FC<Props> = ({ user }) => {
           <Flex align="center" mt="20px">
             <Avatar
               src={
-                user.avatarImage ? base64ToObjectURL(user.avatarImage) : null
+                loggedUser?.loggedUser.avatarImage ? base64ToObjectURL(loggedUser?.loggedUser.avatarImage) : null
               }
               mr="10px"
               size="lg"
             />
-            <Text fontWeight="bold">{user.user.username}</Text>
+            <Text fontWeight="bold">{loggedUser?.loggedUser.user.username}</Text>
           </Flex>
         </Box>
         {storyType == "text" && (

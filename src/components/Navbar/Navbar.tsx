@@ -17,10 +17,7 @@ import {
 import React, { useRef, useState } from "react";
 import { FaFacebookF, FaUserFriends } from "react-icons/fa";
 import NextLink from "next/link";
-import {
-  FullUser,
-  useSearchUsersByUsernameQuery,
-} from "../../generated/graphql";
+import { useSearchUsersByUsernameQuery } from "../../generated/graphql";
 import Options from "./Options";
 import { AiFillCamera, AiFillHome } from "react-icons/ai";
 import PageButton from "./PageButton";
@@ -28,11 +25,7 @@ import { MdMenu, MdSearch } from "react-icons/md";
 import { useRouter } from "next/router";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
-interface Props {
-  loggedUser: FullUser;
-}
-
-const Navbar: React.FC<Props> = ({ loggedUser }) => {
+const Navbar: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialFocusRef = useRef();
@@ -174,7 +167,7 @@ const Navbar: React.FC<Props> = ({ loggedUser }) => {
       </GridItem>
       <GridItem colStart={9} colEnd={13}>
         <Flex justify="flex-end" align="center" h="100%" mr="10px" p="4px">
-          <Options loggedUser={loggedUser} />
+          <Options />
         </Flex>
       </GridItem>
     </Grid>

@@ -15,6 +15,7 @@ import {
   useAcceptFriendRequestMutation,
   useCreateFriendRequestMutation,
   useCreateNotificationMutation,
+  useLoggedUserQuery,
   User,
   useRemoveFriendRequestMutation,
   UserRequest,
@@ -23,7 +24,6 @@ import {
 interface Props {
   user: User;
   isFriend: UserRequest;
-  loggedUserId: number;
 }
 
 //STATES
@@ -32,7 +32,7 @@ interface Props {
 // 3. no friends, user sent a request and status=in-progress
 // 4. friends
 
-const AddFriendButton: React.FC<Props> = ({ user, isFriend, loggedUserId }) => {
+const AddFriendButton: React.FC<Props> = ({ user, isFriend }) => {
   const [{ fetching: createFetching }, createFriendRequest] =
     useCreateFriendRequestMutation();
   const [{ fetching: removeFetching }, removeFriendRequest] =
@@ -40,6 +40,7 @@ const AddFriendButton: React.FC<Props> = ({ user, isFriend, loggedUserId }) => {
   const [{ fetching: acceptFetching }, acceptFriendRequest] =
     useAcceptFriendRequestMutation();
   const [, createNotification] = useCreateNotificationMutation();
+  const [{data: loggedUser}] = useLoggedUserQuery();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -59,7 +60,7 @@ const AddFriendButton: React.FC<Props> = ({ user, isFriend, loggedUserId }) => {
       info: "accepted your friend request.",
       receiverId: user._id,
       type: NotificationType.FriendAccept,
-      link: "/profile/"+loggedUserId
+      link: "/profile/"+loggedUser.loggedUser.user._id
     }})
     setIsOpen(false);
   };

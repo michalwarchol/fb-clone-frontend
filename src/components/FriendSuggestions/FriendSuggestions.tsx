@@ -1,7 +1,7 @@
 import { IconButton } from "@chakra-ui/button";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/Io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useGetSuggestedFriendsQuery } from "../../generated/graphql";
 import Suggestion from "./Suggestion";
 

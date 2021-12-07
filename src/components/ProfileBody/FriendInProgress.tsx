@@ -6,17 +6,17 @@ import {
   useAcceptFriendRequestMutation,
   useCreateNotificationMutation,
   useGetImageQuery,
+  useLoggedUserQuery,
   useRemoveFriendRequestMutation,
 } from "../../generated/graphql";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
   data: FriendRequestWithFriend;
-  loggedUserId: number;
   setId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
+const FriendInProgress: React.FC<Props> = ({ data, setId }) => {
   const [{ data: avatar }] = useGetImageQuery({
     variables: { imageId: data?.friend.avatarId },
     pause: !data,
@@ -24,6 +24,7 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
   const [, acceptRequest] = useAcceptFriendRequestMutation();
   const [, removeRequest] = useRemoveFriendRequestMutation();
   const [, createNotification] = useCreateNotificationMutation();
+  const [{data: loggedUser}] = useLoggedUserQuery();
 
   const confirm = async (e: SyntheticEvent) => {
     e.stopPropagation();
@@ -33,7 +34,7 @@ const FriendInProgress: React.FC<Props> = ({ data, loggedUserId, setId }) => {
         info: "accepted your friend request.",
         receiverId: data.friend._id,
         type: NotificationType.FriendAccept,
-        link: "/profile/" + loggedUserId,
+        link: "/profile/" + loggedUser.loggedUser.user._id,
       },
     });
   };

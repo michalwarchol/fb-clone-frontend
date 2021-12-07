@@ -4,7 +4,7 @@ import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import React, { useMemo, useRef, useState } from "react";
-import { IoIosPause, IoIosPlay } from "react-icons/Io";
+import { IoIosPause, IoIosPlay } from "react-icons/io";
 import { Story, useGetImageQuery } from "../../generated/graphql";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 import { setStoriesInterval } from "../../utils/setStoriesInterval";

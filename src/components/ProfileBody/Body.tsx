@@ -1,7 +1,6 @@
 import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
-  FullUser,
   useGetFriendRequestQuery,
   useGetImageQuery,
   useGetUserByIdQuery,
@@ -15,10 +14,9 @@ import PostsTab from "./PostsTab";
 interface Props {
   editable: boolean;
   id: number;
-  loggedUser: FullUser;
 }
 
-const Body: React.FC<Props> = ({ editable, id, loggedUser }) => {
+const Body: React.FC<Props> = ({ editable, id }) => {
   const [activeTab, setActiveTab] = useState<number>(1);
 
   const [{ data: user }] = useGetUserByIdQuery({
@@ -123,7 +121,6 @@ const Body: React.FC<Props> = ({ editable, id, loggedUser }) => {
                 <AddFriendButton
                   user={user?.getUserById}
                   isFriend={isFriend?.getFriendRequest}
-                  loggedUserId={loggedUser.user._id}
                 />
               )}
             </Flex>

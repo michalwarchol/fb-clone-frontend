@@ -12,19 +12,17 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
-import { FullUser } from "../../generated/graphql";
+import { useLoggedUserQuery } from "../../generated/graphql";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import PostCreatorModal from "./PostCreatorModal";
 import { FaUserTag } from "react-icons/fa";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
-interface Props {
-  loggedUser: FullUser;
-}
-
-const PostCreator: React.FC<Props> = ({ loggedUser }) => {
+const PostCreator: React.FC = () => {
   const [stage, setStage] = useState<string>("basic");
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+
+  const [{data: loggeduser}] = useLoggedUserQuery();
 
   const ref = useRef<HTMLInputElement>();
   const initialMount = useRef(true);
@@ -41,7 +39,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
   return (
     <Box bg="secondary" p="10px" borderRadius="8px" mb="20px" w="100%" w-min="">
       <Flex align="center">
-        <Avatar src={loggedUser.avatarImage ? base64ToObjectURL(loggedUser.avatarImage) : null} />
+        <Avatar src={loggeduser.loggedUser.avatarImage ? base64ToObjectURL(loggeduser.loggedUser.avatarImage) : null} />
         <Button
           borderRadius="20px"
           bg="tertiary"
@@ -52,7 +50,7 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
           onClick={onOpen}
         >
           <Text textAlign="left" w="100%">
-            What's on your mind, {loggedUser && loggedUser.user.username}?
+            What's on your mind, {loggeduser.loggedUser && loggeduser.loggedUser.user.username}?
           </Text>
         </Button>
       </Flex>
@@ -114,7 +112,6 @@ const PostCreator: React.FC<Props> = ({ loggedUser }) => {
       <PostCreatorModal
         isOpen={isOpen}
         onClose={onClose}
-        user={loggedUser}
         stage={stage}
         setStage={setStage}
         img={uploadedImage}

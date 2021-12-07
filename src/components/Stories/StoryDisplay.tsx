@@ -1,7 +1,7 @@
 import { IconButton } from "@chakra-ui/button";
 import { Box, Flex } from "@chakra-ui/layout";
 import React from "react";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/Io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 interface Props {
   setActiveUserStory: React.Dispatch<React.SetStateAction<number | null>>;

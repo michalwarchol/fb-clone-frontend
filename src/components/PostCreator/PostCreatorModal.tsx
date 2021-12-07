@@ -2,10 +2,10 @@ import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import {
-  FullUser,
   NotificationType,
   useCreateNotificationMutation,
   useCreatePostMutation,
+  useLoggedUserQuery,
 } from "../../generated/graphql";
 import PostCreatorActivityStage from "./PostCreatorActivityStage";
 import PostCreatorBasicStage from "./PostCreatorBasicStage";
@@ -15,7 +15,6 @@ import PostCreatorTagPeopleStage from "./PostCreatorTagPeopleStage";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  user: FullUser;
   stage: string;
   setStage: React.Dispatch<React.SetStateAction<string>>;
   img: File;
@@ -32,7 +31,6 @@ export interface FormProps {
 const PostCreatorModal: React.FC<Props> = ({
   isOpen,
   onClose,
-  user,
   stage,
   setStage,
   img,
@@ -41,6 +39,7 @@ const PostCreatorModal: React.FC<Props> = ({
   const initialRef = React.useRef(null);
   const [, createPost] = useCreatePostMutation();
   const [, createNotification] = useCreateNotificationMutation();
+  const [{data: user}] = useLoggedUserQuery();
   const [tagged, setTagged] = useState<{ _id: number; username: string }[]>([]);
 
   return (
@@ -65,7 +64,7 @@ const PostCreatorModal: React.FC<Props> = ({
                 info: "tagged you in a post.",
                 type: NotificationType.Tag,
                 postId: post.data.createPost._id,
-                link: "/profile/"+user.user._id
+                link: "/profile/"+user.loggedUser.user._id
               },
             });
           })
@@ -91,7 +90,6 @@ const PostCreatorModal: React.FC<Props> = ({
               {stage == "basic" && (
                 <PostCreatorBasicStage
                   formikProps={formikProps}
-                  loggedUser={user}
                   initialRef={initialRef}
                   setStage={setStage}
                   img={img}

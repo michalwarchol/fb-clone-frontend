@@ -40,10 +40,7 @@ const Login: React.FC = () => {
                 Information
               </Text>
               <Text color="gray.500">
-                Never enter your personal data on an unknown webside.
-              </Text>
-              <Text color="gray.500">
-                We don't use your email to anything.
+                Michał is glad that you visited his website. Enjoy your time.
               </Text>
             </Box>
           </GridItem>

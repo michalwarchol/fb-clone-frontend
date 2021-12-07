@@ -20,11 +20,11 @@ import React, { useState } from "react";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { ImExit } from "react-icons/im";
 import {
-  FullUser,
   useGetNewNotificationsCountQuery,
   useGetUserNotificationsQuery,
   useLogoutMutation,
   useUpdateNotificationStatusMutation,
+  useLoggedUserQuery,
 } from "../../generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import NextLink from "next/link";
@@ -33,11 +33,8 @@ import NotificationNode from "./Notification";
 import { isServer } from "../../utils/isServer";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
-interface Props {
-  loggedUser: FullUser;
-}
-
-const Options: React.FC<Props> = ({ loggedUser }) => {
+const Options: React.FC = () => {
+  const [{ data: loggedUser }] = useLoggedUserQuery();
   const [{ data }] = useGetUserNotificationsQuery();
   const [{ data: count }] = useGetNewNotificationsCountQuery({
     pause: isServer,
@@ -63,7 +60,7 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
 
   return (
     <Flex align="center">
-      <NextLink href={"/profile/" + loggedUser.user._id}>
+      <NextLink href={"/profile/" + loggedUser.loggedUser.user._id}>
         <Flex
           display={{ base: "none", md: "flex" }}
           direction="row"
@@ -75,36 +72,36 @@ const Options: React.FC<Props> = ({ loggedUser }) => {
           border="1px"
           cursor="pointer"
           color={
-            router.query.id == loggedUser.user._id.toString()
+            router.query.id == loggedUser.loggedUser.user._id.toString()
               ? "active"
               : "textPrimary"
           }
           borderColor={
-            router.query.id == loggedUser.user._id.toString()
+            router.query.id == loggedUser.loggedUser.user._id.toString()
               ? "active"
               : "secondary"
           }
           bg={
-            router.query.id == loggedUser.user._id.toString()
+            router.query.id == loggedUser.loggedUser.user._id.toString()
               ? "activeBackground"
               : "secondary"
           }
           _hover={
-            router.query.id == loggedUser.user._id.toString()
+            router.query.id == loggedUser.loggedUser.user._id.toString()
               ? { backgroundColor: "blue.700", color: "blue.400" }
               : { backgroundColor: "hover" }
           }
         >
           <Avatar
             src={
-              loggedUser.avatarImage
-                ? base64ToObjectURL(loggedUser.avatarImage)
+              loggedUser.loggedUser.avatarImage
+                ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
                 : null
             }
             size="sm"
             mr="4px"
           />
-          <Text fontWeight="bold">{loggedUser?.user.username}</Text>
+          <Text fontWeight="bold">{loggedUser.loggedUser?.user.username}</Text>
         </Flex>
       </NextLink>
       <Popover closeOnEsc closeOnBlur>
