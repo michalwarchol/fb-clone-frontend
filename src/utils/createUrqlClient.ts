@@ -17,6 +17,7 @@ import { betterUpdateQuery } from "./betterUpdateQuery";
 import { pipe, tap } from "wonka";
 import Router from "next/router";
 import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
+import { isServer } from "./isServer";
 
 const errorExchange: Exchange =
   ({ forward }) =>
@@ -181,326 +182,350 @@ const friendRequestPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => ({
-  url: process.env.NEXT_PUBLIC_API_URL,
-  fetchOptions: {
-    credentials: "include" as const,
-  },
-  exchanges: [
-    dedupExchange,
-    cacheExchange({
-      keys: {
-        PaginatedPosts: () => null,
-        PaginatedComments: () => null,
-        FullUser: () => null,
-        PaginatedRequests: () => null,
-        FriendRequest: () => null,
-        UserRequest: () => null,
-        FriendRequestWithFriend: () => null,
-        FriendSuggestion: () => null,
-      },
-      resolvers: {
-        Query: {
-          posts: cursorPagination(),
-          getPostComments: commentPagination(),
-          getUserFriendRequests: friendRequestPagination(),
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+  let cookie = "";
+  if (isServer) {
+    cookie = ctx?.req?.headers?.cookie;
+  }
+  return {
+    url: process.env.NEXT_PUBLIC_API_URL,
+    fetchOptions: {
+      credentials: "include" as const,
+      headers: cookie
+        ? {
+            cookie,
+          }
+        : undefined,
+    },
+    exchanges: [
+      dedupExchange,
+      cacheExchange({
+        keys: {
+          PaginatedPosts: () => null,
+          PaginatedComments: () => null,
+          FullUser: () => null,
+          PaginatedRequests: () => null,
+          FriendRequest: () => null,
+          UserRequest: () => null,
+          FriendRequestWithFriend: () => null,
+          FriendSuggestion: () => null,
         },
-      },
-      updates: {
-        Mutation: {
-          createPost: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const fieldInfos = allFields.filter(
-              (info) => info.fieldName === "posts"
-            );
-            fieldInfos.forEach((fi) => {
-              cache.invalidate("Query", "posts", fi.arguments || {});
-            });
-
-            const creatorPosts = allFields.filter(
-              (info) => info.fieldName === "getPostsByCreatorId"
-            );
-            creatorPosts.forEach((fi) => {
-              cache.invalidate(
-                "Query",
-                "getPostsByCreatorId",
-                fi.arguments || {}
+        resolvers: {
+          Query: {
+            posts: cursorPagination(),
+            getPostComments: commentPagination(),
+            getUserFriendRequests: friendRequestPagination(),
+          },
+        },
+        updates: {
+          Mutation: {
+            createPost: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query");
+              const fieldInfos = allFields.filter(
+                (info) => info.fieldName === "posts"
               );
-            });
-          },
-          createComment: (result, args, cache, info) => {
-            const loggedUser = cache.readQuery({
-              query: LoggedUserDocument,
-            }) as any;
-            cache.updateQuery(
-              {
-                query: GetPostCommentsDocument,
-                variables: { limit: 5, postId: args.postId },
-              },
-              (data) => {
-                (data.getPostComments as any).comments.unshift({
-                  ...(result.createComment as any),
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                  creator: loggedUser.loggedUser.user,
-                });
-                return data;
-              }
-            );
-            cache.updateQuery(
-              {
-                query: CommentCountDocument,
-                variables: { postId: args.postId },
-              },
-              (data) => {
-                const newData = data;
-                (newData.commentCount as number) += 1;
-                return newData;
-              }
-            );
-          },
-          logout: (_result, args, cache, info) => {
-            cache.invalidate("Query");
-            betterUpdateQuery<LogoutMutation, LoggedUserQuery>(
-              cache,
-              { query: LoggedUserDocument },
-              _result,
-              () => ({ loggedUser: null })
-            );
-          },
-          login: (_result, args, cache, info) => {
-            betterUpdateQuery<LoginMutation, LoggedUserQuery>(
-              cache,
-              { query: LoggedUserDocument },
-              _result,
-              (result, query) => {
-                if (result.login.errors) {
-                  return query;
-                } else {
-                  return {
-                    loggedUser: {
-                      ...result.login.loggedUser,
-                    },
-                  };
+              fieldInfos.forEach((fi) => {
+                cache.invalidate("Query", "posts", fi.arguments || {});
+              });
+
+              const creatorPosts = allFields.filter(
+                (info) => info.fieldName === "getPostsByCreatorId"
+              );
+              creatorPosts.forEach((fi) => {
+                cache.invalidate(
+                  "Query",
+                  "getPostsByCreatorId",
+                  fi.arguments || {}
+                );
+              });
+            },
+            createComment: (result, args, cache, info) => {
+              const loggedUser = cache.readQuery({
+                query: LoggedUserDocument,
+              }) as any;
+              cache.updateQuery(
+                {
+                  query: GetPostCommentsDocument,
+                  variables: { limit: 5, postId: args.postId },
+                },
+                (data) => {
+                  (data.getPostComments as any).comments.unshift({
+                    ...(result.createComment as any),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    creator: loggedUser.loggedUser.user,
+                  });
+                  return data;
                 }
-              }
-            );
-            cache.invalidate("Query");
-          },
-
-          register: (_result, args, cache, info) => {
-            betterUpdateQuery<RegisterMutation, LoggedUserQuery>(
-              cache,
-              { query: LoggedUserDocument },
-              _result,
-              (result, query) => {
-                if (result.register.errors) {
-                  return query;
-                } else {
-                  return {
-                    loggedUser: {
-                      ...result.register.loggedUser,
-                    },
-                  };
+              );
+              cache.updateQuery(
+                {
+                  query: CommentCountDocument,
+                  variables: { postId: args.postId },
+                },
+                (data) => {
+                  const newData = data;
+                  (newData.commentCount as number) += 1;
+                  return newData;
                 }
-              }
-            );
-          },
-          react: (_result, args, cache, info) => {
-            const { postId, reaction } = args.variables as ReactionInput;
-            const allFields = cache.inspectFields("Query");
+              );
+            },
+            logout: (_result, args, cache, info) => {
+              cache.invalidate("Query");
+              betterUpdateQuery<LogoutMutation, LoggedUserQuery>(
+                cache,
+                { query: LoggedUserDocument },
+                _result,
+                () => ({ loggedUser: null })
+              );
+            },
+            login: (_result, args, cache, info) => {
+              betterUpdateQuery<LoginMutation, LoggedUserQuery>(
+                cache,
+                { query: LoggedUserDocument },
+                _result,
+                (result, query) => {
+                  if (result.login.errors) {
+                    return query;
+                  } else {
+                    return {
+                      loggedUser: {
+                        ...result.login.loggedUser,
+                      },
+                    };
+                  }
+                }
+              );
+              cache.invalidate("Query");
+            },
 
-            const reactions = allFields.filter(
-              (info) => info.fieldName === "reaction"
-            );
+            register: (_result, args, cache, info) => {
+              betterUpdateQuery<RegisterMutation, LoggedUserQuery>(
+                cache,
+                { query: LoggedUserDocument },
+                _result,
+                (result, query) => {
+                  if (result.register.errors) {
+                    return query;
+                  } else {
+                    return {
+                      loggedUser: {
+                        ...result.register.loggedUser,
+                      },
+                    };
+                  }
+                }
+              );
+            },
+            react: (_result, args, cache, info) => {
+              const { postId, reaction } = args.variables as ReactionInput;
+              const allFields = cache.inspectFields("Query");
 
-            const postReaction = reactions.filter(
-              (r) => r.arguments.postId == postId
-            );
+              const reactions = allFields.filter(
+                (info) => info.fieldName === "reaction"
+              );
 
-            const myReaction = postReaction[0];
-            const resolvedReaction = cache.resolve(
-              "Query",
-              myReaction.fieldKey
-            ) as string;
+              const postReaction = reactions.filter(
+                (r) => r.arguments.postId == postId
+              );
 
-            cache.invalidate("Query", "reaction", myReaction.arguments);
-            if (!resolvedReaction) {
-              //if previous reaction doesn't exist, then only increase next reaction
-              const thisPost = cache.readFragment(
-                gql`
+              const myReaction = postReaction[0];
+              const resolvedReaction = cache.resolve(
+                "Query",
+                myReaction.fieldKey
+              ) as string;
+
+              cache.invalidate("Query", "reaction", myReaction.arguments);
+              if (!resolvedReaction) {
+                //if previous reaction doesn't exist, then only increase next reaction
+                const thisPost = cache.readFragment(
+                  gql`
               fragment ____ on Post {
                 _id
                 ${reaction.toLowerCase()}
               }
             `,
-                { _id: postId as number } as any
-              );
-              cache.writeFragment(
-                gql`
+                  { _id: postId as number } as any
+                );
+                cache.writeFragment(
+                  gql`
                 fragment _ on Post {
                   _id
                   ${reaction.toLowerCase()}
                 }
               `,
-                {
-                  _id: postId,
-                  [reaction.toLowerCase()]:
-                    thisPost[reaction.toLowerCase()] + 1,
-                }
-              );
-              return;
-            }
+                  {
+                    _id: postId,
+                    [reaction.toLowerCase()]:
+                      thisPost[reaction.toLowerCase()] + 1,
+                  }
+                );
+                return;
+              }
 
-            const previousReaction = cache.resolve(
-              resolvedReaction,
-              "reaction"
-            );
-            const thisPost = cache.readFragment(
-              gql`
+              const previousReaction = cache.resolve(
+                resolvedReaction,
+                "reaction"
+              );
+              const thisPost = cache.readFragment(
+                gql`
               fragment ___ on Post {
                 _id
                 ${previousReaction as string}
                 ${reaction.toLowerCase()}
               }
             `,
-              { _id: postId }
-            );
-            if ((previousReaction as string) == reaction.toLowerCase()) {
-              //if previous reaction is the same as next reaction then only decrease the reaction
+                { _id: postId }
+              );
+              if ((previousReaction as string) == reaction.toLowerCase()) {
+                //if previous reaction is the same as next reaction then only decrease the reaction
+                cache.writeFragment(
+                  gql`
+              fragment ___ on Post {
+                _id
+                ${previousReaction as string}
+              }
+            `,
+                  {
+                    _id: postId,
+                    [previousReaction as string]:
+                      thisPost[previousReaction as string] - 1,
+                  }
+                );
+
+                return;
+              }
+              //if previous reaction is different from next reaction, then decrease previous and increase next
               cache.writeFragment(
                 gql`
               fragment ___ on Post {
                 _id
                 ${previousReaction as string}
+                ${reaction.toLowerCase()}
               }
             `,
                 {
                   _id: postId,
                   [previousReaction as string]:
                     thisPost[previousReaction as string] - 1,
+                  [reaction.toLowerCase()]:
+                    thisPost[reaction.toLowerCase()] + 1,
                 }
               );
+            },
 
-              return;
-            }
-            //if previous reaction is different from next reaction, then decrease previous and increase next
-            cache.writeFragment(
-              gql`
-              fragment ___ on Post {
-                _id
-                ${previousReaction as string}
-                ${reaction.toLowerCase()}
-              }
-            `,
-              {
-                _id: postId,
-                [previousReaction as string]:
-                  thisPost[previousReaction as string] - 1,
-                [reaction.toLowerCase()]: thisPost[reaction.toLowerCase()] + 1,
-              }
-            );
-          },
-
-          uploadImage: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const getUserById = allFields.filter(
-              (info) => info.fieldName === "getUserById"
-            );
-
-            getUserById.forEach((fi) => {
-              cache.invalidate("Query", "getUserById", fi.arguments || {});
-            });
-
-            const getImage = allFields.filter(
-              (info) => info.fieldName === "getImage"
-            );
-            getImage.forEach((fi) => {
-              cache.invalidate("Query", "getImage", fi.arguments || {});
-            });
-          },
-          createFriendRequest: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const getFriendRequest = allFields.filter(
-              (info) => info.fieldName === "getFriendRequest"
-            );
-
-            getFriendRequest.forEach((fi) => {
-              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
-            });
-
-            const getSuggestedFriends = allFields.filter(
-              (info) => info.fieldName === "getSuggestedFriends"
-            );
-
-            getSuggestedFriends.forEach((fi) => {
-              cache.invalidate(
-                "Query",
-                "getSuggestedFriends",
-                fi.arguments || {}
+            uploadImage: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query");
+              const getUserById = allFields.filter(
+                (info) => info.fieldName === "getUserById"
               );
-            });
-          },
-          acceptFriendRequest: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const getFriendRequest = allFields.filter(
-              (info) => info.fieldName === "getFriendRequest"
-            );
 
-            getFriendRequest.forEach((fi) => {
-              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
-            });
+              getUserById.forEach((fi) => {
+                cache.invalidate("Query", "getUserById", fi.arguments || {});
+              });
 
-            betterUpdateQuery<
-              AcceptFriendRequestMutation,
-              GetInProgressFriendRequestsQuery
-            >(
-              cache,
-              { query: GetInProgressFriendRequestsDocument },
-              _result,
-              (result, query) => {
-                query.getInProgressFriendRequests =
-                  query.getInProgressFriendRequests.filter(
-                    (request) => request.friend._id != args.userId
-                  );
-                return query;
-              }
-            );
-          },
-          removeFriendRequest: (_result, args, cache, info) => {
-            const allFields = cache.inspectFields("Query");
-            const getFriendRequest = allFields.filter(
-              (info) => info.fieldName === "getFriendRequest"
-            );
+              const getImage = allFields.filter(
+                (info) => info.fieldName === "getImage"
+              );
+              getImage.forEach((fi) => {
+                cache.invalidate("Query", "getImage", fi.arguments || {});
+              });
+            },
+            createFriendRequest: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query");
+              const getFriendRequest = allFields.filter(
+                (info) => info.fieldName === "getFriendRequest"
+              );
 
-            getFriendRequest.forEach((fi) => {
-              cache.invalidate("Query", "getFriendRequest", fi.arguments || {});
-            });
+              getFriendRequest.forEach((fi) => {
+                cache.invalidate(
+                  "Query",
+                  "getFriendRequest",
+                  fi.arguments || {}
+                );
+              });
 
-            betterUpdateQuery<
-              AcceptFriendRequestMutation,
-              GetInProgressFriendRequestsQuery
-            >(
-              cache,
-              { query: GetInProgressFriendRequestsDocument },
-              _result,
-              (result, query) => {
-                query.getInProgressFriendRequests =
-                  query.getInProgressFriendRequests.filter(
-                    (request) => request.friend._id != args.userId
-                  );
-                return query;
-              }
-            );
-          },
-          updateNotificationStatus: (_result, args, cache, info) => {
-            cache.invalidate("Query", "getNewNotificationsCount");
+              const getSuggestedFriends = allFields.filter(
+                (info) => info.fieldName === "getSuggestedFriends"
+              );
+
+              getSuggestedFriends.forEach((fi) => {
+                cache.invalidate(
+                  "Query",
+                  "getSuggestedFriends",
+                  fi.arguments || {}
+                );
+              });
+            },
+            acceptFriendRequest: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query");
+              const getFriendRequest = allFields.filter(
+                (info) => info.fieldName === "getFriendRequest"
+              );
+
+              getFriendRequest.forEach((fi) => {
+                cache.invalidate(
+                  "Query",
+                  "getFriendRequest",
+                  fi.arguments || {}
+                );
+              });
+
+              betterUpdateQuery<
+                AcceptFriendRequestMutation,
+                GetInProgressFriendRequestsQuery
+              >(
+                cache,
+                { query: GetInProgressFriendRequestsDocument },
+                _result,
+                (result, query) => {
+                  query.getInProgressFriendRequests =
+                    query.getInProgressFriendRequests.filter(
+                      (request) => request.friend._id != args.userId
+                    );
+                  return query;
+                }
+              );
+            },
+            removeFriendRequest: (_result, args, cache, info) => {
+              const allFields = cache.inspectFields("Query");
+              const getFriendRequest = allFields.filter(
+                (info) => info.fieldName === "getFriendRequest"
+              );
+
+              getFriendRequest.forEach((fi) => {
+                cache.invalidate(
+                  "Query",
+                  "getFriendRequest",
+                  fi.arguments || {}
+                );
+              });
+
+              betterUpdateQuery<
+                AcceptFriendRequestMutation,
+                GetInProgressFriendRequestsQuery
+              >(
+                cache,
+                { query: GetInProgressFriendRequestsDocument },
+                _result,
+                (result, query) => {
+                  query.getInProgressFriendRequests =
+                    query.getInProgressFriendRequests.filter(
+                      (request) => request.friend._id != args.userId
+                    );
+                  return query;
+                }
+              );
+            },
+            updateNotificationStatus: (_result, args, cache, info) => {
+              cache.invalidate("Query", "getNewNotificationsCount");
+            },
           },
         },
-      },
-    }),
-    errorExchange,
-    ssrExchange,
-    multipartFetchExchange,
-  ],
-});
+      }),
+      errorExchange,
+      ssrExchange,
+      multipartFetchExchange,
+    ],
+  };
+};
