@@ -11,7 +11,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLoggedUserQuery } from "../../generated/graphql";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import PostCreatorModal from "./PostCreatorModal";
@@ -22,7 +22,12 @@ const PostCreator: React.FC = () => {
   const [stage, setStage] = useState<string>("basic");
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
 
-  const [{data: loggeduser}] = useLoggedUserQuery();
+  const [{ data: loggeduser }] = useLoggedUserQuery();
+
+  const memoizedImage = useMemo(
+    () => base64ToObjectURL(loggeduser.loggedUser.avatarImage),
+    [loggeduser.loggedUser.avatarImage]
+  );
 
   const ref = useRef<HTMLInputElement>();
   const initialMount = useRef(true);
@@ -39,7 +44,9 @@ const PostCreator: React.FC = () => {
   return (
     <Box bg="secondary" p="10px" borderRadius="8px" mb="20px" w="100%" w-min="">
       <Flex align="center">
-        <Avatar src={loggeduser.loggedUser.avatarImage ? base64ToObjectURL(loggeduser.loggedUser.avatarImage) : null} />
+        <Avatar
+          src={loggeduser.loggedUser.avatarImage ? memoizedImage : null}
+        />
         <Button
           borderRadius="20px"
           bg="tertiary"
@@ -50,7 +57,8 @@ const PostCreator: React.FC = () => {
           onClick={onOpen}
         >
           <Text textAlign="left" w="100%">
-            What's on your mind, {loggeduser.loggedUser && loggeduser.loggedUser.user.username}?
+            What's on your mind,{" "}
+            {loggeduser.loggedUser && loggeduser.loggedUser.user.username}?
           </Text>
         </Button>
       </Flex>

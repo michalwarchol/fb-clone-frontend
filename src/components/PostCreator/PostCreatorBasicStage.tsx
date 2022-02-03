@@ -18,7 +18,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { FormikProps } from "formik";
-import React, { MutableRefObject, useRef } from "react";
+import React, { MutableRefObject, useMemo, useRef } from "react";
 import { FaUserTag } from "react-icons/fa";
 import { MdPhotoLibrary, MdTagFaces } from "react-icons/md";
 import { useLoggedUserQuery } from "../../generated/graphql";
@@ -46,6 +46,11 @@ const PostCreatorBasicStage: React.FC<Props> = ({
   const ref = useRef<HTMLInputElement>();
 
   const [{ data: loggedUser }] = useLoggedUserQuery();
+
+  const memoizedImage = useMemo(
+    () => base64ToObjectURL(loggedUser.loggedUser.avatarImage),
+    [loggedUser.loggedUser.avatarImage]
+  );
 
   const handlePostStatus = () => {
     let text = loggedUser && loggedUser.loggedUser.user.username;
@@ -104,11 +109,7 @@ const PostCreatorBasicStage: React.FC<Props> = ({
       >
         <Flex>
           <Avatar
-            src={
-              loggedUser.loggedUser.avatarImage
-                ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
-                : null
-            }
+            src={loggedUser.loggedUser.avatarImage ? memoizedImage : null}
           />
           <Text color="textPrimary" fontWeight="bold">
             {handlePostStatus()}
