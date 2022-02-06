@@ -1,5 +1,5 @@
 import { Image, Stack } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useGetImageQuery } from "../../generated/graphql";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 import { isServer } from "../../utils/isServer";
@@ -13,10 +13,15 @@ const ImageContainer: React.FC<Props> = ({ imageId }) => {
     variables: { imageId: imageId },
     pause: isServer,
   });
+
+  const memoizedImage = useMemo(
+    () => base64ToObjectURL(imageUrl?.getImage),
+    [imageUrl]
+  );
   return (
     <Stack mt="10px">
       <Image
-        src={imageUrl?.getImage ? base64ToObjectURL(imageUrl.getImage) : undefined}
+        src={imageUrl?.getImage ? memoizedImage : undefined}
         fallbackSrc="https://via.placeholder.com/800/?text="
         fit="fill"
       />

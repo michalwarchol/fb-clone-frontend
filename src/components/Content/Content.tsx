@@ -22,7 +22,7 @@ const Content: React.FC = () => {
     variables,
     pause: isServer,
   });
-  const [{data: loggedUser}] = useLoggedUserQuery();
+  const [{ data: loggedUser }] = useLoggedUserQuery();
 
   const [{ data: stories }] = useGetRecentStoriesQuery();
   const getMorePosts = () => {
@@ -37,7 +37,10 @@ const Content: React.FC = () => {
     getMorePosts
   );
 
-  const avatar = useMemo(()=>base64ToObjectURL(loggedUser.loggedUser?.avatarImage), [loggedUser]);
+  const avatar = useMemo(
+    () => base64ToObjectURL(loggedUser.loggedUser?.avatarImage),
+    [loggedUser]
+  );
 
   return (
     <Flex
@@ -57,11 +60,7 @@ const Content: React.FC = () => {
         >
           <PageButton
             text={loggedUser.loggedUser?.user.username}
-            image={
-              <Avatar
-                src={avatar}
-              />
-            }
+            image={<Avatar src={avatar} />}
             link={"/profile/" + loggedUser.loggedUser?.user._id}
           />
           <PageButton
@@ -92,15 +91,14 @@ const Content: React.FC = () => {
           </Text>
         </Box>
         <Flex w="100%" direction="column">
-          <StoriesShortcut
-            stories={stories?.getRecentStories}
-            myAvatar={loggedUser.loggedUser.avatarImage}
-          />
+          <StoriesShortcut stories={stories?.getRecentStories || []} />
           <PostCreator />
           <FriendSuggestions />
           <Flex w="100%" direction="column" align="center">
             {!data ? (
-              <Box p="10px" borderRadius="50%" bg="secondary"><Spinner color="active" size="xl" /></Box>
+              <Box p="10px" borderRadius="50%" bg="secondary">
+                <Spinner color="active" size="xl" />
+              </Box>
             ) : (
               data.posts.posts.map((post) => (
                 <PostContainer post={post} key={post._id} />

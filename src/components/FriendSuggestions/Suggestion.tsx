@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRouter } from "next/router";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useMemo, useState } from "react";
 import { FaCheck, FaUserPlus } from "react-icons/fa";
 import {
   FriendSuggestion,
@@ -26,6 +26,8 @@ const Suggestion: React.FC<Props> = ({ friend }) => {
   const [requestSent, setRequestSent] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const memoizedAvatar = useMemo(()=>base64ToObjectURL(avatar?.getImage), [avatar]);
 
   const goToProfile = () => {
     router.push("/profile/" + friend.friend._id);
@@ -58,7 +60,7 @@ const Suggestion: React.FC<Props> = ({ friend }) => {
       <Box w="100%">
         <Box h="220px" w="160px" borderRadius="8px" overflow="hidden">
           <Image
-            src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
+            src={avatar?.getImage ? memoizedAvatar : null}
             w="100%"
             h="100%"
             objectFit="cover"

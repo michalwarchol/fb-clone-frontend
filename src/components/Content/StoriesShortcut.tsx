@@ -1,8 +1,8 @@
 import Icon from "@chakra-ui/icon";
 import { Image } from "@chakra-ui/image";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import React from "react";
-import { Story } from "../../generated/graphql";
+import React, { useMemo } from "react";
+import { Story, useLoggedUserQuery } from "../../generated/graphql";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import NextLink from "next/link";
 import Shortcut from "./Shortcut";
@@ -12,28 +12,38 @@ import EmptyShortcut from "./EmptyShortcut";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
 
 interface Props {
-  stories?: Story[];
-  myAvatar: string;
+  stories: Story[];
 }
 
-const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
+const StoriesShortcut: React.FC<Props> = ({ stories }) => {
+  const [{ data: loggedUser }] = useLoggedUserQuery();
+  const memoizedAvatar = useMemo(
+    () => base64ToObjectURL(loggedUser.loggedUser.avatarImage),
+    [loggedUser]
+  );
+
   let seen = [];
   let uniqueStories = stories
-    ?.filter((story) => {
-      if (seen.indexOf(story.userId)==-1) {
+    .filter((story) => {
+      if (seen.indexOf(story.userId) == -1) {
         seen.push(story.userId);
         return true;
       }
       return false;
     })
     .slice(0, 5);
-    let length = uniqueStories?.length;
-    let emptyShortcuts = [];
-    for(let i=0; i<5-length; i++){
-      emptyShortcuts.push(<EmptyShortcut key={i} />)
-    }
+  let length = uniqueStories?.length;
+  let emptyShortcuts = [];
+  for (let i = 0; i < 5 - length; i++) {
+    emptyShortcuts.push(<EmptyShortcut key={i} />);
+  }
   return (
-    <Flex mb="20px" justify="space-between" position="relative"w={{base: "490px", md: "100%"}}>
+    <Flex
+      mb="20px"
+      justify="space-between"
+      position="relative"
+      w={{ base: "490px", md: "100%" }}
+    >
       <NextLink href="/stories/create">
         <Box
           w="16%"
@@ -44,7 +54,7 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
           _hover={{ cursor: "pointer", filter: "brightness(80%)" }}
         >
           <Image
-            src={base64ToObjectURL(myAvatar)}
+            src={memoizedAvatar}
             h={{ base: "60%", md: "70%" }}
             w="100%"
             objectFit="cover"
@@ -79,18 +89,18 @@ const StoriesShortcut: React.FC<Props> = ({ stories, myAvatar }) => {
       ))}
       {emptyShortcuts}
       <NextLink href="/stories">
-      <IconButton
-        aria-label="view more"
-        icon={<BsArrowRight />}
-        variant="basic"
-        borderRadius="50%"
-        bg="hover"
-        top="0"
-        bottom="0"
-        my="auto"
-        right={{base: "0", md: "-20px"}}
-        position="absolute"
-      />
+        <IconButton
+          aria-label="view more"
+          icon={<BsArrowRight />}
+          variant="basic"
+          borderRadius="50%"
+          bg="hover"
+          top="0"
+          bottom="0"
+          my="auto"
+          right={{ base: "0", md: "-20px" }}
+          position="absolute"
+        />
       </NextLink>
     </Flex>
   );
