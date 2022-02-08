@@ -16,7 +16,7 @@ import {
   Badge,
   Box,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { ImExit } from "react-icons/im";
 import {
@@ -43,6 +43,11 @@ const Options: React.FC = () => {
   const [, updateNotificationStatus] = useUpdateNotificationStatusMutation();
   const router = useRouter();
   const [notsOpened, setNotsOpened] = useState(false);
+
+  const memoizedAvatar = useMemo(
+    () => base64ToObjectURL(loggedUser.loggedUser.avatarImage),
+    [loggedUser]
+  );
 
   const updateNotifications = async () => {
     const notifications = data.getUserNotifications.filter((notification) => {
@@ -93,11 +98,7 @@ const Options: React.FC = () => {
           }
         >
           <Avatar
-            src={
-              loggedUser.loggedUser.avatarImage
-                ? base64ToObjectURL(loggedUser.loggedUser.avatarImage)
-                : null
-            }
+            src={loggedUser.loggedUser.avatarImage ? memoizedAvatar : null}
             size="sm"
             mr="4px"
           />

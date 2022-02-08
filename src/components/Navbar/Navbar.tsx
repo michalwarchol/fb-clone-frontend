@@ -24,6 +24,7 @@ import PageButton from "./PageButton";
 import { MdMenu, MdSearch } from "react-icons/md";
 import { useRouter } from "next/router";
 import { base64ToObjectURL } from "../../utils/base64ToObjectURL";
+import SearchSuggestion from "./SearchSuggestion";
 
 const Navbar: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -83,28 +84,7 @@ const Navbar: React.FC = () => {
                 {searchedUsers &&
                 searchedUsers.searchUsersByUsername.length > 0 ? (
                   searchedUsers.searchUsersByUsername.map((user, i) => (
-                    <NextLink href={"/profile/" + user._id} key={i}>
-                      <Flex
-                        align="center"
-                        p="4px"
-                        borderRadius="8px"
-                        _hover={{
-                          backgroundColor: "hover",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Avatar
-                          size="md"
-                          src={
-                            user.avatarImage
-                              ? base64ToObjectURL(user.avatarImage)
-                              : null
-                          }
-                          mr="10px"
-                        />
-                        <Text textAlign="center">{user.username}</Text>
-                      </Flex>
-                    </NextLink>
+                    <SearchSuggestion user={user} key={i} />
                   ))
                 ) : (
                   <Text>No results found</Text>

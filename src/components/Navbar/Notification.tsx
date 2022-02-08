@@ -1,7 +1,7 @@
 import { Avatar } from "@chakra-ui/avatar";
 import Icon from "@chakra-ui/icon";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import React from "react";
+import React, { useMemo } from "react";
 import { FaFlag } from "react-icons/fa";
 import {
   Notification,
@@ -22,14 +22,14 @@ const NotificationNode: React.FC<Props> = ({ notification }) => {
     variables: { imageId: notification.triggerUser.avatarId },
   });
 
+  const memoizedAvatar = useMemo(
+    () => base64ToObjectURL(avatar?.getImage),
+    [avatar]
+  );
+
   let image = <Icon as={FaFlag} bg="active" w="30px" h="30px" />;
   if (notification.type != NotificationType.Info) {
-    image = (
-      <Avatar
-        src={avatar?.getImage ? base64ToObjectURL(avatar.getImage) : null}
-        size="lg"
-      />
-    );
+    image = <Avatar src={avatar?.getImage ? memoizedAvatar : null} size="lg" />;
   }
 
   return (
