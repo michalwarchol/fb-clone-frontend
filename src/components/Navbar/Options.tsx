@@ -182,7 +182,7 @@ const Options: React.FC = () => {
           <MenuItem
             onClick={() => {
               logout();
-              router.reload();
+              router.replace("/login");
             }}
             bg="secondary"
             borderRadius="8px"
