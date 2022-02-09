@@ -48,7 +48,10 @@ const Login: React.FC = () => {
             <Formik
               initialValues={{ username: "", password: "" }}
               onSubmit={async (values, { setErrors }) => {
-                const response = await login({ username: values.username, password: values.password });
+                const response = await login({
+                  username: values.username,
+                  password: values.password,
+                });
                 if (response.data?.login.errors) {
                   setErrors(toErrorMap(response.data.login.errors));
                 } else if (response.data?.login.loggedUser) {
@@ -107,6 +110,14 @@ const Login: React.FC = () => {
                           "Log in"
                         )}
                       </Button>
+                      <Text mt="10px" fontSize="10px" textAlign="center">
+                        You can use these credentials:
+                      </Text>
+                      <Text fontSize="10px" textAlign="center">
+                        username: <span style={{ fontWeight: "bold" }}>guest</span>{" "}
+                        password:{" "}
+                        <span style={{ fontWeight: "bold" }}>guest123</span>
+                      </Text>
                       <Divider
                         orientation="horizontal"
                         mt={5}
