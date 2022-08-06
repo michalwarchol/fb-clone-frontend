@@ -1,7 +1,7 @@
 fragment RegularFriendRequest on FriendRequest {
-    sender
-    receiver
-    status
-    createdAt
-    updatedAt
+  senderId
+  receiverId
+  status
+  createdAt
+  updatedAt
 }

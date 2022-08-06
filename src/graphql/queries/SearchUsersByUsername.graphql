@@ -1,5 +1,5 @@
 query SearchUsersByUsername($username: String!) {
-  searchUsersByUsername(username: $username){
+  searchUsersByUsername(username: $username) {
     _id
     username
     avatarImage

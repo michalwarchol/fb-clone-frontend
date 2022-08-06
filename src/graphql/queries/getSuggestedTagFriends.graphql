@@ -1,10 +1,14 @@
-query GetSuggestedFriendTags($searchName: String){
+query GetSuggestedFriendTags($searchName: String) {
   getSuggestedFriendTags(searchName: $searchName) {
-    friend{
-      ...RegularUser
-    }
     friendRequest {
-        ...RegularFriendRequest
+      ...RegularFriendRequest
+      sender {
+        ...RegularUser
+      }
+      receiver {
+        ...RegularUser
+      }
     }
+    friendRole
   }
 }

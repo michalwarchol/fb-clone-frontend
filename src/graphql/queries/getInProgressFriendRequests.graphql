@@ -1,10 +1,14 @@
 query GetInProgressFriendRequests {
-  getInProgressFriendRequests{
-    friend {
-      ...RegularUser
-    }
-    friendRequest{
+  getInProgressFriendRequests {
+    friendRequest {
       ...RegularFriendRequest
+      sender {
+        ...RegularUser
+      }
+      receiver {
+        ...RegularUser
+      }
     }
+    friendRole
   }
 }

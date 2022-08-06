@@ -1,5 +1,5 @@
-import gql from "graphql-tag";
-import * as Urql from "urql";
+import gql from 'graphql-tag';
+import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -17,98 +17,98 @@ export type Scalars = {
 };
 
 export type Comment = {
-  __typename?: "Comment";
-  _id: Scalars["Int"];
-  text: Scalars["String"];
-  creatorId: Scalars["Float"];
+  __typename?: 'Comment';
+  _id: Scalars['Int'];
+  text: Scalars['String'];
+  creatorId: Scalars['Float'];
   creator: User;
-  postId: Scalars["Float"];
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  postId: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type Credentials = {
-  username: Scalars["String"];
-  email: Scalars["String"];
-  password: Scalars["String"];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type FieldError = {
-  __typename?: "FieldError";
-  field: Scalars["String"];
-  message: Scalars["String"];
+  __typename?: 'FieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type FriendRequest = {
-  __typename?: "FriendRequest";
-  status: Scalars["String"];
-  sender: Scalars["Float"];
-  receiver: Scalars["Float"];
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  __typename?: 'FriendRequest';
+  status: Scalars['String'];
+  senderId: Scalars['Float'];
+  sender: User;
+  receiverId: Scalars['Float'];
+  receiver: User;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type FriendRequestWithFriend = {
-  __typename?: "FriendRequestWithFriend";
+  __typename?: 'FriendRequestWithFriend';
   friendRequest: FriendRequest;
-  friend: User;
+  friendRole: Scalars['String'];
 };
 
 export type FriendSuggestion = {
-  __typename?: "FriendSuggestion";
+  __typename?: 'FriendSuggestion';
   friend: User;
-  mutual: Scalars["Int"];
+  mutual: Scalars['Int'];
 };
 
 export type FullUser = {
-  __typename?: "FullUser";
+  __typename?: 'FullUser';
   user?: Maybe<User>;
-  avatarImage?: Maybe<Scalars["String"]>;
-  bannerImage?: Maybe<Scalars["String"]>;
+  avatarImage?: Maybe<Scalars['String']>;
+  bannerImage?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
   createPost: Post;
   updatePost?: Maybe<Post>;
-  deletePost: Scalars["Boolean"];
-  uploadImage: Scalars["String"];
+  deletePost: Scalars['Boolean'];
+  uploadImage: Scalars['String'];
   register: UserResponse;
   login: UserResponse;
-  logout: Scalars["Boolean"];
-  forgotPassword: Scalars["Boolean"];
-  changePassword: UserResponse;
-  react: Scalars["Boolean"];
+  logout: Scalars['Boolean'];
+  react: Scalars['Boolean'];
   createComment: Comment;
-  createFriendRequest: Scalars["Boolean"];
-  acceptFriendRequest: Scalars["Boolean"];
-  removeFriendRequest: Scalars["Boolean"];
+  createFriendRequest: Scalars['Boolean'];
+  acceptFriendRequest: Scalars['Boolean'];
+  removeFriendRequest: Scalars['Boolean'];
   createStory: Story;
-  createNotification: Scalars["Boolean"];
-  updateNotificationStatus: Scalars["Boolean"];
+  createNotification: Scalars['Boolean'];
+  updateNotificationStatus: Scalars['Boolean'];
 };
 
 
 export type MutationCreatePostArgs = {
-  image?: Maybe<Scalars["Upload"]>;
+  image?: Maybe<Scalars['Upload']>;
   input: PostInput;
 };
 
 
 export type MutationUpdatePostArgs = {
-  text?: Maybe<Scalars["String"]>;
-  id: Scalars["Float"];
+  text?: Maybe<Scalars['String']>;
+  id: Scalars['Float'];
 };
 
 
 export type MutationDeletePostArgs = {
-  id: Scalars["Float"];
+  id: Scalars['Float'];
 };
 
 
 export type MutationUploadImageArgs = {
-  avatarOrBanner: Scalars["String"];
-  image?: Maybe<Scalars["Upload"]>;
+  avatarOrBanner: Scalars['String'];
+  image?: Maybe<Scalars['Upload']>;
 };
 
 
@@ -118,19 +118,8 @@ export type MutationRegisterArgs = {
 
 
 export type MutationLoginArgs = {
-  password: Scalars["String"];
-  username: Scalars["String"];
-};
-
-
-export type MutationForgotPasswordArgs = {
-  email: Scalars["String"];
-};
-
-
-export type MutationChangePasswordArgs = {
-  newPassword: Scalars["String"];
-  token: Scalars["String"];
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -140,28 +129,28 @@ export type MutationReactArgs = {
 
 
 export type MutationCreateCommentArgs = {
-  postId: Scalars["Int"];
-  text: Scalars["String"];
+  postId: Scalars['Int'];
+  text: Scalars['String'];
 };
 
 
 export type MutationCreateFriendRequestArgs = {
-  receiverId: Scalars["Int"];
+  receiverId: Scalars['Int'];
 };
 
 
 export type MutationAcceptFriendRequestArgs = {
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 };
 
 
 export type MutationRemoveFriendRequestArgs = {
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 };
 
 
 export type MutationCreateStoryArgs = {
-  image?: Maybe<Scalars["Upload"]>;
+  image?: Maybe<Scalars['Upload']>;
   input: StoryInput;
 };
 
@@ -172,94 +161,94 @@ export type MutationCreateNotificationArgs = {
 
 
 export type MutationUpdateNotificationStatusArgs = {
-  notifications: Array<Scalars["Int"]>;
+  notifications: Array<Scalars['Int']>;
 };
 
 export type Notification = {
-  __typename?: "Notification";
-  _id: Scalars["Int"];
-  info: Scalars["String"];
+  __typename?: 'Notification';
+  _id: Scalars['Int'];
+  info: Scalars['String'];
   type: NotificationType;
-  status: Scalars["String"];
-  receiverId: Scalars["Int"];
-  postId?: Maybe<Scalars["Int"]>;
-  triggerId: Scalars["Int"];
+  status: Scalars['String'];
+  receiverId: Scalars['Int'];
+  postId?: Maybe<Scalars['Int']>;
+  triggerId: Scalars['Int'];
   triggerUser: User;
-  link: Scalars["String"];
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  link: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type NotificationInput = {
-  info: Scalars["String"];
+  info: Scalars['String'];
   type: NotificationType;
-  receiverId: Scalars["Int"];
-  link?: Maybe<Scalars["String"]>;
-  postId?: Maybe<Scalars["Int"]>;
+  receiverId: Scalars['Int'];
+  link?: Maybe<Scalars['String']>;
+  postId?: Maybe<Scalars['Int']>;
 };
 
 /** Types of notifications you can get */
 export enum NotificationType {
-  Info = "INFO",
-  Reaction = "REACTION",
-  Comment = "COMMENT",
-  FriendReq = "FRIEND_REQ",
-  FriendAccept = "FRIEND_ACCEPT",
-  Tag = "TAG"
+  Info = 'INFO',
+  Reaction = 'REACTION',
+  Comment = 'COMMENT',
+  FriendReq = 'FRIEND_REQ',
+  FriendAccept = 'FRIEND_ACCEPT',
+  Tag = 'TAG'
 }
 
 export type PaginatedComments = {
-  __typename?: "PaginatedComments";
+  __typename?: 'PaginatedComments';
   comments: Array<Comment>;
-  hasMore: Scalars["Boolean"];
+  hasMore: Scalars['Boolean'];
 };
 
 export type PaginatedPosts = {
-  __typename?: "PaginatedPosts";
+  __typename?: 'PaginatedPosts';
   posts: Array<Post>;
-  hasMore: Scalars["Boolean"];
+  hasMore: Scalars['Boolean'];
 };
 
 export type PaginatedRequests = {
-  __typename?: "PaginatedRequests";
+  __typename?: 'PaginatedRequests';
   friendRequestsWithFriends: Array<FriendRequestWithFriend>;
-  hasMore: Scalars["Boolean"];
-  mutualFriends: Scalars["Int"];
+  hasMore: Scalars['Boolean'];
+  mutualFriends: Scalars['Int'];
 };
 
 export type Post = {
-  __typename?: "Post";
-  _id: Scalars["Int"];
-  creatorId: Scalars["Float"];
+  __typename?: 'Post';
+  _id: Scalars['Int'];
+  creatorId: Scalars['Float'];
   creator: User;
-  text: Scalars["String"];
-  feeling: Scalars["String"];
-  activity: Scalars["String"];
-  imageId: Scalars["String"];
-  tagged: Array<Scalars["Int"]>;
-  like: Scalars["Float"];
-  love: Scalars["Float"];
-  care: Scalars["Float"];
-  haha: Scalars["Float"];
-  wow: Scalars["Float"];
-  sad: Scalars["Float"];
-  angry: Scalars["Float"];
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  text: Scalars['String'];
+  feeling: Scalars['String'];
+  activity: Scalars['String'];
+  imageId: Scalars['String'];
+  tagged: Array<Scalars['Int']>;
+  like: Scalars['Float'];
+  love: Scalars['Float'];
+  care: Scalars['Float'];
+  haha: Scalars['Float'];
+  wow: Scalars['Float'];
+  sad: Scalars['Float'];
+  angry: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type PostInput = {
-  text: Scalars["String"];
-  feeling: Scalars["String"];
-  activity: Scalars["String"];
-  tagged: Array<Scalars["Int"]>;
+  text: Scalars['String'];
+  feeling: Scalars['String'];
+  activity: Scalars['String'];
+  tagged: Array<Scalars['Int']>;
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
   posts: PaginatedPosts;
   post?: Maybe<Post>;
-  getImage: Scalars["String"];
+  getImage: Scalars['String'];
   getUsers: Array<User>;
   getUserById?: Maybe<User>;
   searchUsersByUsername: Array<SearchedUser>;
@@ -267,270 +256,255 @@ export type Query = {
   reactions: Array<Reaction>;
   reaction?: Maybe<Reaction>;
   getPostComments: PaginatedComments;
-  commentCount: Scalars["Int"];
+  commentCount: Scalars['Int'];
   friendRequests: Array<FriendRequest>;
   getUserFriendRequests: PaginatedRequests;
   getFriendRequest: UserRequest;
   getSuggestedFriendTags: Array<FriendRequestWithFriend>;
   getSuggestedFriends: Array<FriendSuggestion>;
   getInProgressFriendRequests: Array<FriendRequestWithFriend>;
-  friendCount: Scalars["Int"];
+  friendCount: Scalars['Int'];
   getStories: Array<Story>;
   getRecentStories: Array<Story>;
   getNotifications: Array<Notification>;
   getUserNotifications: Array<Notification>;
-  getNewNotificationsCount: Scalars["Int"];
+  getNewNotificationsCount: Scalars['Int'];
 };
 
 
 export type QueryPostsArgs = {
-  creatorId?: Maybe<Scalars["Int"]>;
-  cursor?: Maybe<Scalars["String"]>;
-  limit: Scalars["Int"];
+  creatorId?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
 export type QueryPostArgs = {
-  id: Scalars["Int"];
+  id: Scalars['Int'];
 };
 
 
 export type QueryGetImageArgs = {
-  imageId: Scalars["String"];
+  imageId: Scalars['String'];
 };
 
 
 export type QueryGetUserByIdArgs = {
-  id: Scalars["Int"];
+  id: Scalars['Int'];
 };
 
 
 export type QuerySearchUsersByUsernameArgs = {
-  username: Scalars["String"];
+  username: Scalars['String'];
 };
 
 
 export type QueryReactionArgs = {
-  postId: Scalars["Int"];
+  postId: Scalars['Int'];
 };
 
 
 export type QueryGetPostCommentsArgs = {
-  cursor?: Maybe<Scalars["String"]>;
-  limit: Scalars["Int"];
-  postId: Scalars["Int"];
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  postId: Scalars['Int'];
 };
 
 
 export type QueryCommentCountArgs = {
-  postId: Scalars["Int"];
+  postId: Scalars['Int'];
 };
 
 
 export type QueryGetUserFriendRequestsArgs = {
-  skip?: Maybe<Scalars["Int"]>;
-  userId?: Maybe<Scalars["Int"]>;
-  limit: Scalars["Int"];
+  skip?: Maybe<Scalars['Int']>;
+  userId?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
 };
 
 
 export type QueryGetFriendRequestArgs = {
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 };
 
 
 export type QueryGetSuggestedFriendTagsArgs = {
-  searchName?: Maybe<Scalars["String"]>;
+  searchName?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryFriendCountArgs = {
-  userId?: Maybe<Scalars["Int"]>;
+  userId?: Maybe<Scalars['Int']>;
 };
 
 export type Reaction = {
-  __typename?: "Reaction";
-  _id: Scalars["Int"];
-  reaction: Scalars["String"];
-  value: Scalars["Int"];
-  userId: Scalars["Int"];
-  postId: Scalars["Int"];
+  __typename?: 'Reaction';
+  _id: Scalars['Int'];
+  reaction: Scalars['String'];
+  value: Scalars['Int'];
+  userId: Scalars['Int'];
+  postId: Scalars['Int'];
 };
 
 export type ReactionInput = {
   reaction: ReactionType;
-  postId: Scalars["Int"];
-  value: Scalars["Int"];
+  postId: Scalars['Int'];
 };
 
 /** Reactions, that a user can have on a post */
 export enum ReactionType {
-  Like = "LIKE",
-  Love = "LOVE",
-  Care = "CARE",
-  Haha = "HAHA",
-  Wow = "WOW",
-  Sad = "SAD",
-  Angry = "ANGRY"
+  Like = 'LIKE',
+  Love = 'LOVE',
+  Care = 'CARE',
+  Haha = 'HAHA',
+  Wow = 'WOW',
+  Sad = 'SAD',
+  Angry = 'ANGRY'
 }
 
 export type SearchedUser = {
-  __typename?: "SearchedUser";
-  _id: Scalars["Int"];
-  username: Scalars["String"];
-  avatarImage?: Maybe<Scalars["String"]>;
+  __typename?: 'SearchedUser';
+  _id: Scalars['Int'];
+  username: Scalars['String'];
+  avatarImage?: Maybe<Scalars['String']>;
 };
 
 export type Story = {
-  __typename?: "Story";
-  _id: Scalars["Float"];
-  userId: Scalars["Float"];
+  __typename?: 'Story';
+  _id: Scalars['Float'];
+  userId: Scalars['Float'];
   creator: User;
-  text?: Maybe<Scalars["String"]>;
-  font?: Maybe<Scalars["String"]>;
-  gradient?: Maybe<Scalars["String"]>;
-  time: Scalars["Float"];
-  imageId?: Maybe<Scalars["String"]>;
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  text?: Maybe<Scalars['String']>;
+  font?: Maybe<Scalars['String']>;
+  gradient?: Maybe<Scalars['String']>;
+  time: Scalars['Float'];
+  imageId?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type StoryInput = {
-  text?: Maybe<Scalars["String"]>;
-  font?: Maybe<Scalars["String"]>;
-  gradient?: Maybe<Scalars["String"]>;
-  time?: Maybe<Scalars["Float"]>;
+  text?: Maybe<Scalars['String']>;
+  font?: Maybe<Scalars['String']>;
+  gradient?: Maybe<Scalars['String']>;
+  time?: Maybe<Scalars['Float']>;
 };
 
 
 export type User = {
-  __typename?: "User";
-  _id: Scalars["Int"];
-  username: Scalars["String"];
-  email: Scalars["String"];
-  avatarId: Scalars["String"];
-  bannerId: Scalars["String"];
-  createdAt: Scalars["String"];
-  updatedAt: Scalars["String"];
+  __typename?: 'User';
+  _id: Scalars['Int'];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  avatarId: Scalars['String'];
+  bannerId: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type UserRequest = {
-  __typename?: "UserRequest";
+  __typename?: 'UserRequest';
   friendRequest?: Maybe<FriendRequest>;
-  isSender: Scalars["Boolean"];
+  isSender: Scalars['Boolean'];
 };
 
 export type UserResponse = {
-  __typename?: "UserResponse";
+  __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
   loggedUser?: Maybe<FullUser>;
 };
 
 export type RegularErrorFragment = (
-  { __typename?: "FieldError" }
-  & Pick<FieldError, "field" | "message">
+  { __typename?: 'FieldError' }
+  & Pick<FieldError, 'field' | 'message'>
 );
 
 export type RegularFriendRequestFragment = (
-  { __typename?: "FriendRequest" }
-  & Pick<FriendRequest, "sender" | "receiver" | "status" | "createdAt" | "updatedAt">
+  { __typename?: 'FriendRequest' }
+  & Pick<FriendRequest, 'senderId' | 'receiverId' | 'status' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularNotificationFragment = (
-  { __typename?: "Notification" }
-  & Pick<Notification, "_id" | "info" | "type" | "status" | "link" | "postId" | "receiverId" | "triggerId" | "createdAt" | "updatedAt">
+  { __typename?: 'Notification' }
+  & Pick<Notification, '_id' | 'info' | 'type' | 'status' | 'link' | 'postId' | 'receiverId' | 'triggerId' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularPostFragment = (
-  { __typename?: "Post" }
-  & Pick<Post, "_id" | "text" | "feeling" | "activity" | "tagged" | "imageId" | "creatorId" | "createdAt" | "updatedAt">
+  { __typename?: 'Post' }
+  & Pick<Post, '_id' | 'text' | 'feeling' | 'activity' | 'tagged' | 'imageId' | 'creatorId' | 'createdAt' | 'updatedAt'>
   & { creator: (
-    { __typename?: "User" }
+    { __typename?: 'User' }
     & RegularUserFragment
   ) }
   & RegularReactionsFragment
 );
 
 export type RegularReactionsFragment = (
-  { __typename?: "Post" }
-  & Pick<Post, "like" | "love" | "care" | "haha" | "wow" | "sad" | "angry">
+  { __typename?: 'Post' }
+  & Pick<Post, 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry'>
 );
 
 export type RegularStoryFragment = (
-  { __typename?: "Story" }
-  & Pick<Story, "_id" | "userId" | "text" | "font" | "gradient" | "imageId" | "time" | "createdAt" | "updatedAt">
+  { __typename?: 'Story' }
+  & Pick<Story, '_id' | 'userId' | 'text' | 'font' | 'gradient' | 'imageId' | 'time' | 'createdAt' | 'updatedAt'>
   & { creator: (
-    { __typename?: "User" }
+    { __typename?: 'User' }
     & RegularUserFragment
   ) }
 );
 
 export type RegularUserFragment = (
-  { __typename?: "User" }
-  & Pick<User, "_id" | "username" | "email" | "avatarId" | "bannerId" | "createdAt" | "updatedAt">
+  { __typename?: 'User' }
+  & Pick<User, '_id' | 'username' | 'email' | 'avatarId' | 'bannerId' | 'createdAt' | 'updatedAt'>
 );
 
 export type RegularUserResponseFragment = (
-  { __typename?: "UserResponse" }
+  { __typename?: 'UserResponse' }
   & { errors?: Maybe<Array<(
-    { __typename?: "FieldError" }
+    { __typename?: 'FieldError' }
     & RegularErrorFragment
   )>>, loggedUser?: Maybe<(
-    { __typename?: "FullUser" }
-    & Pick<FullUser, "avatarImage" | "bannerImage">
+    { __typename?: 'FullUser' }
+    & Pick<FullUser, 'avatarImage' | 'bannerImage'>
     & { user?: Maybe<(
-      { __typename?: "User" }
+      { __typename?: 'User' }
       & RegularUserFragment
     )> }
   )> }
 );
 
 export type AcceptFriendRequestMutationVariables = Exact<{
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 }>;
 
 
 export type AcceptFriendRequestMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "acceptFriendRequest">
-);
-
-export type ChangePasswordMutationVariables = Exact<{
-  token: Scalars["String"];
-  newPassword: Scalars["String"];
-}>;
-
-
-export type ChangePasswordMutation = (
-  { __typename?: "Mutation" }
-  & { changePassword: (
-    { __typename?: "UserResponse" }
-    & RegularUserResponseFragment
-  ) }
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptFriendRequest'>
 );
 
 export type CreateCommentMutationVariables = Exact<{
-  postId: Scalars["Int"];
-  text: Scalars["String"];
+  postId: Scalars['Int'];
+  text: Scalars['String'];
 }>;
 
 
 export type CreateCommentMutation = (
-  { __typename?: "Mutation" }
+  { __typename?: 'Mutation' }
   & { createComment: (
-    { __typename?: "Comment" }
-    & Pick<Comment, "_id" | "text" | "postId" | "creatorId">
+    { __typename?: 'Comment' }
+    & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId'>
   ) }
 );
 
 export type CreateFriendRequestMutationVariables = Exact<{
-  receiver: Scalars["Int"];
+  receiver: Scalars['Int'];
 }>;
 
 
 export type CreateFriendRequestMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "createFriendRequest">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createFriendRequest'>
 );
 
 export type CreateNotificationMutationVariables = Exact<{
@@ -539,58 +513,48 @@ export type CreateNotificationMutationVariables = Exact<{
 
 
 export type CreateNotificationMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "createNotification">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createNotification'>
 );
 
 export type CreatePostMutationVariables = Exact<{
   input: PostInput;
-  image?: Maybe<Scalars["Upload"]>;
+  image?: Maybe<Scalars['Upload']>;
 }>;
 
 
 export type CreatePostMutation = (
-  { __typename?: "Mutation" }
+  { __typename?: 'Mutation' }
   & { createPost: (
-    { __typename?: "Post" }
-    & Pick<Post, "_id" | "creatorId" | "text" | "feeling" | "activity" | "imageId" | "like" | "love" | "care" | "haha" | "wow" | "sad" | "angry" | "createdAt" | "updatedAt">
+    { __typename?: 'Post' }
+    & Pick<Post, '_id' | 'creatorId' | 'text' | 'feeling' | 'activity' | 'imageId' | 'like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
 export type CreateStoryMutationVariables = Exact<{
   input: StoryInput;
-  image?: Maybe<Scalars["Upload"]>;
+  image?: Maybe<Scalars['Upload']>;
 }>;
 
 
 export type CreateStoryMutation = (
-  { __typename?: "Mutation" }
+  { __typename?: 'Mutation' }
   & { createStory: (
-    { __typename?: "Story" }
-    & Pick<Story, "_id" | "userId" | "text" | "font" | "gradient" | "time" | "imageId" | "createdAt" | "updatedAt">
+    { __typename?: 'Story' }
+    & Pick<Story, '_id' | 'userId' | 'text' | 'font' | 'gradient' | 'time' | 'imageId' | 'createdAt' | 'updatedAt'>
   ) }
 );
 
-export type ForgotPasswordMutationVariables = Exact<{
-  email: Scalars["String"];
-}>;
-
-
-export type ForgotPasswordMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "forgotPassword">
-);
-
 export type LoginMutationVariables = Exact<{
-  username: Scalars["String"];
-  password: Scalars["String"];
+  username: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
 export type LoginMutation = (
-  { __typename?: "Mutation" }
+  { __typename?: 'Mutation' }
   & { login: (
-    { __typename?: "UserResponse" }
+    { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
   ) }
 );
@@ -599,8 +563,8 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "logout">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
 );
 
 export type ReactMutationVariables = Exact<{
@@ -609,8 +573,8 @@ export type ReactMutationVariables = Exact<{
 
 
 export type ReactMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "react">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'react'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -619,116 +583,121 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = (
-  { __typename?: "Mutation" }
+  { __typename?: 'Mutation' }
   & { register: (
-    { __typename?: "UserResponse" }
+    { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
   ) }
 );
 
 export type RemoveFriendRequestMutationVariables = Exact<{
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 }>;
 
 
 export type RemoveFriendRequestMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "removeFriendRequest">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeFriendRequest'>
 );
 
 export type UpdateNotificationStatusMutationVariables = Exact<{
-  notifications: Array<Scalars["Int"]> | Scalars["Int"];
+  notifications: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
 export type UpdateNotificationStatusMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "updateNotificationStatus">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateNotificationStatus'>
 );
 
 export type UploadUserImageMutationVariables = Exact<{
-  image?: Maybe<Scalars["Upload"]>;
-  avatarOrBanner: Scalars["String"];
+  image?: Maybe<Scalars['Upload']>;
+  avatarOrBanner: Scalars['String'];
 }>;
 
 
 export type UploadUserImageMutation = (
-  { __typename?: "Mutation" }
-  & Pick<Mutation, "uploadImage">
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'uploadImage'>
 );
 
 export type SearchUsersByUsernameQueryVariables = Exact<{
-  username: Scalars["String"];
+  username: Scalars['String'];
 }>;
 
 
 export type SearchUsersByUsernameQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { searchUsersByUsername: Array<(
-    { __typename?: "SearchedUser" }
-    & Pick<SearchedUser, "_id" | "username" | "avatarImage">
+    { __typename?: 'SearchedUser' }
+    & Pick<SearchedUser, '_id' | 'username' | 'avatarImage'>
   )> }
 );
 
 export type CommentCountQueryVariables = Exact<{
-  postId: Scalars["Int"];
+  postId: Scalars['Int'];
 }>;
 
 
 export type CommentCountQuery = (
-  { __typename?: "Query" }
-  & Pick<Query, "commentCount">
+  { __typename?: 'Query' }
+  & Pick<Query, 'commentCount'>
 );
 
 export type FriendCountQueryVariables = Exact<{
-  userId?: Maybe<Scalars["Int"]>;
+  userId?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type FriendCountQuery = (
-  { __typename?: "Query" }
-  & Pick<Query, "friendCount">
+  { __typename?: 'Query' }
+  & Pick<Query, 'friendCount'>
 );
 
 export type GetFriendRequestQueryVariables = Exact<{
-  userId: Scalars["Int"];
+  userId: Scalars['Int'];
 }>;
 
 
 export type GetFriendRequestQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getFriendRequest: (
-    { __typename?: "UserRequest" }
-    & Pick<UserRequest, "isSender">
+    { __typename?: 'UserRequest' }
+    & Pick<UserRequest, 'isSender'>
     & { friendRequest?: Maybe<(
-      { __typename?: "FriendRequest" }
+      { __typename?: 'FriendRequest' }
       & RegularFriendRequestFragment
     )> }
   ) }
 );
 
 export type GetImageQueryVariables = Exact<{
-  imageId: Scalars["String"];
+  imageId: Scalars['String'];
 }>;
 
 
 export type GetImageQuery = (
-  { __typename?: "Query" }
-  & Pick<Query, "getImage">
+  { __typename?: 'Query' }
+  & Pick<Query, 'getImage'>
 );
 
 export type GetInProgressFriendRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetInProgressFriendRequestsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getInProgressFriendRequests: Array<(
-    { __typename?: "FriendRequestWithFriend" }
-    & { friend: (
-      { __typename?: "User" }
-      & RegularUserFragment
-    ), friendRequest: (
-      { __typename?: "FriendRequest" }
+    { __typename?: 'FriendRequestWithFriend' }
+    & Pick<FriendRequestWithFriend, 'friendRole'>
+    & { friendRequest: (
+      { __typename?: 'FriendRequest' }
+      & { sender: (
+        { __typename?: 'User' }
+        & RegularUserFragment
+      ), receiver: (
+        { __typename?: 'User' }
+        & RegularUserFragment
+      ) }
       & RegularFriendRequestFragment
     ) }
   )> }
@@ -738,27 +707,27 @@ export type GetNewNotificationsCountQueryVariables = Exact<{ [key: string]: neve
 
 
 export type GetNewNotificationsCountQuery = (
-  { __typename?: "Query" }
-  & Pick<Query, "getNewNotificationsCount">
+  { __typename?: 'Query' }
+  & Pick<Query, 'getNewNotificationsCount'>
 );
 
 export type GetPostCommentsQueryVariables = Exact<{
-  postId: Scalars["Int"];
-  limit: Scalars["Int"];
-  cursor?: Maybe<Scalars["String"]>;
+  postId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
 export type GetPostCommentsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getPostComments: (
-    { __typename?: "PaginatedComments" }
-    & Pick<PaginatedComments, "hasMore">
+    { __typename?: 'PaginatedComments' }
+    & Pick<PaginatedComments, 'hasMore'>
     & { comments: Array<(
-      { __typename?: "Comment" }
-      & Pick<Comment, "_id" | "text" | "postId" | "creatorId" | "createdAt" | "updatedAt">
+      { __typename?: 'Comment' }
+      & Pick<Comment, '_id' | 'text' | 'postId' | 'creatorId' | 'createdAt' | 'updatedAt'>
       & { creator: (
-        { __typename?: "User" }
+        { __typename?: 'User' }
         & RegularUserFragment
       ) }
     )> }
@@ -769,9 +738,9 @@ export type GetRecentStoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetRecentStoriesQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getRecentStories: Array<(
-    { __typename?: "Story" }
+    { __typename?: 'Story' }
     & RegularStoryFragment
   )> }
 );
@@ -780,69 +749,79 @@ export type GetSuggestedFriendsQueryVariables = Exact<{ [key: string]: never; }>
 
 
 export type GetSuggestedFriendsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getSuggestedFriends: Array<(
-    { __typename?: "FriendSuggestion" }
-    & Pick<FriendSuggestion, "mutual">
+    { __typename?: 'FriendSuggestion' }
+    & Pick<FriendSuggestion, 'mutual'>
     & { friend: (
-      { __typename?: "User" }
+      { __typename?: 'User' }
       & RegularUserFragment
     ) }
   )> }
 );
 
 export type GetSuggestedFriendTagsQueryVariables = Exact<{
-  searchName?: Maybe<Scalars["String"]>;
+  searchName?: Maybe<Scalars['String']>;
 }>;
 
 
 export type GetSuggestedFriendTagsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getSuggestedFriendTags: Array<(
-    { __typename?: "FriendRequestWithFriend" }
-    & { friend: (
-      { __typename?: "User" }
-      & RegularUserFragment
-    ), friendRequest: (
-      { __typename?: "FriendRequest" }
+    { __typename?: 'FriendRequestWithFriend' }
+    & Pick<FriendRequestWithFriend, 'friendRole'>
+    & { friendRequest: (
+      { __typename?: 'FriendRequest' }
+      & { sender: (
+        { __typename?: 'User' }
+        & RegularUserFragment
+      ), receiver: (
+        { __typename?: 'User' }
+        & RegularUserFragment
+      ) }
       & RegularFriendRequestFragment
     ) }
   )> }
 );
 
 export type GetUserByIdQueryVariables = Exact<{
-  id: Scalars["Int"];
+  id: Scalars['Int'];
 }>;
 
 
 export type GetUserByIdQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getUserById?: Maybe<(
-    { __typename?: "User" }
+    { __typename?: 'User' }
     & RegularUserFragment
   )> }
 );
 
 export type GetUserFriendRequestsQueryVariables = Exact<{
-  userId?: Maybe<Scalars["Int"]>;
-  limit: Scalars["Int"];
-  skip?: Maybe<Scalars["Int"]>;
+  userId?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type GetUserFriendRequestsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getUserFriendRequests: (
-    { __typename?: "PaginatedRequests" }
-    & Pick<PaginatedRequests, "mutualFriends" | "hasMore">
+    { __typename?: 'PaginatedRequests' }
+    & Pick<PaginatedRequests, 'mutualFriends' | 'hasMore'>
     & { friendRequestsWithFriends: Array<(
-      { __typename?: "FriendRequestWithFriend" }
+      { __typename?: 'FriendRequestWithFriend' }
+      & Pick<FriendRequestWithFriend, 'friendRole'>
       & { friendRequest: (
-        { __typename?: "FriendRequest" }
+        { __typename?: 'FriendRequest' }
+        & { sender: (
+          { __typename?: 'User' }
+          & RegularUserFragment
+        ), receiver: (
+          { __typename?: 'User' }
+          & RegularUserFragment
+        ) }
         & RegularFriendRequestFragment
-      ), friend: (
-        { __typename?: "User" }
-        & RegularUserFragment
       ) }
     )> }
   ) }
@@ -852,11 +831,11 @@ export type GetUserNotificationsQueryVariables = Exact<{ [key: string]: never; }
 
 
 export type GetUserNotificationsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { getUserNotifications: Array<(
-    { __typename?: "Notification" }
+    { __typename?: 'Notification' }
     & { triggerUser: (
-      { __typename?: "User" }
+      { __typename?: 'User' }
       & RegularUserFragment
     ) }
     & RegularNotificationFragment
@@ -867,53 +846,53 @@ export type LoggedUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LoggedUserQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { loggedUser?: Maybe<(
-    { __typename?: "FullUser" }
-    & Pick<FullUser, "avatarImage" | "bannerImage">
+    { __typename?: 'FullUser' }
+    & Pick<FullUser, 'avatarImage' | 'bannerImage'>
     & { user?: Maybe<(
-      { __typename?: "User" }
+      { __typename?: 'User' }
       & RegularUserFragment
     )> }
   )> }
 );
 
 export type PostsQueryVariables = Exact<{
-  limit: Scalars["Int"];
-  cursor?: Maybe<Scalars["String"]>;
-  creatorId?: Maybe<Scalars["Int"]>;
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  creatorId?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type PostsQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { posts: (
-    { __typename?: "PaginatedPosts" }
-    & Pick<PaginatedPosts, "hasMore">
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
-      { __typename?: "Post" }
+      { __typename?: 'Post' }
       & RegularPostFragment
     )> }
   ) }
 );
 
 export type ReactionQueryVariables = Exact<{
-  postId: Scalars["Int"];
+  postId: Scalars['Int'];
 }>;
 
 
 export type ReactionQuery = (
-  { __typename?: "Query" }
+  { __typename?: 'Query' }
   & { reaction?: Maybe<(
-    { __typename?: "Reaction" }
-    & Pick<Reaction, "_id" | "reaction" | "userId" | "value" | "postId">
+    { __typename?: 'Reaction' }
+    & Pick<Reaction, '_id' | 'reaction' | 'userId' | 'value' | 'postId'>
   )> }
 );
 
 export const RegularFriendRequestFragmentDoc = gql`
     fragment RegularFriendRequest on FriendRequest {
-  sender
-  receiver
+  senderId
+  receiverId
   status
   createdAt
   updatedAt
@@ -1019,17 +998,6 @@ export const AcceptFriendRequestDocument = gql`
 export function useAcceptFriendRequestMutation() {
   return Urql.useMutation<AcceptFriendRequestMutation, AcceptFriendRequestMutationVariables>(AcceptFriendRequestDocument);
 };
-export const ChangePasswordDocument = gql`
-    mutation ChangePassword($token: String!, $newPassword: String!) {
-  changePassword(token: $token, newPassword: $newPassword) {
-    ...RegularUserResponse
-  }
-}
-    ${RegularUserResponseFragmentDoc}`;
-
-export function useChangePasswordMutation() {
-  return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
-};
 export const CreateCommentDocument = gql`
     mutation CreateComment($postId: Int!, $text: String!) {
   createComment(postId: $postId, text: $text) {
@@ -1105,15 +1073,6 @@ export const CreateStoryDocument = gql`
 
 export function useCreateStoryMutation() {
   return Urql.useMutation<CreateStoryMutation, CreateStoryMutationVariables>(CreateStoryDocument);
-};
-export const ForgotPasswordDocument = gql`
-    mutation ForgotPassword($email: String!) {
-  forgotPassword(email: $email)
-}
-    `;
-
-export function useForgotPasswordMutation() {
-  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
 };
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
@@ -1192,7 +1151,7 @@ export const SearchUsersByUsernameDocument = gql`
 }
     `;
 
-export function useSearchUsersByUsernameQuery(options: Omit<Urql.UseQueryArgs<SearchUsersByUsernameQueryVariables>, "query"> = {}) {
+export function useSearchUsersByUsernameQuery(options: Omit<Urql.UseQueryArgs<SearchUsersByUsernameQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<SearchUsersByUsernameQuery>({ query: SearchUsersByUsernameDocument, ...options });
 };
 export const CommentCountDocument = gql`
@@ -1201,7 +1160,7 @@ export const CommentCountDocument = gql`
 }
     `;
 
-export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, "query"> = {}) {
+export function useCommentCountQuery(options: Omit<Urql.UseQueryArgs<CommentCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<CommentCountQuery>({ query: CommentCountDocument, ...options });
 };
 export const FriendCountDocument = gql`
@@ -1210,7 +1169,7 @@ export const FriendCountDocument = gql`
 }
     `;
 
-export function useFriendCountQuery(options: Omit<Urql.UseQueryArgs<FriendCountQueryVariables>, "query"> = {}) {
+export function useFriendCountQuery(options: Omit<Urql.UseQueryArgs<FriendCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<FriendCountQuery>({ query: FriendCountDocument, ...options });
 };
 export const GetFriendRequestDocument = gql`
@@ -1224,7 +1183,7 @@ export const GetFriendRequestDocument = gql`
 }
     ${RegularFriendRequestFragmentDoc}`;
 
-export function useGetFriendRequestQuery(options: Omit<Urql.UseQueryArgs<GetFriendRequestQueryVariables>, "query"> = {}) {
+export function useGetFriendRequestQuery(options: Omit<Urql.UseQueryArgs<GetFriendRequestQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetFriendRequestQuery>({ query: GetFriendRequestDocument, ...options });
 };
 export const GetImageDocument = gql`
@@ -1233,24 +1192,28 @@ export const GetImageDocument = gql`
 }
     `;
 
-export function useGetImageQuery(options: Omit<Urql.UseQueryArgs<GetImageQueryVariables>, "query"> = {}) {
+export function useGetImageQuery(options: Omit<Urql.UseQueryArgs<GetImageQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetImageQuery>({ query: GetImageDocument, ...options });
 };
 export const GetInProgressFriendRequestsDocument = gql`
     query GetInProgressFriendRequests {
   getInProgressFriendRequests {
-    friend {
-      ...RegularUser
-    }
     friendRequest {
       ...RegularFriendRequest
+      sender {
+        ...RegularUser
+      }
+      receiver {
+        ...RegularUser
+      }
     }
+    friendRole
   }
 }
-    ${RegularUserFragmentDoc}
-${RegularFriendRequestFragmentDoc}`;
+    ${RegularFriendRequestFragmentDoc}
+${RegularUserFragmentDoc}`;
 
-export function useGetInProgressFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetInProgressFriendRequestsQueryVariables>, "query"> = {}) {
+export function useGetInProgressFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetInProgressFriendRequestsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetInProgressFriendRequestsQuery>({ query: GetInProgressFriendRequestsDocument, ...options });
 };
 export const GetNewNotificationsCountDocument = gql`
@@ -1259,7 +1222,7 @@ export const GetNewNotificationsCountDocument = gql`
 }
     `;
 
-export function useGetNewNotificationsCountQuery(options: Omit<Urql.UseQueryArgs<GetNewNotificationsCountQueryVariables>, "query"> = {}) {
+export function useGetNewNotificationsCountQuery(options: Omit<Urql.UseQueryArgs<GetNewNotificationsCountQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetNewNotificationsCountQuery>({ query: GetNewNotificationsCountDocument, ...options });
 };
 export const GetPostCommentsDocument = gql`
@@ -1281,7 +1244,7 @@ export const GetPostCommentsDocument = gql`
 }
     ${RegularUserFragmentDoc}`;
 
-export function useGetPostCommentsQuery(options: Omit<Urql.UseQueryArgs<GetPostCommentsQueryVariables>, "query"> = {}) {
+export function useGetPostCommentsQuery(options: Omit<Urql.UseQueryArgs<GetPostCommentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetPostCommentsQuery>({ query: GetPostCommentsDocument, ...options });
 };
 export const GetRecentStoriesDocument = gql`
@@ -1292,7 +1255,7 @@ export const GetRecentStoriesDocument = gql`
 }
     ${RegularStoryFragmentDoc}`;
 
-export function useGetRecentStoriesQuery(options: Omit<Urql.UseQueryArgs<GetRecentStoriesQueryVariables>, "query"> = {}) {
+export function useGetRecentStoriesQuery(options: Omit<Urql.UseQueryArgs<GetRecentStoriesQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetRecentStoriesQuery>({ query: GetRecentStoriesDocument, ...options });
 };
 export const GetSuggestedFriendsDocument = gql`
@@ -1306,24 +1269,28 @@ export const GetSuggestedFriendsDocument = gql`
 }
     ${RegularUserFragmentDoc}`;
 
-export function useGetSuggestedFriendsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendsQueryVariables>, "query"> = {}) {
+export function useGetSuggestedFriendsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetSuggestedFriendsQuery>({ query: GetSuggestedFriendsDocument, ...options });
 };
 export const GetSuggestedFriendTagsDocument = gql`
     query GetSuggestedFriendTags($searchName: String) {
   getSuggestedFriendTags(searchName: $searchName) {
-    friend {
-      ...RegularUser
-    }
     friendRequest {
       ...RegularFriendRequest
+      sender {
+        ...RegularUser
+      }
+      receiver {
+        ...RegularUser
+      }
     }
+    friendRole
   }
 }
-    ${RegularUserFragmentDoc}
-${RegularFriendRequestFragmentDoc}`;
+    ${RegularFriendRequestFragmentDoc}
+${RegularUserFragmentDoc}`;
 
-export function useGetSuggestedFriendTagsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendTagsQueryVariables>, "query"> = {}) {
+export function useGetSuggestedFriendTagsQuery(options: Omit<Urql.UseQueryArgs<GetSuggestedFriendTagsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetSuggestedFriendTagsQuery>({ query: GetSuggestedFriendTagsDocument, ...options });
 };
 export const GetUserByIdDocument = gql`
@@ -1334,7 +1301,7 @@ export const GetUserByIdDocument = gql`
 }
     ${RegularUserFragmentDoc}`;
 
-export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, "query"> = {}) {
+export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
 };
 export const GetUserFriendRequestsDocument = gql`
@@ -1345,17 +1312,21 @@ export const GetUserFriendRequestsDocument = gql`
     friendRequestsWithFriends {
       friendRequest {
         ...RegularFriendRequest
+        sender {
+          ...RegularUser
+        }
+        receiver {
+          ...RegularUser
+        }
       }
-      friend {
-        ...RegularUser
-      }
+      friendRole
     }
   }
 }
     ${RegularFriendRequestFragmentDoc}
 ${RegularUserFragmentDoc}`;
 
-export function useGetUserFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetUserFriendRequestsQueryVariables>, "query"> = {}) {
+export function useGetUserFriendRequestsQuery(options: Omit<Urql.UseQueryArgs<GetUserFriendRequestsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserFriendRequestsQuery>({ query: GetUserFriendRequestsDocument, ...options });
 };
 export const GetUserNotificationsDocument = gql`
@@ -1370,7 +1341,7 @@ export const GetUserNotificationsDocument = gql`
     ${RegularNotificationFragmentDoc}
 ${RegularUserFragmentDoc}`;
 
-export function useGetUserNotificationsQuery(options: Omit<Urql.UseQueryArgs<GetUserNotificationsQueryVariables>, "query"> = {}) {
+export function useGetUserNotificationsQuery(options: Omit<Urql.UseQueryArgs<GetUserNotificationsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetUserNotificationsQuery>({ query: GetUserNotificationsDocument, ...options });
 };
 export const LoggedUserDocument = gql`
@@ -1385,7 +1356,7 @@ export const LoggedUserDocument = gql`
 }
     ${RegularUserFragmentDoc}`;
 
-export function useLoggedUserQuery(options: Omit<Urql.UseQueryArgs<LoggedUserQueryVariables>, "query"> = {}) {
+export function useLoggedUserQuery(options: Omit<Urql.UseQueryArgs<LoggedUserQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<LoggedUserQuery>({ query: LoggedUserDocument, ...options });
 };
 export const PostsDocument = gql`
@@ -1399,7 +1370,7 @@ export const PostsDocument = gql`
 }
     ${RegularPostFragmentDoc}`;
 
-export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, "query"> = {}) {
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };
 export const ReactionDocument = gql`
@@ -1414,6 +1385,6 @@ export const ReactionDocument = gql`
 }
     `;
 
-export function useReactionQuery(options: Omit<Urql.UseQueryArgs<ReactionQueryVariables>, "query"> = {}) {
+export function useReactionQuery(options: Omit<Urql.UseQueryArgs<ReactionQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ReactionQuery>({ query: ReactionDocument, ...options });
 };

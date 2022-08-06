@@ -5,10 +5,14 @@ query GetUserFriendRequests($userId: Int, $limit: Int!, $skip: Int) {
     friendRequestsWithFriends {
       friendRequest {
         ...RegularFriendRequest
+        sender {
+          ...RegularUser
+        }
+        receiver {
+          ...RegularUser
+        }
       }
-      friend {
-        ...RegularUser
-      }
+      friendRole
     }
   }
 }
