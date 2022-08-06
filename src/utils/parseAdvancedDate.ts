@@ -14,8 +14,8 @@ const months = [
 ];
 
 export const parseAdvancedDate = (timestamp: string) => {
-  let date = new Date(parseInt(timestamp));
-  let now = new Date();
+  const date = new Date(parseInt(timestamp));
+  const now = new Date();
 
   //if today
   if (
@@ -23,10 +23,10 @@ export const parseAdvancedDate = (timestamp: string) => {
     date.getMonth() == now.getMonth() &&
     date.getDate() == now.getDate()
   ) {
-    let rowValue = now.getTime() - date.getTime();
-    let seconds = rowValue / 1000;
-    let minutes = seconds / 60;
-    let hours = minutes / 60;
+    const rowValue = now.getTime() - date.getTime();
+    const seconds = rowValue / 1000;
+    const minutes = seconds / 60;
+    const hours = minutes / 60;
     if (hours >= 1) return Math.floor(hours) + "h";
     if (minutes >= 1) return Math.floor(minutes) + "m";
     if (seconds >= 1) return Math.floor(seconds) + "s";
@@ -40,10 +40,10 @@ export const parseAdvancedDate = (timestamp: string) => {
     date.getDate() == now.getDate() - 1
   ) {
     let hours = date.getHours();
-    let ampm = hours >= 12 ? "pm" : "am";
+    const ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12;
-    let minutes =
+    const minutes =
       date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
     return "Yesterday at " + hours + ":" + minutes + " " + ampm;
   }

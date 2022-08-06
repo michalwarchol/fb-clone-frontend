@@ -11,6 +11,8 @@ import {
   GetInProgressFriendRequestsDocument,
   ReactionInput,
   GetPostCommentsDocument,
+  GetPostCommentsQuery,
+  Comment,
   CommentCountDocument,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
@@ -18,21 +20,23 @@ import { pipe, tap } from "wonka";
 import Router from "next/router";
 import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 import { isServer } from "./isServer";
+import { SSRExchange } from "next-urql";
+import { NextPageContext } from "next";
 
 const errorExchange: Exchange =
   ({ forward }) =>
-  (ops$) => {
-    return pipe(
-      forward(ops$),
-      tap(({ error }) => {
-        if (error) {
-          if (error?.message.includes("not authenticated")) {
-            Router.replace("login");
+    (ops$) => {
+      return pipe(
+        forward(ops$),
+        tap(({ error }) => {
+          if (error) {
+            if (error?.message.includes("not authenticated")) {
+              Router.replace("login");
+            }
           }
-        }
-      })
-    );
-  };
+        })
+      );
+    };
 
 const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -182,7 +186,7 @@ const friendRequestPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+export const createUrqlClient = (ssrExchange: SSRExchange, ctx?: NextPageContext) => {
   let cookie = "";
   if (isServer) {
     cookie = ctx?.req?.headers?.cookie;
@@ -193,8 +197,8 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
       credentials: "include" as const,
       headers: cookie
         ? {
-            cookie,
-          }
+          cookie,
+        }
         : undefined,
     },
     exchanges: [
@@ -219,7 +223,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
         },
         updates: {
           Mutation: {
-            createPost: (_result, args, cache, info) => {
+            createPost: (_result, args, cache) => {
               const allFields = cache.inspectFields("Query");
               const fieldInfos = allFields.filter(
                 (info) => info.fieldName === "posts"
@@ -239,20 +243,20 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 );
               });
             },
-            createComment: (result, args, cache, info) => {
-              const loggedUser = cache.readQuery({
+            createComment: (result, args, cache) => {
+              const loggedUser = cache.readQuery<LoggedUserQuery>({
                 query: LoggedUserDocument,
-              }) as any;
-              cache.updateQuery(
+              });
+              cache.updateQuery<GetPostCommentsQuery>(
                 {
                   query: GetPostCommentsDocument,
                   variables: { limit: 5, postId: args.postId },
                 },
                 (data) => {
-                  (data.getPostComments as any).comments.unshift({
-                    ...(result.createComment as any),
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
+                  data.getPostComments.comments.unshift({
+                    ...result.createComment as Comment,
+                    createdAt: new Date().toDateString(),
+                    updatedAt: new Date().toDateString(),
                     creator: loggedUser.loggedUser.user,
                   });
                   return data;
@@ -270,7 +274,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               );
             },
-            logout: (_result, args, cache, info) => {
+            logout: (_result, args, cache) => {
               cache.invalidate("Query");
               betterUpdateQuery<LogoutMutation, LoggedUserQuery>(
                 cache,
@@ -279,7 +283,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 () => ({ loggedUser: null })
               );
             },
-            login: (_result, args, cache, info) => {
+            login: (_result, args, cache) => {
               betterUpdateQuery<LoginMutation, LoggedUserQuery>(
                 cache,
                 { query: LoggedUserDocument },
@@ -299,7 +303,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               cache.invalidate("Query");
             },
 
-            register: (_result, args, cache, info) => {
+            register: (_result, args, cache) => {
               betterUpdateQuery<RegisterMutation, LoggedUserQuery>(
                 cache,
                 { query: LoggedUserDocument },
@@ -317,7 +321,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               );
             },
-            react: (_result, args, cache, info) => {
+            react: (_result, args, cache) => {
               const { postId, reaction } = args.variables as ReactionInput;
               const allFields = cache.inspectFields("Query");
 
@@ -345,7 +349,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 ${reaction.toLowerCase()}
               }
             `,
-                  { _id: postId as number } as any
+                  { _id: postId as number } as object
                 );
                 cache.writeFragment(
                   gql`
@@ -414,7 +418,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               );
             },
 
-            uploadImage: (_result, args, cache, info) => {
+            uploadImage: (_result, args, cache) => {
               const allFields = cache.inspectFields("Query");
               const getUserById = allFields.filter(
                 (info) => info.fieldName === "getUserById"
@@ -431,7 +435,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 cache.invalidate("Query", "getImage", fi.arguments || {});
               });
             },
-            createFriendRequest: (_result, args, cache, info) => {
+            createFriendRequest: (_result, args, cache) => {
               const allFields = cache.inspectFields("Query");
               const getFriendRequest = allFields.filter(
                 (info) => info.fieldName === "getFriendRequest"
@@ -457,7 +461,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 );
               });
             },
-            acceptFriendRequest: (_result, args, cache, info) => {
+            acceptFriendRequest: (_result, args, cache) => {
               const allFields = cache.inspectFields("Query");
               const getFriendRequest = allFields.filter(
                 (info) => info.fieldName === "getFriendRequest"
@@ -487,7 +491,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               );
             },
-            removeFriendRequest: (_result, args, cache, info) => {
+            removeFriendRequest: (_result, args, cache) => {
               const allFields = cache.inspectFields("Query");
               const getFriendRequest = allFields.filter(
                 (info) => info.fieldName === "getFriendRequest"
@@ -517,7 +521,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 }
               );
             },
-            updateNotificationStatus: (_result, args, cache, info) => {
+            updateNotificationStatus: (_result, args, cache) => {
               cache.invalidate("Query", "getNewNotificationsCount");
             },
           },

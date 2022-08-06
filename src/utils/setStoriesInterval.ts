@@ -45,11 +45,11 @@ export const setStoriesInterval = (
         if (storiesLength-1 > displayed) {
           setDisplayed(displayed + 1);
           setPassedTime(0);
-         }else{
+        }else{
           setPassedTime(0);
           setDisplayed(0);
           setActiveUser(nextActiveUser);
-         }
+        }
       }, time-passedTime);
     }
     return () => {
